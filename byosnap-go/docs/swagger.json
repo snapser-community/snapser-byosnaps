@@ -1,0 +1,86 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is an example postgame server",
+        "title": "Postgame API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/v1/byosnap-postgame/user/{user_id}/lose": {
+            "post": {
+                "description": "Increment lose count for a user",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Lose a game",
+                "operationId": "Lose",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Authorization Token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-postgame/user/{user_id}/win": {
+            "post": {
+                "description": "Increment win count for a user and grant reward",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Win a game",
+                "operationId": "Win",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Authorization Token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        }
+    }
+}

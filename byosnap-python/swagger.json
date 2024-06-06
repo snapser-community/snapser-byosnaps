@@ -1,0 +1,152 @@
+{
+  "info": {
+    "description": "Custom Python Service API",
+    "version": "1.0.0-oas3",
+    "contact": {
+      "email": "tech@snapser.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "title": "Custom Python Service"
+  },
+  "servers": [],
+  "tags": [
+    {
+      "name": "Custom Python Service",
+      "description": "Endpoints for the Custom Python Service"
+    }
+  ],
+  "paths": {
+    "/v1/byosnap-jinks-flask/resource-one/{req_id}": {
+      "get": {
+        "summary": "resource_one",
+        "description": "Custom Call Resource One",
+        "operationId": "Get Resource One",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "req_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "Token",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "headers": {
+              "Server-Time": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomService"
+                }
+              }
+            },
+            "description": "A successful response"
+          },
+          "201": {
+            "headers": {
+              "Server-Time": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomService"
+                }
+              }
+            },
+            "description": "A successful creation"
+          }
+        }
+      }
+    },
+    "/v1/byosnap-jinks-flask/resource-two/{req_id}": {
+      "get": {
+        "summary": "resource_two",
+        "description": "Custom Call Resource Two",
+        "operationId": "Get Resource Two",
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Token",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "req_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomService"
+                }
+              }
+            },
+            "description": "A successful response"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomService"
+                }
+              }
+            },
+            "description": "A successful creation"
+          }
+        }
+      }
+    }
+  },
+  "openapi": "3.0.2",
+  "components": {
+    "schemas": {
+      "CustomService": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

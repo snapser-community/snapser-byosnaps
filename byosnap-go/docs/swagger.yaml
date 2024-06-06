@@ -1,0 +1,59 @@
+info:
+  contact: {}
+  description: This is an example postgame server
+  title: Postgame API
+  version: "1.0"
+paths:
+  /v1/byosnap-postgame/user/{user_id}/lose:
+    post:
+      description: Increment lose count for a user
+      operationId: Lose
+      parameters:
+      - description: User ID
+        format: uuid
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Authorization Token
+        format: uuid
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: Lose a game
+  /v1/byosnap-postgame/user/{user_id}/win:
+    post:
+      description: Increment win count for a user and grant reward
+      operationId: Win
+      parameters:
+      - description: User ID
+        format: uuid
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Authorization Token
+        format: uuid
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: Win a game
+swagger: "2.0"

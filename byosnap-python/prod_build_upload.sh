@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+SNAPSER_PROVIDED_TOKEN=eyJwYXlsb2FkIjoidHlzdUZkUnRjdEUxYkZtVWtXMHh0b3ZtRFRGYnhVRXdwUmR3VS8zeHZ3dGxrL05zWmszeFFlLzlDem5TakpUTDBYMWsvM2xiQzNORDdwMG1RQ2hmOS9MRWhGdVNqN2VndlZ5Z0JyWE1ma3NrRU9heTV3amVybmptdmZXMTBWZlVmYXFFQ2huM2JtcVEydXlTYXZqclRybUZybWVnOU9vRDRIS1htNk1LZk4rRFJiclN4VlR5RDBveFJNeVY5SjA0aVV6RzNJRmRvSk1mM1FEOURRakNEKzhrWk1tVVUrYlc2RjZrSEU3MTdaU1p6Uk1GdUlUNDVOT2FZRkdXbUJJeVo4YTZ2ditvQ1duRkh1NjVZNjdNVFYwQSt5MkZDMHFLRmYxOURXU0dsVHppbDRiS0NyOTRBRU1rLzNvTW4xdjdTb2pDdkh2Q2JPSEFtcUZkcVRpNlVsTmxBalhSOXM0aktNakthTFdvZCtOTWxyNjh5NVpwTFhWMnJaQktZcnZ5VExGQmdZT0pUVW55YU9zbXZQWDluNnBnME9PV0Z2ajNTYlVNQ2U3bEZXM2hDeGVNc1laUkExTlZtQ3dGWWNmRWh2MXZKemNuRmhXbnFmRUwyaDZrZXIwZFNOb1QydTl5ZXN2MDZTeUtRL1RDNURBSWRPTStOZkhxNWpYK1JFV0JVc3U4bSszN2lvNXdIWXViNGdHV0VaNHRScUdZWEpTUFljTmQ2WEhVRFRMUm5tVmtFb0gwWXRsaUpUWG4zVWEzS2Q5ZVJNVk0vZHlva1V2TklmclIrRHhXVHl4dHV4UU94NkVUZ1YvTXFVSUlsa2MxbUkwMmRXOW0xWTBzckIvUFZTdGxrZzkyVkRGNkVtdEcrMndmTjZ3a21NMVgzN1NPVDdnelh5WFV1V3hCeUJ2Mmh2Tk80bmFuckpQOWREZFNGMEF5TjNQV3RyOUgraWFCckdTaEpYM2JITEdwb0NZTDNyZzZNYUV3N3pEaTNYZ1c4V2E2NkU3UVdDY3RQUStGTlFwWkFQSnhGQ2haZlF2MitZdlg3UFZUbys2TEQrSWNZcmtnV2svNUVZUHdXSi9aWHh4UnJOOXNiV3E3aW16N0RRalI5bXBDWHhsRG1URDZ6WS9mazMwT1BzQjh5SkI3Y2hjWnFJbTZRQThSQklqODZUNm1jcFJBN1FnWHdHRXBBRHB4ZWFNUEVvMXduLzBVRFNSNVpScUhjK0lCeldXR0hqZUR5bzdPL1doK3U2V1pSVVRCcXZXcVNET2g5bW9UWUlHSXFzVnRYZkpDdkhiRE9lMS9GbDlPUitDTlZ0bWdzM2JudXBnek50YWd1dVNlZ09uYmV6WmIwem51T1o3dVNoSXozakxING1RV20rQzhCOVVmMHZJWUdQdjVZVlNVOXRNeDk2RXd1TEk3NWhYNzR0aWlKQ3VxVDlRNGFPZ3VVMnZKejgrY1NGMGxQRGpwTUoyeGoxWE9SelA4V2lDY1E4emp5K1lablZMbWlSa2JoMWM3dFFoaGhBeVNnbDgvVkVxQlVIR0g3azlHRTRjdEFOQnRXOWFoNzloU2hBUXVEektYN0M4cnBZZGhkMTBLak51T0RseGsyelFrUmtxVFNZNTdLV1h1SWwvNmpLYzYxc2JRZ0s3cjBMTkNiSzJMN1BRbTdNbmdNbHhJOG5sUURjbktEZmlMUHprZHdEeW41UTY1S09Qbkk3OSsvdWFvSHBaREUxVk1JSVpNdkNKSkcyTGtPS1MzQnB4WlJubENVUFBpTzNkb05VaUtsQkpZQU9SckdGSGd3THpvMzZEeTExRmxCK3JCNTY3TDRzTUtkVjhpVVFCQ0NsMnYzMHRrUGlIRFJTQ2EzeWFJUGN5YzdsR2UzQzQ9IiwiZGF0YWtleSI6IkFRRUJBSGo2bGM0WElKdy83bG4wSGMwMERNZWs2R0V4SENiWTRSSXBUTUNJNThJblV3QUFBSDR3ZkFZSktvWklodmNOQVFjR29HOHdiUUlCQURCb0Jna3Foa2lHOXcwQkJ3RXdIZ1lKWUlaSUFXVURCQUV1TUJFRURDOFJxVmxvaUM0SlduR2VkUUlCRUlBN3NjbGJLSTVhdTl2R3FvVStWOGZDYUxZaW9BUEp4ZnIxOWUyb1ZHa3YvNXdBampQa3cvcHZHaHF3cDRmd2cxbjJoN0ZUV1IyMmRSa1gwREE9IiwidmVyc2lvbiI6IjIiLCJ0eXBlIjoiREFUQV9LRVkiLCJleHBpcmF0aW9uIjoxNjc4NDUyMzcwfQ==
+
+AWS_REGION="us-west-2"
+BASE_REPO="31164543756.dkr.ecr.us-west-2.amazonaws.com"
+REPO_NAME="sandbox-multi-tools"
+ECR_PATH="${BASE_REPO}/${REPO_NAME}"
+TAG="latest"
+
+
+echo $SNAPSER_PROVIDED_TOKEN | docker login --username AWS --password-stdin $BASE_REPO
+
+
+
+
+
+
+
+
+# Pass the Amazon ECR login to docker
+aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $BASE_REPO
+
+# Build your code
+docker build --no-cache -t $REPO_NAME -f Dockerfile.production .
+
+# Tag the build
+docker tag "${REPO_NAME}:${TAG}" "$ECR_PATH:${TAG}"
+
+# Push the image to Amazon ECR
+docker push "$ECR_PATH:${TAG}"
+
+# Get a list of images to delete
+IMAGES_TO_DELETE=$( aws ecr list-images --region $AWS_REGION --repository-name $REPO_NAME --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
+
+# Delete older untagged images
+aws ecr batch-delete-image --region $AWS_REGION --repository-name $REPO_NAME --image-ids "$IMAGES_TO_DELETE" || true
+
+# Test
+# IMAGES_TO_DELETE=$( aws ecr list-images --region us-west-2 --repository-name jinks_storage --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
+# aws ecr batch-delete-image --region us-west-2 --repository-name jinks_storage --image-ids "$IMAGES_TO_DELETE" || true

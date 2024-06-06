@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+ jt_flask_web:
+  build:
+   context: .
+  ports:
+  - 5002:5002
+  environment:
+  - PYTHONUNBUFFERED=1
+  volumes:
+  - ./:/app
+  networks:
+  - jt_platform
+  - jt_store
+
+networks:
+  jt_platform:
+    external: true
+    name: jt_platform    
+  jt_store:
+    external: true
+    name: jt_store
