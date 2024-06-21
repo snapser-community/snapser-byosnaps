@@ -1,0 +1,93 @@
+# .NET Core
+bin/
+obj/
+*.log
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Auto-generated files
+*.dbmdl
+*.dbproj.schemaview
+*.pfx
+*.publishsettings
+
+# Visual Studio Code
+.vscode/
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Rider
+.idea/
+*.sln.iml
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Rider
+.idea/
+
+# DotNet Runtime
+.dotnet/
+
+# Local history for Visual Studio
+.vs/
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Ignore all local application data
+local.settings.json
+
+# Azure Functions
+function.json
+
+# Log files
+*.log
+*.tlog
+
+# User-specific files (Mono Auto Generated)
+mono_crash.*
+
+# ASP.NET Identity
+App_Data/
+
+# Temporary ASP.NET Files
+**/AspNetCoreModule/
+
+# Azure WebApps
+_ide/azuredeploy.json
+
+# VS Code Coverage
+coverage/
+
+# Local SQL Database Files
+*.mdf
+*.ldf
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# NCrunch
+.ncrunch*
+

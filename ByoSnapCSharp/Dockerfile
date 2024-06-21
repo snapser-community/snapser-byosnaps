@@ -1,0 +1,27 @@
+# Use the official .NET 8.0 SDK image to build the application for arm64
+FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /app
+
+# Copy the project file and restore any dependencies
+COPY *.csproj ./
+RUN dotnet restore
+
+# Copy the rest of the application code
+COPY . ./
+RUN dotnet publish -c Release -o out
+
+# Use the official ASP.NET Core runtime image for .NET 8.0, targeting arm64
+FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
+WORKDIR /app
+
+# Copy the build output to the runtime image
+COPY --from=build /app/out .
+
+# Set the entry point for the container to run the application
+ENTRYPOINT ["dotnet", "ByoSnapCSharp.dll"]
+
+# Expose port 5003 for the RESTful server
+EXPOSE 5003
+
+# Set the environment variable to configure the application to listen on port 5003
+ENV ASPNETCORE_URLS=http://+:5003
