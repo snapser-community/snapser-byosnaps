@@ -12,7 +12,9 @@ A very simple microservice written in C#, that can be added to your Snapser infr
 ### Step 1 - Create a BYOSnap
 1. You will be asked to enter an ID for your BYOSnap. The UI will have **byosnap-** prefix already in the form, so please
 enter **csharp**
-2. Give your BYOSnap a name, description, pick your platform (linux/amd64) and select the language **C sharp** for your BYOSnap.
+2. Give your BYOSnap a name, description, pick your platform - **linux/amd64** and select the language **C sharp** for your BYOSnap.
+
+**Note**: Dotnet SDKs have issues with the linux/arm64 platform. So please make sure you chose **linux/amd64** as your platform for this BYOSnap.
 
 ### Step 2a - Publish your BYOSNap image
 1. You will need to download the Snapser CLI tool for this and have docker running locally.
