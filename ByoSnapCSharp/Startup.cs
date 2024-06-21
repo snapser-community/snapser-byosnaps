@@ -11,6 +11,17 @@ namespace ByoSnapCSharp
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddControllers();
+
+      // Add CORS policy
+      services.AddCors(options =>
+      {
+        options.AddPolicy("AllowSpecificOrigin",
+                  builder => builder
+                      .AllowAnyOrigin()
+                      .AllowAnyMethod()
+                      .AllowAnyHeader());
+      });
+
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "ByoSnapCSharp", Version = "v1" });
@@ -49,6 +60,9 @@ namespace ByoSnapCSharp
       app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ByoSnapCSharp v1"));
 
       app.UseRouting();
+
+      // Enable CORS
+      app.UseCors("AllowSpecificOrigin");
 
       app.UseAuthorization();
 
