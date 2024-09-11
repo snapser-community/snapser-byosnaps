@@ -12,15 +12,15 @@ A very simple microservice written in C#, that can be added to your Snapser infr
 ### Step 1 - Create a BYOSnap
 1. You will be asked to enter an ID for your BYOSnap. The UI will have **byosnap-** prefix already in the form, so please
 enter **csharp**
-2. Give your BYOSnap a name, description, pick your platform - **linux/amd64** and select the language **C sharp** for your BYOSnap.
+2. Give your BYOSnap a name, description, pick your platform - **linux/amd64** (Intel Mac) **linux/arm64** (Apple M Series) and select the language **C sharp** for your BYOSnap.
 
-**Note**: Dotnet SDKs have issues with the linux/arm64 platform. So please make sure you chose **linux/amd64** as your platform for this BYOSnap.
+**Note**: Make sure you select the right platform based on your hardware.
 
 ### Step 2a - Publish your BYOSNap image
 1. You will need to download the Snapser CLI tool for this and have docker running locally.
 2. You will then use the CLI tool to upload this code to your own private snap marketplace.
 ```
-snapctl byosnap publish-image byosnap-jinks-flask --tag "v0.0.1" --path <path_to_root_of_this_repo> --platform linux/amd64
+snapctl byosnap publish-image byosnap-jinks-flask --tag "v0.0.1" --path <path_to_root_of_this_repo> --platform <linux/amd64 or linux/arm64>
 ```
 3. Once your code is uploaded go back to the web browser to move to Step 2b.
 
