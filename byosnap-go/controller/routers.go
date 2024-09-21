@@ -51,8 +51,13 @@ func (pgs *PostgameServer) NewRouter() *gin.Engine {
 	v1 := router.Group("/v1/byosnap-postgame")
 	v1.POST("/user/:user_id/win", pgs.Win)
 	v1.POST("/user/:user_id/lose", pgs.Lose)
+	v1.GET("/healthz", pgs.Healthz)
 
 	return router
+}
+
+func (pgs *PostgameServer) Healthz(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }
 
 // We use GRPC internally to provide fast requests between services.  Users are authenticated at our API Gateway and then trusted once internal;

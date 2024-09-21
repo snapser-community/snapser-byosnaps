@@ -1,0 +1,62 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+data:
+  trackables.yaml: |
+    caches: {}
+    couchbase: null
+    databases:
+      trackables:
+        database: akis67cn_trackables
+        host: sandbox-multi-cluster-common.cluster-c0zivlmlcykx.us-west-2.rds.amazonaws.com
+        password: ElfY4w3jQBldiDOS
+        port: 5432
+        useReader: true
+        username: akis67cn_trackables_user
+      trackables_settings:
+        database: akis67cn_trackables_settings
+        host: sandbox-multi-cluster-common.cluster-c0zivlmlcykx.us-west-2.rds.amazonaws.com
+        password: fZAaoPgU7IMAart6
+        port: 5432
+        useReader: true
+        username: akis67cn_trackables_settings_user
+    env: dev
+    logger:
+      console: false
+      level: trace
+    mailer: null
+    metrics:
+      port: 2112
+    namespace: akis67cn
+    profiler:
+      address: http://pyroscope:4040
+      enabled: false
+    server:
+      grpcPort: 8080
+      httpPort: 8090
+    service_name: trackables
+    serviceName: trackables
+    services:
+      hades:
+        address: internal-hades:8080
+        grpcAddress: internal-hades:8080
+        httpAddress: internal-hades:8090
+      statistics:
+        address: service-statistics:8080
+        grpcAddress: service-statistics:8080
+        httpAddress: service-statistics:8090
+    snapend:
+      env: dev
+    version: v0.36.0-dev
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"trackables.yaml":"caches: {}\ncouchbase: null\ndatabases:\n  trackables:\n    database: akis67cn_trackables\n    host: sandbox-multi-cluster-common.cluster-c0zivlmlcykx.us-west-2.rds.amazonaws.com\n    password: ElfY4w3jQBldiDOS\n    port: 5432\n    useReader: true\n    username: akis67cn_trackables_user\n  trackables_settings:\n    database: akis67cn_trackables_settings\n    host: sandbox-multi-cluster-common.cluster-c0zivlmlcykx.us-west-2.rds.amazonaws.com\n    password: fZAaoPgU7IMAart6\n    port: 5432\n    useReader: true\n    username: akis67cn_trackables_settings_user\nenv: dev\nlogger:\n  console: false\n  level: debug\nmailer: null\nmetrics:\n  port: 2112\nnamespace: akis67cn\nprofiler:\n  address: http://pyroscope:4040\n  enabled: false\nserver:\n  grpcPort: 8080\n  httpPort: 8090\nservice_name: trackables\nserviceName: trackables\nservices:\n  hades:\n    address: internal-hades:8080\n    grpcAddress: internal-hades:8080\n    httpAddress: internal-hades:8090\n  statistics:\n    address: service-statistics:8080\n    grpcAddress: service-statistics:8080\n    httpAddress: service-statistics:8090\nsnapend:\n  env: dev\nversion: v0.36.0-dev\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"trackables-config","namespace":"akis67cn"}}
+  creationTimestamp: "2024-09-16T03:24:44Z"
+  name: trackables-config
+  namespace: akis67cn
+  resourceVersion: "623981821"
+  uid: 9a44a156-82a7-466d-ab3c-0ead0fa76c56
