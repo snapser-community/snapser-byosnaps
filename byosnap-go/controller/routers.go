@@ -48,10 +48,11 @@ func (pgs *PostgameServer) NewRouter() *gin.Engine {
 		AllowMethods:    []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:    []string{"Origin", "Authorization", "Content-Type", "User-Id", "Token"},
 	}))
+	router.GET("/healthz", pgs.Healthz)
+
 	v1 := router.Group("/v1/byosnap-postgame")
 	v1.POST("/user/:user_id/win", pgs.Win)
 	v1.POST("/user/:user_id/lose", pgs.Lose)
-	v1.GET("/healthz", pgs.Healthz)
 
 	return router
 }
