@@ -41,3 +41,18 @@ your private snaps.
 
 ## Use
 Go to the Snapend API explorer to play around with the APIs
+
+## Generating the OpenAPI spec
+1. Install swaggo/swag 
+```
+go get -u github.com/swaggo/swag/cmd/swag
+```
+2. Generate the swagger 2.0 doc
+```
+swag init --output ./docs
+```
+3. Convert to openapi 3.0
+Copy the generated swagger.yaml or swagger.json file into [Swagger Editor](https://editor.swagger.io/). 
+Click on Edit -> Convert to OpenAPI 3.0
+File -> Convert and save as JSON
+4. Save this file in the root folder of the byosnap with the name swagger.json

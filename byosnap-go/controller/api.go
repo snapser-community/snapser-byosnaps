@@ -18,7 +18,7 @@ import (
 // @Router /v1/byosnap-postgame/user/{user_id}/win [post]
 // @Produce  json
 // @Param user_id path string true "User ID" Format(uuid)
-// @Param token header string true "Authorization Token" Format(uuid)
+// @Param Token header string true "Authorization Token" Format(uuid)
 // @Success 200
 // @Failure 403
 // @Failure 500

@@ -43,7 +43,7 @@ paths:
       - description: Authorization Token
         format: uuid
         in: header
-        name: token
+        name: Token
         required: true
         type: string
       produces:

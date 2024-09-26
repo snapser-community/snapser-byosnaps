@@ -72,7 +72,7 @@ const docTemplate = `{
                         "type": "string",
                         "format": "uuid",
                         "description": "Authorization Token",
-                        "name": "token",
+                        "name": "Token",
                         "in": "header",
                         "required": true
                     }
