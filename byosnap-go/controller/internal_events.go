@@ -26,12 +26,13 @@ func (ps *PostgameServer) Events(c *gin.Context) {
 
 	fmt.Printf("%s %s\n", r.Method, r.URL.Path)
 	fmt.Printf("Content-Type: %s\n", r.Header.Get("Content-Type"))
-	fmt.Printf("BODY: %s\n", string(body))
 
 	// Parse body as eventbus.WebhookMessage
 	var wr eventbuspb.ByoWebhookRequest
 	err = proto.Unmarshal(body, &wr)
 	if err != nil {
+		// Log the body
+		fmt.Printf("Body: %s\n", body)
 		panic(err)
 	}
 
