@@ -49,6 +49,7 @@ func (pgs *PostgameServer) NewRouter() *gin.Engine {
 		AllowHeaders:    []string{"Origin", "Authorization", "Content-Type", "User-Id", "Token", "App-Key"},
 	}))
 	router.GET("/healthz", pgs.Healthz)
+	router.POST("/internal/events", pgs.Events)
 
 	v1 := router.Group("/v1/byosnap-postgame")
 	v1.POST("/user/:user_id/win", pgs.Win)
