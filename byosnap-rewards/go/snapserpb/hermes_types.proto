@@ -1,0 +1,130 @@
+syntax = "proto3";
+
+package hermes;
+
+option go_package = "github.com/snapser-engine/services/hermes/proto";
+
+/* Service Requests & Responses */
+
+/* Message Types and Enums */
+enum MessageType {
+  MESSAGE_TYPE_UNSPECIFIED = 0;
+  MESSAGE_TYPE_SNAP_API_PROXY = 4;
+  MESSAGE_TYPE_ERROR = 5;
+  MESSAGE_TYPE_PINGPONG = 7;
+  MESSAGE_TYPE_SNAP_EVENT = 8;
+  MESSAGE_TYPE_PRESENCE = 9;
+}
+
+// Incoming message wrapper
+message ClientMessage {
+  // message id.  ServerMessage will use this id in the response
+  string mid = 1;
+
+  // allows the server to easily route the message to the correct subsystem
+  MessageType message_type = 2;
+
+  // client time when the message was sent
+  int64 timestamp = 3;
+
+  // list of recipients.  If empty, the message is broadcast to all clients
+  repeated string recipients = 4;
+
+  // incoming payload
+  oneof message {
+    Message_Ping ping = 10;
+    Message_SnapApiRequest snap_api_request = 50;
+    Message_PresenceRequest presence_request = 80;
+  }
+}
+
+// Outgoing message wrapper
+message ServerMessage {
+  // message id from ClientMessage
+  string mid = 1;
+
+  // allows the client to easily route the message to the correct subsystem
+  MessageType message_type = 2;
+
+  // server time when the message was sent
+  int64 timestamp = 3;
+
+  // list of recipients.  If empty, the message is broadcast to all clients
+  repeated string recipients = 4;
+
+  // if this message was built in response to a ClientMessage, this is the sender.
+  // Useful for relay when we may not want to broadcast
+  string sender = 5;
+
+  // outgoing payload
+  oneof message {
+    Message_Pong pong = 10;
+    Message_Error error = 11;
+    Message_SnapApiResponse api_response = 50;
+    Message_SnapEvent snap_event = 60;
+    Message_PresenceResponse presence_response = 80;
+  }
+}
+
+message Message_Ping {}
+message Message_Pong {}
+
+message Message_SnapEvent {
+  uint32 event_id = 1;
+  string service_name = 2;
+  bytes payload = 3;
+}
+enum ErrorCode {
+  ErrorCode_OK = 0;
+  ErrorCode_INTERNAL = 1;
+  ErrorCode_INVALID_ARGUMENT = 2;
+  ErrorCode_NOT_FOUND = 3;
+  ErrorCode_ALREADY_EXISTS = 4;
+  ErrorCode_BUFFER_FULL = 5;
+  ErrorCode_PERMISSION_DENIED = 6;
+}
+
+message Message_Error {
+  ErrorCode code = 1;
+  string message = 2;
+}
+
+message Message_SnapApiRequest {
+  string method = 1;
+  bytes payload = 2;
+}
+
+message Message_SnapApiResponse {
+  string caller_method = 1;
+  int64 caller_time = 2;
+  bytes payload = 3;
+  bool is_error = 4;
+  optional SnapApiError error = 5;
+}
+
+message Message_PresenceRequest {}
+message Message_PresenceResponse {
+  int32 total_presence_count = 1;
+  repeated NodePresence node_presences = 2;
+}
+
+message NodePresence {
+  string node_id = 1;
+  int32 presence_count = 2;
+  int64 last_seen_at = 3;
+  int64 uptime_in_seconds = 4;
+}
+
+message SnapApiError {
+  int32 code = 1;
+  string message = 2;
+  repeated string details = 3;
+}
+
+/* Service Events & Pub/Sub */
+message EventSessionDisconnected {
+  string user_id = 1;
+  string session_id = 2;
+  string reason = 3;
+  int64 disconnected_at = 4;
+}

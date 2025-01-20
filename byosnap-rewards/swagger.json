@@ -1,0 +1,37 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Rewadrs",
+        "description": "Rewards a player on certain actions",
+        "contact": {},
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "/"
+        }
+    ],
+    "paths": {
+        "/v1/byosnap-rewards/debug/echo": {
+            "post": {
+                "summary": "Echo",
+                "description": "Echo back the request",
+                "operationId": "Echo",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {}
+                    }
+                }
+            }
+        }
+    },
+    "components": {}
+}
