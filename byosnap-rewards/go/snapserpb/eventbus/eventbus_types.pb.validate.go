@@ -524,31 +524,31 @@ var _ interface {
 	ErrorName() string
 } = ByoSnapEventValidationError{}
 
-// Validate checks the field values on RegisterEventTypesRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on RegisterByoEventTypesRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RegisterEventTypesRequest) Validate() error {
+func (m *RegisterByoEventTypesRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on RegisterEventTypesRequest with the
+// ValidateAll checks the field values on RegisterByoEventTypesRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// RegisterEventTypesRequestMultiError, or nil if none found.
-func (m *RegisterEventTypesRequest) ValidateAll() error {
+// RegisterByoEventTypesRequestMultiError, or nil if none found.
+func (m *RegisterByoEventTypesRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *RegisterEventTypesRequest) validate(all bool) error {
+func (m *RegisterByoEventTypesRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetServiceName()) > 100 {
-		err := RegisterEventTypesRequestValidationError{
-			field:  "ServiceName",
+	if utf8.RuneCountInString(m.GetByosnapId()) > 100 {
+		err := RegisterByoEventTypesRequestValidationError{
+			field:  "ByosnapId",
 			reason: "value length must be at most 100 runes",
 		}
 		if !all {
@@ -557,9 +557,9 @@ func (m *RegisterEventTypesRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if !_RegisterEventTypesRequest_ServiceName_Pattern.MatchString(m.GetServiceName()) {
-		err := RegisterEventTypesRequestValidationError{
-			field:  "ServiceName",
+	if !_RegisterByoEventTypesRequest_ByosnapId_Pattern.MatchString(m.GetByosnapId()) {
+		err := RegisterByoEventTypesRequestValidationError{
+			field:  "ByosnapId",
 			reason: "value does not match regex pattern \"(?i)^[a-z]([a-z0-9-_]*[a-z0-9])?$\"",
 		}
 		if !all {
@@ -575,7 +575,7 @@ func (m *RegisterEventTypesRequest) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RegisterEventTypesRequestValidationError{
+					errors = append(errors, RegisterByoEventTypesRequestValidationError{
 						field:  fmt.Sprintf("EventTypes[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -583,7 +583,7 @@ func (m *RegisterEventTypesRequest) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, RegisterEventTypesRequestValidationError{
+					errors = append(errors, RegisterByoEventTypesRequestValidationError{
 						field:  fmt.Sprintf("EventTypes[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -592,7 +592,7 @@ func (m *RegisterEventTypesRequest) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return RegisterEventTypesRequestValidationError{
+				return RegisterByoEventTypesRequestValidationError{
 					field:  fmt.Sprintf("EventTypes[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -603,19 +603,19 @@ func (m *RegisterEventTypesRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return RegisterEventTypesRequestMultiError(errors)
+		return RegisterByoEventTypesRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// RegisterEventTypesRequestMultiError is an error wrapping multiple validation
-// errors returned by RegisterEventTypesRequest.ValidateAll() if the
-// designated constraints aren't met.
-type RegisterEventTypesRequestMultiError []error
+// RegisterByoEventTypesRequestMultiError is an error wrapping multiple
+// validation errors returned by RegisterByoEventTypesRequest.ValidateAll() if
+// the designated constraints aren't met.
+type RegisterByoEventTypesRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m RegisterEventTypesRequestMultiError) Error() string {
+func (m RegisterByoEventTypesRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -624,11 +624,12 @@ func (m RegisterEventTypesRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m RegisterEventTypesRequestMultiError) AllErrors() []error { return m }
+func (m RegisterByoEventTypesRequestMultiError) AllErrors() []error { return m }
 
-// RegisterEventTypesRequestValidationError is the validation error returned by
-// RegisterEventTypesRequest.Validate if the designated constraints aren't met.
-type RegisterEventTypesRequestValidationError struct {
+// RegisterByoEventTypesRequestValidationError is the validation error returned
+// by RegisterByoEventTypesRequest.Validate if the designated constraints
+// aren't met.
+type RegisterByoEventTypesRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -636,24 +637,24 @@ type RegisterEventTypesRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e RegisterEventTypesRequestValidationError) Field() string { return e.field }
+func (e RegisterByoEventTypesRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e RegisterEventTypesRequestValidationError) Reason() string { return e.reason }
+func (e RegisterByoEventTypesRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e RegisterEventTypesRequestValidationError) Cause() error { return e.cause }
+func (e RegisterByoEventTypesRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e RegisterEventTypesRequestValidationError) Key() bool { return e.key }
+func (e RegisterByoEventTypesRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e RegisterEventTypesRequestValidationError) ErrorName() string {
-	return "RegisterEventTypesRequestValidationError"
+func (e RegisterByoEventTypesRequestValidationError) ErrorName() string {
+	return "RegisterByoEventTypesRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e RegisterEventTypesRequestValidationError) Error() string {
+func (e RegisterByoEventTypesRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -665,14 +666,14 @@ func (e RegisterEventTypesRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sRegisterEventTypesRequest.%s: %s%s",
+		"invalid %sRegisterByoEventTypesRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = RegisterEventTypesRequestValidationError{}
+var _ error = RegisterByoEventTypesRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -680,26 +681,26 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = RegisterEventTypesRequestValidationError{}
+} = RegisterByoEventTypesRequestValidationError{}
 
-var _RegisterEventTypesRequest_ServiceName_Pattern = regexp.MustCompile("(?i)^[a-z]([a-z0-9-_]*[a-z0-9])?$")
+var _RegisterByoEventTypesRequest_ByosnapId_Pattern = regexp.MustCompile("(?i)^[a-z]([a-z0-9-_]*[a-z0-9])?$")
 
-// Validate checks the field values on RegisterEventTypesResponse with the
+// Validate checks the field values on RegisterByoEventTypesResponse with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RegisterEventTypesResponse) Validate() error {
+func (m *RegisterByoEventTypesResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on RegisterEventTypesResponse with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// RegisterEventTypesResponseMultiError, or nil if none found.
-func (m *RegisterEventTypesResponse) ValidateAll() error {
+// ValidateAll checks the field values on RegisterByoEventTypesResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// RegisterByoEventTypesResponseMultiError, or nil if none found.
+func (m *RegisterByoEventTypesResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *RegisterEventTypesResponse) validate(all bool) error {
+func (m *RegisterByoEventTypesResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -709,19 +710,19 @@ func (m *RegisterEventTypesResponse) validate(all bool) error {
 	// no validation rules for Success
 
 	if len(errors) > 0 {
-		return RegisterEventTypesResponseMultiError(errors)
+		return RegisterByoEventTypesResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// RegisterEventTypesResponseMultiError is an error wrapping multiple
-// validation errors returned by RegisterEventTypesResponse.ValidateAll() if
-// the designated constraints aren't met.
-type RegisterEventTypesResponseMultiError []error
+// RegisterByoEventTypesResponseMultiError is an error wrapping multiple
+// validation errors returned by RegisterByoEventTypesResponse.ValidateAll()
+// if the designated constraints aren't met.
+type RegisterByoEventTypesResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m RegisterEventTypesResponseMultiError) Error() string {
+func (m RegisterByoEventTypesResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -730,11 +731,12 @@ func (m RegisterEventTypesResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m RegisterEventTypesResponseMultiError) AllErrors() []error { return m }
+func (m RegisterByoEventTypesResponseMultiError) AllErrors() []error { return m }
 
-// RegisterEventTypesResponseValidationError is the validation error returned
-// by RegisterEventTypesResponse.Validate if the designated constraints aren't met.
-type RegisterEventTypesResponseValidationError struct {
+// RegisterByoEventTypesResponseValidationError is the validation error
+// returned by RegisterByoEventTypesResponse.Validate if the designated
+// constraints aren't met.
+type RegisterByoEventTypesResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -742,24 +744,24 @@ type RegisterEventTypesResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e RegisterEventTypesResponseValidationError) Field() string { return e.field }
+func (e RegisterByoEventTypesResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e RegisterEventTypesResponseValidationError) Reason() string { return e.reason }
+func (e RegisterByoEventTypesResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e RegisterEventTypesResponseValidationError) Cause() error { return e.cause }
+func (e RegisterByoEventTypesResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e RegisterEventTypesResponseValidationError) Key() bool { return e.key }
+func (e RegisterByoEventTypesResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e RegisterEventTypesResponseValidationError) ErrorName() string {
-	return "RegisterEventTypesResponseValidationError"
+func (e RegisterByoEventTypesResponseValidationError) ErrorName() string {
+	return "RegisterByoEventTypesResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e RegisterEventTypesResponseValidationError) Error() string {
+func (e RegisterByoEventTypesResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -771,14 +773,14 @@ func (e RegisterEventTypesResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sRegisterEventTypesResponse.%s: %s%s",
+		"invalid %sRegisterByoEventTypesResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = RegisterEventTypesResponseValidationError{}
+var _ error = RegisterByoEventTypesResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -786,41 +788,117 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = RegisterEventTypesResponseValidationError{}
+} = RegisterByoEventTypesResponseValidationError{}
 
-// Validate checks the field values on PublishEventRequest with the rules
+// Validate checks the field values on PublishByoEventRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *PublishEventRequest) Validate() error {
+func (m *PublishByoEventRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on PublishEventRequest with the rules
+// ValidateAll checks the field values on PublishByoEventRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// PublishEventRequestMultiError, or nil if none found.
-func (m *PublishEventRequest) ValidateAll() error {
+// PublishByoEventRequestMultiError, or nil if none found.
+func (m *PublishByoEventRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *PublishEventRequest) validate(all bool) error {
+func (m *PublishByoEventRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for ServiceName
+	if l := utf8.RuneCountInString(m.GetByosnapId()); l < 1 || l > 100 {
+		err := PublishByoEventRequestValidationError{
+			field:  "ByosnapId",
+			reason: "value length must be between 1 and 100 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Subject
+	if !_PublishByoEventRequest_ByosnapId_Pattern.MatchString(m.GetByosnapId()) {
+		err := PublishByoEventRequestValidationError{
+			field:  "ByosnapId",
+			reason: "value does not match regex pattern \"(?i)^[a-z]([a-z0-9-_]*[a-z0-9])?$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for EventTypeId
+	if l := utf8.RuneCountInString(m.GetSubject()); l < 1 || l > 100 {
+		err := PublishByoEventRequestValidationError{
+			field:  "Subject",
+			reason: "value length must be between 1 and 100 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_PublishByoEventRequest_Subject_Pattern.MatchString(m.GetSubject()) {
+		err := PublishByoEventRequestValidationError{
+			field:  "Subject",
+			reason: "value does not match regex pattern \"^[a-zA-Z0-9-_.]+$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetEventTypeId() <= 0 {
+		err := PublishByoEventRequestValidationError{
+			field:  "EventTypeId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetRecipients()) > 100 {
+		err := PublishByoEventRequestValidationError{
+			field:  "Recipients",
+			reason: "value must contain no more than 100 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetRecipients() {
+		_, _ = idx, item
+
+		if l := utf8.RuneCountInString(item); l < 1 || l > 50 {
+			err := PublishByoEventRequestValidationError{
+				field:  fmt.Sprintf("Recipients[%v]", idx),
+				reason: "value length must be between 1 and 50 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
 
 	if all {
 		switch v := interface{}(m.GetMessage()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, PublishEventRequestValidationError{
+				errors = append(errors, PublishByoEventRequestValidationError{
 					field:  "Message",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -828,7 +906,7 @@ func (m *PublishEventRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, PublishEventRequestValidationError{
+				errors = append(errors, PublishByoEventRequestValidationError{
 					field:  "Message",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -837,7 +915,7 @@ func (m *PublishEventRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetMessage()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return PublishEventRequestValidationError{
+			return PublishByoEventRequestValidationError{
 				field:  "Message",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -845,22 +923,31 @@ func (m *PublishEventRequest) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for Payload
+	if len(m.GetPayload()) > 1048576 {
+		err := PublishByoEventRequestValidationError{
+			field:  "Payload",
+			reason: "value length must be at most 1048576 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
-		return PublishEventRequestMultiError(errors)
+		return PublishByoEventRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// PublishEventRequestMultiError is an error wrapping multiple validation
-// errors returned by PublishEventRequest.ValidateAll() if the designated
+// PublishByoEventRequestMultiError is an error wrapping multiple validation
+// errors returned by PublishByoEventRequest.ValidateAll() if the designated
 // constraints aren't met.
-type PublishEventRequestMultiError []error
+type PublishByoEventRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m PublishEventRequestMultiError) Error() string {
+func (m PublishByoEventRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -869,11 +956,11 @@ func (m PublishEventRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m PublishEventRequestMultiError) AllErrors() []error { return m }
+func (m PublishByoEventRequestMultiError) AllErrors() []error { return m }
 
-// PublishEventRequestValidationError is the validation error returned by
-// PublishEventRequest.Validate if the designated constraints aren't met.
-type PublishEventRequestValidationError struct {
+// PublishByoEventRequestValidationError is the validation error returned by
+// PublishByoEventRequest.Validate if the designated constraints aren't met.
+type PublishByoEventRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -881,24 +968,24 @@ type PublishEventRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e PublishEventRequestValidationError) Field() string { return e.field }
+func (e PublishByoEventRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e PublishEventRequestValidationError) Reason() string { return e.reason }
+func (e PublishByoEventRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e PublishEventRequestValidationError) Cause() error { return e.cause }
+func (e PublishByoEventRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e PublishEventRequestValidationError) Key() bool { return e.key }
+func (e PublishByoEventRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e PublishEventRequestValidationError) ErrorName() string {
-	return "PublishEventRequestValidationError"
+func (e PublishByoEventRequestValidationError) ErrorName() string {
+	return "PublishByoEventRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e PublishEventRequestValidationError) Error() string {
+func (e PublishByoEventRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -910,14 +997,14 @@ func (e PublishEventRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sPublishEventRequest.%s: %s%s",
+		"invalid %sPublishByoEventRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = PublishEventRequestValidationError{}
+var _ error = PublishByoEventRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -925,24 +1012,28 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = PublishEventRequestValidationError{}
+} = PublishByoEventRequestValidationError{}
 
-// Validate checks the field values on PublishEventResponse with the rules
+var _PublishByoEventRequest_ByosnapId_Pattern = regexp.MustCompile("(?i)^[a-z]([a-z0-9-_]*[a-z0-9])?$")
+
+var _PublishByoEventRequest_Subject_Pattern = regexp.MustCompile("^[a-zA-Z0-9-_.]+$")
+
+// Validate checks the field values on PublishByoEventResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *PublishEventResponse) Validate() error {
+func (m *PublishByoEventResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on PublishEventResponse with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on PublishByoEventResponse with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// PublishEventResponseMultiError, or nil if none found.
-func (m *PublishEventResponse) ValidateAll() error {
+// PublishByoEventResponseMultiError, or nil if none found.
+func (m *PublishByoEventResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *PublishEventResponse) validate(all bool) error {
+func (m *PublishByoEventResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -952,19 +1043,19 @@ func (m *PublishEventResponse) validate(all bool) error {
 	// no validation rules for Sequence
 
 	if len(errors) > 0 {
-		return PublishEventResponseMultiError(errors)
+		return PublishByoEventResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// PublishEventResponseMultiError is an error wrapping multiple validation
-// errors returned by PublishEventResponse.ValidateAll() if the designated
+// PublishByoEventResponseMultiError is an error wrapping multiple validation
+// errors returned by PublishByoEventResponse.ValidateAll() if the designated
 // constraints aren't met.
-type PublishEventResponseMultiError []error
+type PublishByoEventResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m PublishEventResponseMultiError) Error() string {
+func (m PublishByoEventResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -973,11 +1064,11 @@ func (m PublishEventResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m PublishEventResponseMultiError) AllErrors() []error { return m }
+func (m PublishByoEventResponseMultiError) AllErrors() []error { return m }
 
-// PublishEventResponseValidationError is the validation error returned by
-// PublishEventResponse.Validate if the designated constraints aren't met.
-type PublishEventResponseValidationError struct {
+// PublishByoEventResponseValidationError is the validation error returned by
+// PublishByoEventResponse.Validate if the designated constraints aren't met.
+type PublishByoEventResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -985,24 +1076,24 @@ type PublishEventResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e PublishEventResponseValidationError) Field() string { return e.field }
+func (e PublishByoEventResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e PublishEventResponseValidationError) Reason() string { return e.reason }
+func (e PublishByoEventResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e PublishEventResponseValidationError) Cause() error { return e.cause }
+func (e PublishByoEventResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e PublishEventResponseValidationError) Key() bool { return e.key }
+func (e PublishByoEventResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e PublishEventResponseValidationError) ErrorName() string {
-	return "PublishEventResponseValidationError"
+func (e PublishByoEventResponseValidationError) ErrorName() string {
+	return "PublishByoEventResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e PublishEventResponseValidationError) Error() string {
+func (e PublishByoEventResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1014,14 +1105,14 @@ func (e PublishEventResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sPublishEventResponse.%s: %s%s",
+		"invalid %sPublishByoEventResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = PublishEventResponseValidationError{}
+var _ error = PublishByoEventResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -1029,4 +1120,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = PublishEventResponseValidationError{}
+} = PublishByoEventResponseValidationError{}

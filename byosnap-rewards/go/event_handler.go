@@ -8,9 +8,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	authpb "github.com/snapser/byosnap-rewards/snapserpb/auth"
-	eventbuspb "github.com/snapser/byosnap-rewards/snapserpb/eventbus"
-	lobbiespb "github.com/snapser/byosnap-rewards/snapserpb/lobbies"
+	authpb "github.com/snapser-community/snapser-byosnaps/byosnap-rewards/snapserpb/auth"
+	eventbuspb "github.com/snapser-community/snapser-byosnaps/byosnap-rewards/snapserpb/eventbus"
+	lobbiespb "github.com/snapser-community/snapser-byosnaps/byosnap-rewards/snapserpb/lobbies"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
@@ -71,8 +71,8 @@ func (a *app) eventHandler(c *gin.Context) {
 				// Publish our custom event using evntbus publish
 				payload := []byte(fmt.Sprintf("Nice work, you joined a lobby - %s", getRandomPraise()))
 
-				praiseReq := &eventbuspb.PublishEventRequest{
-					ServiceName: byoSnapID,
+				praiseReq := &eventbuspb.PublishByoEventRequest{
+					ByosnapId:   byoSnapID,
 					Subject:     "praise",
 					EventTypeId: praiseEventType.EventTypeEnumValue,
 					Payload:     payload,
@@ -80,7 +80,7 @@ func (a *app) eventHandler(c *gin.Context) {
 				}
 				md := metadata.Pairs("gateway", "internal")
 				ctx = metadata.NewOutgoingContext(ctx, md)
-				_, err := a.eventbusClient.PublishEvent(ctx, praiseReq)
+				_, err := a.eventbusClient.PublishByoEvent(ctx, praiseReq)
 				if err != nil {
 					log.Error().Err(err).Msg("failed to publish event")
 				} else {

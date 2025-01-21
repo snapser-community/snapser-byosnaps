@@ -30,8 +30,8 @@ const (
 	EventbusService_ExportSettings_FullMethodName         = "/eventbus.EventbusService/ExportSettings"
 	EventbusService_ImportSettings_FullMethodName         = "/eventbus.EventbusService/ImportSettings"
 	EventbusService_ValidateImportSettings_FullMethodName = "/eventbus.EventbusService/ValidateImportSettings"
-	EventbusService_RegisterEventTypes_FullMethodName     = "/eventbus.EventbusService/RegisterEventTypes"
-	EventbusService_PublishEvent_FullMethodName           = "/eventbus.EventbusService/PublishEvent"
+	EventbusService_RegisterByoEventTypes_FullMethodName  = "/eventbus.EventbusService/RegisterByoEventTypes"
+	EventbusService_PublishByoEvent_FullMethodName        = "/eventbus.EventbusService/PublishByoEvent"
 )
 
 // EventbusServiceClient is the client API for EventbusService service.
@@ -48,8 +48,8 @@ type EventbusServiceClient interface {
 	ExportSettings(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SettingsImportExportData, error)
 	ImportSettings(ctx context.Context, in *SettingsImportExportData, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ValidateImportSettings(ctx context.Context, in *SettingsImportExportData, opts ...grpc.CallOption) (*SettingsImportExportData, error)
-	RegisterEventTypes(ctx context.Context, in *RegisterEventTypesRequest, opts ...grpc.CallOption) (*RegisterEventTypesResponse, error)
-	PublishEvent(ctx context.Context, in *PublishEventRequest, opts ...grpc.CallOption) (*PublishEventResponse, error)
+	RegisterByoEventTypes(ctx context.Context, in *RegisterByoEventTypesRequest, opts ...grpc.CallOption) (*RegisterByoEventTypesResponse, error)
+	PublishByoEvent(ctx context.Context, in *PublishByoEventRequest, opts ...grpc.CallOption) (*PublishByoEventResponse, error)
 }
 
 type eventbusServiceClient struct {
@@ -150,18 +150,18 @@ func (c *eventbusServiceClient) ValidateImportSettings(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *eventbusServiceClient) RegisterEventTypes(ctx context.Context, in *RegisterEventTypesRequest, opts ...grpc.CallOption) (*RegisterEventTypesResponse, error) {
-	out := new(RegisterEventTypesResponse)
-	err := c.cc.Invoke(ctx, EventbusService_RegisterEventTypes_FullMethodName, in, out, opts...)
+func (c *eventbusServiceClient) RegisterByoEventTypes(ctx context.Context, in *RegisterByoEventTypesRequest, opts ...grpc.CallOption) (*RegisterByoEventTypesResponse, error) {
+	out := new(RegisterByoEventTypesResponse)
+	err := c.cc.Invoke(ctx, EventbusService_RegisterByoEventTypes_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *eventbusServiceClient) PublishEvent(ctx context.Context, in *PublishEventRequest, opts ...grpc.CallOption) (*PublishEventResponse, error) {
-	out := new(PublishEventResponse)
-	err := c.cc.Invoke(ctx, EventbusService_PublishEvent_FullMethodName, in, out, opts...)
+func (c *eventbusServiceClient) PublishByoEvent(ctx context.Context, in *PublishByoEventRequest, opts ...grpc.CallOption) (*PublishByoEventResponse, error) {
+	out := new(PublishByoEventResponse)
+	err := c.cc.Invoke(ctx, EventbusService_PublishByoEvent_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -182,8 +182,8 @@ type EventbusServiceServer interface {
 	ExportSettings(context.Context, *emptypb.Empty) (*SettingsImportExportData, error)
 	ImportSettings(context.Context, *SettingsImportExportData) (*emptypb.Empty, error)
 	ValidateImportSettings(context.Context, *SettingsImportExportData) (*SettingsImportExportData, error)
-	RegisterEventTypes(context.Context, *RegisterEventTypesRequest) (*RegisterEventTypesResponse, error)
-	PublishEvent(context.Context, *PublishEventRequest) (*PublishEventResponse, error)
+	RegisterByoEventTypes(context.Context, *RegisterByoEventTypesRequest) (*RegisterByoEventTypesResponse, error)
+	PublishByoEvent(context.Context, *PublishByoEventRequest) (*PublishByoEventResponse, error)
 	mustEmbedUnimplementedEventbusServiceServer()
 }
 
@@ -221,11 +221,11 @@ func (UnimplementedEventbusServiceServer) ImportSettings(context.Context, *Setti
 func (UnimplementedEventbusServiceServer) ValidateImportSettings(context.Context, *SettingsImportExportData) (*SettingsImportExportData, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidateImportSettings not implemented")
 }
-func (UnimplementedEventbusServiceServer) RegisterEventTypes(context.Context, *RegisterEventTypesRequest) (*RegisterEventTypesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RegisterEventTypes not implemented")
+func (UnimplementedEventbusServiceServer) RegisterByoEventTypes(context.Context, *RegisterByoEventTypesRequest) (*RegisterByoEventTypesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterByoEventTypes not implemented")
 }
-func (UnimplementedEventbusServiceServer) PublishEvent(context.Context, *PublishEventRequest) (*PublishEventResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PublishEvent not implemented")
+func (UnimplementedEventbusServiceServer) PublishByoEvent(context.Context, *PublishByoEventRequest) (*PublishByoEventResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PublishByoEvent not implemented")
 }
 func (UnimplementedEventbusServiceServer) mustEmbedUnimplementedEventbusServiceServer() {}
 
@@ -420,38 +420,38 @@ func _EventbusService_ValidateImportSettings_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EventbusService_RegisterEventTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RegisterEventTypesRequest)
+func _EventbusService_RegisterByoEventTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterByoEventTypesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EventbusServiceServer).RegisterEventTypes(ctx, in)
+		return srv.(EventbusServiceServer).RegisterByoEventTypes(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: EventbusService_RegisterEventTypes_FullMethodName,
+		FullMethod: EventbusService_RegisterByoEventTypes_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventbusServiceServer).RegisterEventTypes(ctx, req.(*RegisterEventTypesRequest))
+		return srv.(EventbusServiceServer).RegisterByoEventTypes(ctx, req.(*RegisterByoEventTypesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EventbusService_PublishEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PublishEventRequest)
+func _EventbusService_PublishByoEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PublishByoEventRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EventbusServiceServer).PublishEvent(ctx, in)
+		return srv.(EventbusServiceServer).PublishByoEvent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: EventbusService_PublishEvent_FullMethodName,
+		FullMethod: EventbusService_PublishByoEvent_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventbusServiceServer).PublishEvent(ctx, req.(*PublishEventRequest))
+		return srv.(EventbusServiceServer).PublishByoEvent(ctx, req.(*PublishByoEventRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -504,12 +504,12 @@ var EventbusService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _EventbusService_ValidateImportSettings_Handler,
 		},
 		{
-			MethodName: "RegisterEventTypes",
-			Handler:    _EventbusService_RegisterEventTypes_Handler,
+			MethodName: "RegisterByoEventTypes",
+			Handler:    _EventbusService_RegisterByoEventTypes_Handler,
 		},
 		{
-			MethodName: "PublishEvent",
-			Handler:    _EventbusService_PublishEvent_Handler,
+			MethodName: "PublishByoEvent",
+			Handler:    _EventbusService_PublishByoEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -9,7 +9,7 @@ import (
 	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	eventbuspb "github.com/snapser/byosnap-rewards/snapserpb/eventbus"
+	eventbuspb "github.com/snapser-community/snapser-byosnaps/byosnap-rewards/snapserpb/eventbus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
@@ -32,8 +32,9 @@ func main() {
 
 	eventbusUrl := os.Getenv("SNAPEND_EVENTBUS_GRPC_URL")
 	if eventbusUrl == "" {
-		log.Printf("SNAPEND_EVENTBUS_GRPC_URL not set")
+		log.Fatal().Msg("SNAPEND_EVENTBUS_GRPC_URL not set")
 	}
+	log.Info().Msgf("eventbus url: %s", eventbusUrl)
 
 	// FIXME: can take out once the env var is fixed
 	eventbusUrl = strings.TrimPrefix(eventbusUrl, "http://")
@@ -50,13 +51,13 @@ func main() {
 		eventbusClient: eventbusClient,
 	}
 
-	req := &eventbuspb.RegisterEventTypesRequest{
-		ServiceName: byoSnapID,
-		EventTypes:  eventTypes,
+	req := &eventbuspb.RegisterByoEventTypesRequest{
+		ByosnapId:  byoSnapID,
+		EventTypes: eventTypes,
 	}
 	md := metadata.Pairs("gateway", "internal")
 	ctx = metadata.NewOutgoingContext(ctx, md)
-	_, err = eventbusClient.RegisterEventTypes(ctx, req)
+	_, err = eventbusClient.RegisterByoEventTypes(ctx, req)
 	if err != nil {
 		log.Fatal().Msgf("failed to register event types: %v", err)
 	}

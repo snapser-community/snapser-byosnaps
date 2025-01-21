@@ -448,8 +448,8 @@ func local_request_EventbusService_ValidateImportSettings_0(ctx context.Context,
 
 }
 
-func request_EventbusService_RegisterEventTypes_0(ctx context.Context, marshaler runtime.Marshaler, client EventbusServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq RegisterEventTypesRequest
+func request_EventbusService_RegisterByoEventTypes_0(ctx context.Context, marshaler runtime.Marshaler, client EventbusServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq RegisterByoEventTypesRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -467,23 +467,23 @@ func request_EventbusService_RegisterEventTypes_0(ctx context.Context, marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["service_name"]
+	val, ok = pathParams["byosnap_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "service_name")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "byosnap_id")
 	}
 
-	protoReq.ServiceName, err = runtime.String(val)
+	protoReq.ByosnapId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "service_name", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "byosnap_id", err)
 	}
 
-	msg, err := client.RegisterEventTypes(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.RegisterByoEventTypes(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_EventbusService_RegisterEventTypes_0(ctx context.Context, marshaler runtime.Marshaler, server EventbusServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq RegisterEventTypesRequest
+func local_request_EventbusService_RegisterByoEventTypes_0(ctx context.Context, marshaler runtime.Marshaler, server EventbusServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq RegisterByoEventTypesRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -501,23 +501,23 @@ func local_request_EventbusService_RegisterEventTypes_0(ctx context.Context, mar
 		_   = err
 	)
 
-	val, ok = pathParams["service_name"]
+	val, ok = pathParams["byosnap_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "service_name")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "byosnap_id")
 	}
 
-	protoReq.ServiceName, err = runtime.String(val)
+	protoReq.ByosnapId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "service_name", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "byosnap_id", err)
 	}
 
-	msg, err := server.RegisterEventTypes(ctx, &protoReq)
+	msg, err := server.RegisterByoEventTypes(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-func request_EventbusService_PublishEvent_0(ctx context.Context, marshaler runtime.Marshaler, client EventbusServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq PublishEventRequest
+func request_EventbusService_PublishByoEvent_0(ctx context.Context, marshaler runtime.Marshaler, client EventbusServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq PublishByoEventRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -535,14 +535,14 @@ func request_EventbusService_PublishEvent_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["service_name"]
+	val, ok = pathParams["byosnap_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "service_name")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "byosnap_id")
 	}
 
-	protoReq.ServiceName, err = runtime.String(val)
+	protoReq.ByosnapId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "service_name", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "byosnap_id", err)
 	}
 
 	val, ok = pathParams["subject"]
@@ -555,13 +555,13 @@ func request_EventbusService_PublishEvent_0(ctx context.Context, marshaler runti
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject", err)
 	}
 
-	msg, err := client.PublishEvent(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.PublishByoEvent(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_EventbusService_PublishEvent_0(ctx context.Context, marshaler runtime.Marshaler, server EventbusServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq PublishEventRequest
+func local_request_EventbusService_PublishByoEvent_0(ctx context.Context, marshaler runtime.Marshaler, server EventbusServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq PublishByoEventRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -579,14 +579,14 @@ func local_request_EventbusService_PublishEvent_0(ctx context.Context, marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["service_name"]
+	val, ok = pathParams["byosnap_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "service_name")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "byosnap_id")
 	}
 
-	protoReq.ServiceName, err = runtime.String(val)
+	protoReq.ByosnapId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "service_name", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "byosnap_id", err)
 	}
 
 	val, ok = pathParams["subject"]
@@ -599,7 +599,7 @@ func local_request_EventbusService_PublishEvent_0(ctx context.Context, marshaler
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject", err)
 	}
 
-	msg, err := server.PublishEvent(ctx, &protoReq)
+	msg, err := server.PublishByoEvent(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -860,7 +860,7 @@ func RegisterEventbusServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 
 	})
 
-	mux.Handle("PUT", pattern_EventbusService_RegisterEventTypes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_EventbusService_RegisterByoEventTypes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -868,12 +868,12 @@ func RegisterEventbusServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/eventbus.EventbusService/RegisterEventTypes", runtime.WithHTTPPathPattern("/v1/eventbus/event-types/{service_name}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/eventbus.EventbusService/RegisterByoEventTypes", runtime.WithHTTPPathPattern("/v1/eventbus/byo/event-types/{byosnap_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_EventbusService_RegisterEventTypes_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_EventbusService_RegisterByoEventTypes_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -881,11 +881,11 @@ func RegisterEventbusServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 			return
 		}
 
-		forward_EventbusService_RegisterEventTypes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_EventbusService_RegisterByoEventTypes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_EventbusService_PublishEvent_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_EventbusService_PublishByoEvent_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -893,12 +893,12 @@ func RegisterEventbusServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/eventbus.EventbusService/PublishEvent", runtime.WithHTTPPathPattern("/v1/eventbus/events/{service_name}/{subject}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/eventbus.EventbusService/PublishByoEvent", runtime.WithHTTPPathPattern("/v1/eventbus/byo/events/{byosnap_id}/{subject}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_EventbusService_PublishEvent_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_EventbusService_PublishByoEvent_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -906,7 +906,7 @@ func RegisterEventbusServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 			return
 		}
 
-		forward_EventbusService_PublishEvent_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_EventbusService_PublishByoEvent_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -1171,47 +1171,47 @@ func RegisterEventbusServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 
 	})
 
-	mux.Handle("PUT", pattern_EventbusService_RegisterEventTypes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_EventbusService_RegisterByoEventTypes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/eventbus.EventbusService/RegisterEventTypes", runtime.WithHTTPPathPattern("/v1/eventbus/event-types/{service_name}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/eventbus.EventbusService/RegisterByoEventTypes", runtime.WithHTTPPathPattern("/v1/eventbus/byo/event-types/{byosnap_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_EventbusService_RegisterEventTypes_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_EventbusService_RegisterByoEventTypes_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_EventbusService_RegisterEventTypes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_EventbusService_RegisterByoEventTypes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_EventbusService_PublishEvent_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_EventbusService_PublishByoEvent_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/eventbus.EventbusService/PublishEvent", runtime.WithHTTPPathPattern("/v1/eventbus/events/{service_name}/{subject}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/eventbus.EventbusService/PublishByoEvent", runtime.WithHTTPPathPattern("/v1/eventbus/byo/events/{byosnap_id}/{subject}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_EventbusService_PublishEvent_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_EventbusService_PublishByoEvent_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_EventbusService_PublishEvent_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_EventbusService_PublishByoEvent_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -1239,9 +1239,9 @@ var (
 
 	pattern_EventbusService_ValidateImportSettings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "eventbus", "settings", "validate-import"}, ""))
 
-	pattern_EventbusService_RegisterEventTypes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "eventbus", "event-types", "service_name"}, ""))
+	pattern_EventbusService_RegisterByoEventTypes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "eventbus", "byo", "event-types", "byosnap_id"}, ""))
 
-	pattern_EventbusService_PublishEvent_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "eventbus", "events", "service_name", "subject"}, ""))
+	pattern_EventbusService_PublishByoEvent_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"v1", "eventbus", "byo", "events", "byosnap_id", "subject"}, ""))
 )
 
 var (
@@ -1265,7 +1265,7 @@ var (
 
 	forward_EventbusService_ValidateImportSettings_0 = runtime.ForwardResponseMessage
 
-	forward_EventbusService_RegisterEventTypes_0 = runtime.ForwardResponseMessage
+	forward_EventbusService_RegisterByoEventTypes_0 = runtime.ForwardResponseMessage
 
-	forward_EventbusService_PublishEvent_0 = runtime.ForwardResponseMessage
+	forward_EventbusService_PublishByoEvent_0 = runtime.ForwardResponseMessage
 )
