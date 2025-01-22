@@ -24,7 +24,7 @@ type app struct {
 func main() {
 	ctx := context.Background()
 
-	// Setup a log and tie it to
+	// Setup a log and tie it to the default context
 	log := zerolog.New(os.Stdout).With().Caller().Logger()
 	ctx = log.WithContext(ctx)
 	zerolog.DefaultContextLogger = &log
@@ -36,7 +36,6 @@ func main() {
 	}
 	log.Info().Msgf("eventbus url: %s", eventbusUrl)
 
-	// FIXME: can take out once the env var is fixed
 	eventbusUrl = strings.TrimPrefix(eventbusUrl, "http://")
 
 	// Use grpc to call the eventbus service, RegisterEventTypes
@@ -76,8 +75,6 @@ func main() {
 	})
 	router.POST("/internal/events", app.eventHandler)
 
-	router.Group("/v1/" + byoSnapID).
-		GET("echo")
 	if err = router.Run(":8080"); err != nil {
 		log.Fatal().Err(err).Msg("failed to start server")
 	}

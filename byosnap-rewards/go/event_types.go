@@ -14,15 +14,6 @@ var praiseEventType = &eventbuspb.SnapserEventType{
 	EventTypeEnumValue: 1,
 }
 
-// Money reward, a message rewarding the player with money
-var moneyEventType = &eventbuspb.SnapserEventType{
-	Subject:            fmt.Sprintf("snapser.byo.%s.money", byoSnapID),
-	Description:        "Reward the user with money",
-	MessageType:        "rewards.Money",
-	EventTypeEnumValue: 2,
-}
-
 var eventTypes = []*eventbuspb.SnapserEventType{
 	praiseEventType,
-	moneyEventType,
 }

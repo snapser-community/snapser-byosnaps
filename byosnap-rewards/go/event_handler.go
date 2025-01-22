@@ -1,20 +1,18 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"net/http"
 
+	"math/rand"
+
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	authpb "github.com/snapser-community/snapser-byosnaps/byosnap-rewards/snapserpb/auth"
 	eventbuspb "github.com/snapser-community/snapser-byosnaps/byosnap-rewards/snapserpb/eventbus"
 	lobbiespb "github.com/snapser-community/snapser-byosnaps/byosnap-rewards/snapserpb/lobbies"
 	"google.golang.org/grpc/metadata"
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 func (a *app) eventHandler(c *gin.Context) {
@@ -45,19 +43,6 @@ func (a *app) eventHandler(c *gin.Context) {
 		case byoSnapID:
 			log.Info().Msgf("Received %s event: %v", byoSnapID, snapEvent)
 
-		case "auth":
-			// Switch on the event-id (the Event* enums in each service types proto)
-			switch snapEvent.EventId {
-			case uint32(authpb.AuthEventType_AUTH_ANON_USER_ADDED):
-				authAnonUserAdded := &authpb.EventAuthAnonUserAdded{}
-				if err := proto.Unmarshal([]byte(snapEvent.Payload), authAnonUserAdded); err != nil {
-					panic(err)
-				}
-				fmt.Printf("Got EventAuthAnonUserAdded: %v\n", authAnonUserAdded)
-				PrintMessage(ctx, authAnonUserAdded)
-			default:
-				log.Printf("unknown event_id: %v", snapEvent.EventId)
-			}
 		case "lobbies":
 			switch snapEvent.EventId {
 			case uint32(lobbiespb.LobbiesEventType_LOBBIES_MEMBER_JOINED):
@@ -67,9 +52,18 @@ func (a *app) eventHandler(c *gin.Context) {
 				}
 				log.Info().Msgf("got EventLobbiesMemberJoined: %v", ev)
 
-				// Praise the user
-				// Publish our custom event using evntbus publish
-				payload := []byte(fmt.Sprintf("Nice work, you joined a lobby - %s", getRandomPraise()))
+				// Some praise messages
+				var fallbackPraises = []string{
+					"You're doing amazing work!",
+					"Keep up the fantastic effort!",
+					"Your dedication is inspiring!",
+					"You're a star, keep shining!",
+					"You have the power to achieve great things!",
+					"Believe in yourself, you're unstoppable!",
+				}
+
+				randomPraise := fallbackPraises[rand.Intn(len(fallbackPraises))]
+				payload := []byte(fmt.Sprintf("Nice work, you joined a lobby - %s", randomPraise))
 
 				praiseReq := &eventbuspb.PublishByoEventRequest{
 					ByosnapId:   byoSnapID,
@@ -96,19 +90,4 @@ func (a *app) eventHandler(c *gin.Context) {
 
 	c.Writer.WriteHeader(http.StatusOK)
 	c.Writer.Write([]byte("ok"))
-}
-
-// PrintMessage takes a proto.Message and prints it as pretty-printed json
-func PrintMessage(ctx context.Context, msg protoreflect.ProtoMessage) {
-	log := zerolog.Ctx(ctx)
-	marshaller := protojson.MarshalOptions{
-		Multiline: true,
-		Indent:    "  ",
-	}
-	json, err := marshaller.Marshal(msg)
-	if err != nil {
-		log.Printf("Error marshalling message: %v", err)
-		return
-	}
-	fmt.Printf("%T as JSON:\n%v\n", msg, string(json))
 }
