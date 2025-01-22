@@ -63,17 +63,14 @@ func (a *app) eventHandler(c *gin.Context) {
 				}
 
 				randomPraise := fallbackPraises[rand.Intn(len(fallbackPraises))]
-				payload := []byte(fmt.Sprintf("Nice work, you joined a lobby - %s", randomPraise))
 
 				praiseReq := &eventbuspb.PublishByoEventRequest{
-					ByosnapId:   byoSnapID,
-					Subject:     "praise",
-					EventTypeId: praiseEventType.EventTypeEnumValue,
-					Payload:     payload,
-					Recipients:  []string{ev.JoinedUserId},
+					ByosnapId:  byoSnapID,
+					Subject:    "praise",
+					Payload:    []byte(fmt.Sprintf("Nice work, you joined a lobby - %s", randomPraise)),
+					Recipients: []string{ev.JoinedUserId},
 				}
-				md := metadata.Pairs("gateway", "internal")
-				ctx = metadata.NewOutgoingContext(ctx, md)
+				ctx = metadata.NewOutgoingContext(ctx, metadata.Pairs("gateway", "internal"))
 				_, err := a.eventbusClient.PublishByoEvent(ctx, praiseReq)
 				if err != nil {
 					log.Error().Err(err).Msg("failed to publish event")
