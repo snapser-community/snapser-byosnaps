@@ -4,15 +4,26 @@ An example byosnap that congratulates a player when they join a lobby.
 
 ## How it works
 
-### Configuration
+- `byosnap-rewards` registers a custom event with a subject of `praise`, which is translated to `snapser.byo.byosnap-rewards.praise` by the EventBus.
+- A webhook is setup to subscribe to `snapser.services.lobbies.joined` events
+- The hermes/websocket transport has the `snapser.byo.byosnap-rewards.praise` toggled **on** 
+
+Now when a player joins a lobby, `byosnap-rewards` will receive that event and publish a `praise` event with
+the subject `snapser.byo.byosnap-rewards.praise`. The payload is a string as bytes.
+
+In your WebSocket client code you can switch on `Message_SnapEvent.Subject` for `snapser.byo.byosnap-rewards.praise` and decode the payload which is just a string as bytes and display it to the user.
+
+### Snapend Setup
 
 *NOTE* EventBus >= 0.45.0 is required.
 
-- `byosnap-rewards` registers a custom event with a subject of `praise`, which is translated to `snapser.byo.rewards.praise` by the EventBus.
-- A webhook is setup to subscribe to `snapser.services.lobbies.joined` events.
-- The hermes/websocket transport has the `snapser.byo.rewards.praise` toggled **on** 
+**Required Snaps**: Lobbies, Auth, EventBus and enable the WebSocket Gateway.
 
-### Example flow in this BYOSnap
+1. Add `byosnap-rewards` to your Snapend
+2. In the EventBus configuration for Websocket turn on the snapser.services.lobbies.member.joined and snapser.byo.byosnap-rewards.praise events.
+3. Add a Webhook configuration for byosnap-rewards and select snapser.services.lobbies.member.joined and snapser.byo.byosnap-rewards.praise events
+
+### Overall Event Flow
 
 ```mermaid
 sequenceDiagram
