@@ -1,5 +1,5 @@
 {
-    "name": "byosnap-rewards",
+    "name": "Rewards",
     "description": "BYOSnap Rewards example for custom events",
     "platform": "linux/amd64",
     "language": "go",
