@@ -13,13 +13,27 @@ the subject `snapser.byo.byosnap-rewards.praise`. The payload is a string as byt
 
 In your WebSocket client code you can switch on `Message_SnapEvent.Subject` for `snapser.byo.byosnap-rewards.praise` and decode the payload which is just a string as bytes and display it to the user.
 
-### Snapend Setup
+## Snapend Setup
+
+### Using `snapctl` and `clone`
+
+In the `byosnap-rewards` directory run:
+
+```shell
+snapctl snapend clone --manifest-path=manifest.json --game-id=$game_id --name=fromcli --env=DEVELOPMENT
+```
+
+### Mnauallly in an existing or new Snapend
 
 *NOTE* EventBus >= 0.45.0 is required.
 
 **Required Snaps**: Rewards (This BYOSnap), Lobbies, Auth, EventBus and enable the WebSocket Gateway.
 
-1. Add `byosnap-rewards` to your Snapend
+1. Publish this BYOSnap to your Snapend with:
+    ```shell
+    snapctl byosnap publish byosnap-rewards --version v1.0.0 --path .
+    ```
+1. Add `byosnap-rewards` to an existing Snapend, or create a new Snapend with the `byosnap-rewards` BYOSnap and required Snaps above.
 2. In the EventBus configuration for Websocket toggle on these two events: `snapser.services.lobbies.member.joined` and `snapser.byo.byosnap-rewards.praise events`
 3. Add a Webhook configuration for byosnap-rewards and select `snapser.services.lobbies.member.joined` and `snapser.byo.byosnap-rewards.praise` events
 
