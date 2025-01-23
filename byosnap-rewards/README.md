@@ -17,11 +17,11 @@ In your WebSocket client code you can switch on `Message_SnapEvent.Subject` for 
 
 *NOTE* EventBus >= 0.45.0 is required.
 
-**Required Snaps**: Lobbies, Auth, EventBus and enable the WebSocket Gateway.
+**Required Snaps**: Rewards (This BYOSnap), Lobbies, Auth, EventBus and enable the WebSocket Gateway.
 
 1. Add `byosnap-rewards` to your Snapend
-2. In the EventBus configuration for Websocket turn on the snapser.services.lobbies.member.joined and snapser.byo.byosnap-rewards.praise events.
-3. Add a Webhook configuration for byosnap-rewards and select snapser.services.lobbies.member.joined and snapser.byo.byosnap-rewards.praise events
+2. In the EventBus configuration for Websocket toggle on these two events: `snapser.services.lobbies.member.joined` and `snapser.byo.byosnap-rewards.praise events`
+3. Add a Webhook configuration for byosnap-rewards and select `snapser.services.lobbies.member.joined` and `snapser.byo.byosnap-rewards.praise` events
 
 ### Overall Event Flow
 
