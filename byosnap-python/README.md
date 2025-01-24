@@ -32,7 +32,7 @@ Snapser supports infrastructure as code. In this folder you will find a file cal
 - Go to your Game on the Web portal.
 - Click on **Create a Snapend**.
 - Give your Snapend a name and hit Continue.
-- Pick Authentication and Byosnap-Python snaps
+- Pick **Authentication** and **BYOSnap Python** snaps
 - Now keep hitting **Continue** till you reach the Review stage and then click **Snap it**.
 - Your custom cluster should be up in about 2-4 minutes.
 - Now, go into your Snapend and then click on the **Snapend Configuration**.

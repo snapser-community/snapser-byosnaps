@@ -1,0 +1,57 @@
+{
+    "name": "BYOSnap Csharp",
+    "description": "BYOSnap Csharp example",
+    "platform": "linux/arm64",
+    "language": "csharp",
+    "prefix": "/v1",
+    "ingress": {
+        "external_port": {
+            "name": "http",
+            "port": 5003
+        },
+        "internal_ports": []
+    },
+    "readiness_probe_config": {
+        "initial_delay_seconds": null,
+        "path": null
+    },
+    "dev_template": {
+        "cpu": 100,
+        "memory": 0.125,
+        "min_replicas": 1,
+        "cmd": "",
+        "args": [],
+        "env_params": [
+            {
+                "key": "SNAPSER_ENVIRONMENT",
+                "value": "DEVELOPMENT"
+            }
+        ]
+    },
+    "stage_template": {
+        "cpu": 100,
+        "memory": 0.125,
+        "min_replicas": 1,
+        "cmd": "",
+        "args": [],
+        "env_params": [
+            {
+                "key": "SNAPSER_ENVIRONMENT",
+                "value": "STAGING"
+            }
+        ]
+    },
+    "prod_template": {
+        "cpu": 100,
+        "memory": 0.125,
+        "min_replicas": 2,
+        "cmd": "",
+        "args": [],
+        "env_params": [
+            {
+                "key": "SNAPSER_ENVIRONMENT",
+                "value": "PRODUCTION"
+            }
+        ]
+    }
+}
