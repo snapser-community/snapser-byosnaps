@@ -1,37 +1,46 @@
-# Snapser - Custom Code Example - Python
+# BYOSnap Python Example
 
-A very simple microservice written in python, that can be added to your Snapser infrastructure.
+This folder has a Flask microservice written in Python with a couple restful endpoints. This BYOSnap
+can be added to any Snapend you build on Snapser.
 
-## Tool Location
-1. To start creating the BYOSnap you need to go to the **Snaps** tool and then select **Private Snaps**.
-2. You will then see an option to **Add Custom Code**.
-3. This will take you to the tool for adding your BYOSnap.
+## Requirement
 
-## Configuration
+### Snapctl
+Make sure you have the [Snapctl](https://pypi.org/project/snapctl/) installed.
 
-### Step 1 - Create a BYOSnap
-1. You will be asked to enter an ID for your BYOSnap. The UI will have **byosnap-** prefix already in the form, so please
-enter **jinks-flask**
-2. Give your BYOSnap a name, description, pick your platform and select the language **python** for your BYOSnap.
+### Snapser Cluster Requirement
+This BYOSnap needs a Snapend with the Authentication Snap and at least the Anon Auth connector enabled.
 
-### Step 2a - Publish your BYOSNap image
-1. You will need to download the Snapser CLI tool for this and have docker running locally.
-2. You will then use the CLI tool to upload this code to your own private snap marketplace.
+## Publish the BYOSnap
+Run the following command to publish your BYOSnap to your Snapser account.
 ```
-snapctl byosnap publish-image byosnap-jinks-flask --tag "v0.0.1" --path <path_to_root_of_this_repo>
+snapctl byosnap publish byosnap-python --version "v1.0.0" --path $pathToThisFolder
 ```
-3. Once your code is uploaded go back to the web browser to move to Step 2b.
 
-### Step 2b - Publish your Snap
-1. Now that the code image has been uploaded, we want to publish this custom private snap.
-2. For this, select the tag from the Select tag drop down. If you were following these instructions the tag should be **v0.0.1**.
-3. Next pick **v1** as the prefix and then add dev, staging and prod settings for your BYOSnap. You will
-at least need to setup one of the three. We recommend you to add the dev settings to start.
-4. Here you will select, CPU, Memory, which you can keep as defaults. Additionally, select **5003** as the Port and hit Publish.
+## Setup
+### Automated Setup
+Snapser supports infrastructure as code. In this folder you will find a file called `snapser-snapend-manifest.json`. You can use this file to directly create your cluster on Snapser.
+- Go to your Game on the Web portal.
+- Click on **Create a Snapend**.
+- Give your Snapend a name and hit Continue.
+- Click on the Blue button icon and pick **Import**.
+- There select the `snapser-snapend-manifest.json` from this folder and hit **Import**.
+- Now keep hitting **Continue** till you reach the Review stage and then click **Snap it**.
+- Your custom cluster should be up in about 2-4 minutes.
 
-## Create a Snapend
-1. Create a snapend with Auth
-2. In the Auth snap enable anon login
+### Manual Setup
+- Go to your Game on the Web portal.
+- Click on **Create a Snapend**.
+- Give your Snapend a name and hit Continue.
+- Pick Authentication and Byosnap-Python snaps
+- Now keep hitting **Continue** till you reach the Review stage and then click **Snap it**.
+- Your custom cluster should be up in about 2-4 minutes.
+- Now, go into your Snapend and then click on the **Snapend Configuration**.
+- Click on the Authentication Snap and then click on the **Connector** tool.
+- There select **Anon** and hit Save.
 
-## Use
-Go to the Snapend API explorer to play around with the APIs
+## Testing
+- Go to the Snapend API explorer, which you can find under **Quick Links**,
+- Use the Authentication.AnonLogin to create a test user.
+- The API Explorer History button will show you details of the created users Id and session token.
+- Then you can go to the BYOSnap API, add the users session token, and access the BYOSnap endpoint.

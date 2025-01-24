@@ -1,7 +1,7 @@
 {
   "version": "v1",
   "id": "hma1mo01",
-  "name": "rewardstest",
+  "name": "my-snapend",
   "environment": "DEVELOPMENT",
   "service_definitions": [
     {
