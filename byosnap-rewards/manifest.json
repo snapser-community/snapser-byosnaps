@@ -1,0 +1,373 @@
+{
+  "version": "v1",
+  "id": "hma1mo01",
+  "name": "rewardstest",
+  "environment": "DEVELOPMENT",
+  "service_definitions": [
+    {
+      "id": "auth",
+      "language": "go",
+      "version": "v0.45.0-devtwo",
+      "author_id": "snapser",
+      "category": "SNAPSER",
+      "subcategory": "SERVICE",
+      "data_dependencies": [
+        {
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "auth"
+          }
+        },
+        {
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "auth_settings"
+          }
+        },
+        {
+          "type": "REDIS",
+          "redis": {}
+        }
+      ]
+    },
+    {
+      "id": "byosnap-rewards",
+      "language": "go",
+      "version": "v1.0.0",
+      "author_id": "6dc48688-f7d4-4900-8aa8-d5aa444d26b0",
+      "category": "BYOSNAP",
+      "subcategory": "SERVICE"
+    },
+    {
+      "id": "eventbus",
+      "language": "go",
+      "version": "v0.45.0-dev",
+      "author_id": "snapser",
+      "category": "SNAPSER",
+      "subcategory": "SERVICE",
+      "data_dependencies": [
+        {
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "eventbus"
+          }
+        },
+        {
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "eventbus_settings"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lobbies",
+      "language": "go",
+      "version": "v0.45.0-devtwo",
+      "author_id": "snapser",
+      "category": "SNAPSER",
+      "subcategory": "SERVICE",
+      "data_dependencies": [
+        {
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "lobbies_settings"
+          }
+        },
+        {
+          "type": "REDIS",
+          "redis": {}
+        },
+        {
+          "type": "COUCHBASE",
+          "couchbase": {
+            "fts_idx_field": "search_metadata"
+          }
+        }
+      ]
+    }
+  ],
+  "feature_definitions": [
+    "WEB_SOCKETS"
+  ],
+  "settings": [
+    {
+      "id": "auth",
+      "data": {
+        "dev": {
+          "anon": {
+            "enabled": true
+          },
+          "app_auth": {
+            "enabled": false
+          },
+          "app_verify": {
+            "client_secret": "",
+            "enabled": false
+          },
+          "apple": {
+            "enabled": false,
+            "key_id": "",
+            "private_key": "",
+            "service_id": "",
+            "team_id": ""
+          },
+          "email": {
+            "enabled": false,
+            "otp_length": 0,
+            "otp_rate_limit_settings": {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60
+            },
+            "otp_validity": 0
+          },
+          "epic": {
+            "client_id": "",
+            "client_secret": "",
+            "enabled": false
+          },
+          "facebook": {
+            "client_id": "",
+            "client_secret": "",
+            "enabled": false
+          },
+          "google": {
+            "client_id": "",
+            "client_secret": "",
+            "enabled": false
+          },
+          "password": {
+            "enabled": false
+          },
+          "session_inactivity_timeout": 604800,
+          "session_token_validity": 2592000,
+          "steam": {
+            "api_key": "",
+            "app_id": 0,
+            "enabled": false,
+            "publisher_api_key": "",
+            "web_api_key": ""
+          },
+          "xbox": {
+            "client_id": "",
+            "client_secret": "",
+            "enabled": false
+          }
+        },
+        "prod": {
+          "anon": {
+            "enabled": false
+          },
+          "app_auth": {
+            "enabled": false
+          },
+          "app_verify": {
+            "client_secret": "",
+            "enabled": false
+          },
+          "apple": {
+            "enabled": false,
+            "key_id": "",
+            "private_key": "",
+            "service_id": "",
+            "team_id": ""
+          },
+          "email": {
+            "enabled": false,
+            "otp_length": 0,
+            "otp_rate_limit_settings": {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60
+            },
+            "otp_validity": 0
+          },
+          "epic": {
+            "client_id": "",
+            "client_secret": "",
+            "enabled": false
+          },
+          "facebook": {
+            "client_id": "",
+            "client_secret": "",
+            "enabled": false
+          },
+          "google": {
+            "client_id": "",
+            "client_secret": "",
+            "enabled": false
+          },
+          "password": {
+            "enabled": false
+          },
+          "session_inactivity_timeout": 604800,
+          "session_token_validity": 2592000,
+          "steam": {
+            "api_key": "",
+            "app_id": 0,
+            "enabled": false,
+            "publisher_api_key": "",
+            "web_api_key": ""
+          },
+          "xbox": {
+            "client_id": "",
+            "client_secret": "",
+            "enabled": false
+          }
+        },
+        "stage": {
+          "anon": {
+            "enabled": false
+          },
+          "app_auth": {
+            "enabled": false
+          },
+          "app_verify": {
+            "client_secret": "",
+            "enabled": false
+          },
+          "apple": {
+            "enabled": false,
+            "key_id": "",
+            "private_key": "",
+            "service_id": "",
+            "team_id": ""
+          },
+          "email": {
+            "enabled": false,
+            "otp_length": 0,
+            "otp_rate_limit_settings": {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60
+            },
+            "otp_validity": 0
+          },
+          "epic": {
+            "client_id": "",
+            "client_secret": "",
+            "enabled": false
+          },
+          "facebook": {
+            "client_id": "",
+            "client_secret": "",
+            "enabled": false
+          },
+          "google": {
+            "client_id": "",
+            "client_secret": "",
+            "enabled": false
+          },
+          "password": {
+            "enabled": false
+          },
+          "session_inactivity_timeout": 604800,
+          "session_token_validity": 2592000,
+          "steam": {
+            "api_key": "",
+            "app_id": 0,
+            "enabled": false,
+            "publisher_api_key": "",
+            "web_api_key": ""
+          },
+          "xbox": {
+            "client_id": "",
+            "client_secret": "",
+            "enabled": false
+          }
+        }
+      },
+      "version": "v0.45.0-devtwo",
+      "exported_at": "1737656573"
+    },
+    {
+      "id": "eventbus",
+      "data": {
+        "dev": {
+          "consumers": [
+            {
+              "created_at": "1737652765",
+              "id": "hermes",
+              "subjects": [
+                "",
+                "snapser.services.lobbies.member.joined",
+                "snapser.byo.byosnap-rewards.praise"
+              ],
+              "updated_at": "1737656272",
+              "websocket": {}
+            },
+            {
+              "created_at": "1737656288",
+              "id": "f50b7c24-45ed-4133-aa26-9c9357c176fc",
+              "subjects": [
+                "snapser.services.lobbies.member.joined",
+                "snapser.byo.byosnap-rewards.praise"
+              ],
+              "updated_at": "0",
+              "webhook": {
+                "consumer_id": "f50b7c24-45ed-4133-aa26-9c9357c176fc",
+                "id": "dc2188cf-88bb-4725-992d-7beaddd7b282",
+                "lastRequest": null,
+                "secret": "",
+                "url": "http://service-byosnap-rewards:8080/internal/events"
+              }
+            }
+          ]
+        },
+        "prod": {
+          "consumers": [
+            {
+              "created_at": "1737652765",
+              "id": "hermes",
+              "subjects": [
+                ""
+              ],
+              "updated_at": "0",
+              "websocket": {}
+            }
+          ]
+        },
+        "stage": {
+          "consumers": [
+            {
+              "created_at": "1737652765",
+              "id": "hermes",
+              "subjects": [
+                ""
+              ],
+              "updated_at": "0",
+              "websocket": {}
+            }
+          ]
+        }
+      },
+      "version": "v0.45.0-dev"
+    },
+    {
+      "id": "lobbies",
+      "data": {
+        "events_settings": {},
+        "lobbies_settings": {
+          "allocation_target": "relay",
+          "kick_on_disconnect_enabled": false,
+          "lobbies_default_max_members": "16",
+          "lobbies_invite_ttl": "7200",
+          "lobbies_lifetime_ttl": "7200",
+          "lobbies_match_start_ttl": "7200",
+          "lobbies_max_invites": "50",
+          "ready_check_enabled": true
+        }
+      },
+      "version": "v0.45.0-devtwo",
+      "exported_at": "1737656573"
+    }
+  ],
+  "applied_configuration": "{\"version\":\"v1\",\"id\":\"hma1mo01\",\"name\":\"rewardstest\",\"environment\":\"DEVELOPMENT\",\"service_definitions\":[{\"id\":\"auth\",\"language\":\"go\",\"version\":\"v0.45.0-devtwo\",\"author_id\":\"snapser\",\"category\":\"SNAPSER\",\"subcategory\":\"SERVICE\",\"data_dependencies\":[{\"type\":\"POSTGRES\",\"postgres\":{\"database\":\"auth\"}},{\"type\":\"POSTGRES\",\"postgres\":{\"database\":\"auth_settings\"}},{\"type\":\"REDIS\",\"redis\":{}}]},{\"id\":\"byosnap-rewards\",\"language\":\"go\",\"version\":\"v1.0.0\",\"author_id\":\"6dc48688-f7d4-4900-8aa8-d5aa444d26b0\",\"category\":\"BYOSNAP\",\"subcategory\":\"SERVICE\"},{\"id\":\"eventbus\",\"language\":\"go\",\"version\":\"v0.45.0-dev\",\"author_id\":\"snapser\",\"category\":\"SNAPSER\",\"subcategory\":\"SERVICE\",\"data_dependencies\":[{\"type\":\"POSTGRES\",\"postgres\":{\"database\":\"eventbus\"}},{\"type\":\"POSTGRES\",\"postgres\":{\"database\":\"eventbus_settings\"}}]},{\"id\":\"lobbies\",\"language\":\"go\",\"version\":\"v0.45.0-devtwo\",\"author_id\":\"snapser\",\"category\":\"SNAPSER\",\"subcategory\":\"SERVICE\",\"data_dependencies\":[{\"type\":\"POSTGRES\",\"postgres\":{\"database\":\"lobbies_settings\"}},{\"type\":\"REDIS\",\"redis\":{}},{\"type\":\"COUCHBASE\",\"couchbase\":{\"fts_idx_field\":\"search_metadata\"}}]}],\"feature_definitions\":[\"WEB_SOCKETS\"],\"settings\":[{\"id\":\"auth\",\"data\":{\"dev\":{\"anon\":{\"enabled\":true},\"app_auth\":{\"enabled\":false},\"app_verify\":{\"client_secret\":\"\",\"enabled\":false},\"apple\":{\"enabled\":false,\"key_id\":\"\",\"private_key\":\"\",\"service_id\":\"\",\"team_id\":\"\"},\"email\":{\"enabled\":false,\"otp_length\":0,\"otp_rate_limit_settings\":{\"allow_list\":[],\"deny_list\":[],\"duration_in_seconds\":60,\"limit\":5,\"lockout_duration_in_seconds\":60},\"otp_validity\":0},\"epic\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"facebook\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"google\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"password\":{\"enabled\":false},\"session_inactivity_timeout\":604800,\"session_token_validity\":2592000,\"steam\":{\"api_key\":\"\",\"app_id\":0,\"enabled\":false,\"publisher_api_key\":\"\",\"web_api_key\":\"\"},\"xbox\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false}},\"prod\":{\"anon\":{\"enabled\":false},\"app_auth\":{\"enabled\":false},\"app_verify\":{\"client_secret\":\"\",\"enabled\":false},\"apple\":{\"enabled\":false,\"key_id\":\"\",\"private_key\":\"\",\"service_id\":\"\",\"team_id\":\"\"},\"email\":{\"enabled\":false,\"otp_length\":0,\"otp_rate_limit_settings\":{\"allow_list\":[],\"deny_list\":[],\"duration_in_seconds\":60,\"limit\":5,\"lockout_duration_in_seconds\":60},\"otp_validity\":0},\"epic\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"facebook\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"google\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"password\":{\"enabled\":false},\"session_inactivity_timeout\":604800,\"session_token_validity\":2592000,\"steam\":{\"api_key\":\"\",\"app_id\":0,\"enabled\":false,\"publisher_api_key\":\"\",\"web_api_key\":\"\"},\"xbox\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false}},\"stage\":{\"anon\":{\"enabled\":false},\"app_auth\":{\"enabled\":false},\"app_verify\":{\"client_secret\":\"\",\"enabled\":false},\"apple\":{\"enabled\":false,\"key_id\":\"\",\"private_key\":\"\",\"service_id\":\"\",\"team_id\":\"\"},\"email\":{\"enabled\":false,\"otp_length\":0,\"otp_rate_limit_settings\":{\"allow_list\":[],\"deny_list\":[],\"duration_in_seconds\":60,\"limit\":5,\"lockout_duration_in_seconds\":60},\"otp_validity\":0},\"epic\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"facebook\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"google\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"password\":{\"enabled\":false},\"session_inactivity_timeout\":604800,\"session_token_validity\":2592000,\"steam\":{\"api_key\":\"\",\"app_id\":0,\"enabled\":false,\"publisher_api_key\":\"\",\"web_api_key\":\"\"},\"xbox\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false}}},\"version\":\"v0.45.0-devtwo\",\"exported_at\":\"1737656573\"},{\"id\":\"eventbus\",\"data\":{\"dev\":{\"consumers\":[{\"created_at\":\"1737652765\",\"id\":\"hermes\",\"subjects\":[\"\",\"snapser.services.lobbies.member.joined\",\"snapser.byo.byosnap-rewards.praise\"],\"updated_at\":\"1737656272\",\"websocket\":{}},{\"created_at\":\"1737656288\",\"id\":\"f50b7c24-45ed-4133-aa26-9c9357c176fc\",\"subjects\":[\"snapser.services.lobbies.member.joined\",\"snapser.byo.byosnap-rewards.praise\"],\"updated_at\":\"0\",\"webhook\":{\"consumer_id\":\"f50b7c24-45ed-4133-aa26-9c9357c176fc\",\"id\":\"dc2188cf-88bb-4725-992d-7beaddd7b282\",\"lastRequest\":null,\"secret\":\"\",\"url\":\"http://service-byosnap-rewards:8080/internal/events\"}}]},\"prod\":{\"consumers\":[{\"created_at\":\"1737652765\",\"id\":\"hermes\",\"subjects\":[\"\"],\"updated_at\":\"0\",\"websocket\":{}}]},\"stage\":{\"consumers\":[{\"created_at\":\"1737652765\",\"id\":\"hermes\",\"subjects\":[\"\"],\"updated_at\":\"0\",\"websocket\":{}}]}},\"version\":\"v0.45.0-dev\"},{\"id\":\"lobbies\",\"data\":{\"events_settings\":{},\"lobbies_settings\":{\"allocation_target\":\"relay\",\"kick_on_disconnect_enabled\":false,\"lobbies_default_max_members\":\"16\",\"lobbies_invite_ttl\":\"7200\",\"lobbies_lifetime_ttl\":\"7200\",\"lobbies_match_start_ttl\":\"7200\",\"lobbies_max_invites\":\"50\",\"ready_check_enabled\":true}},\"version\":\"v0.45.0-devtwo\",\"exported_at\":\"1737656573\"}]}"
+}

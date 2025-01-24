@@ -1,0 +1,15 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Rewards",
+        "description": "Rewards a player on certain actions",
+        "contact": {},
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "/"
+        }
+    ],
+    "components": {}
+}
