@@ -12,7 +12,7 @@
     }
   ],
   "paths": {
-    "/v1/byosnap-postgame/user/{user_id}/lose": {
+    "/v1/byosnap-go/user/{user_id}/lose": {
       "post": {
         "summary": "Lose a game",
         "description": "Increment lose count for a user",
@@ -51,7 +51,7 @@
         }
       }
     },
-    "/v1/byosnap-postgame/user/{user_id}/win": {
+    "/v1/byosnap-go/user/{user_id}/win": {
       "post": {
         "summary": "Win a game",
         "description": "Increment win count for a user and grant reward",
