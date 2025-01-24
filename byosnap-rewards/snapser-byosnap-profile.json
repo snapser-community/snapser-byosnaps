@@ -1,7 +1,7 @@
 {
     "name": "BYOSnap Rewards",
     "description": "BYOSnap Rewards example for custom events",
-    "platform": "linux/amd64",
+    "platform": "linux/arm64",
     "language": "go",
     "prefix": "/v1",
     "ingress": {
