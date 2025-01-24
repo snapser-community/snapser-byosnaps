@@ -1,6 +1,6 @@
 {
   "version": "v1",
-  "id": "wm18ifq0",
+  "id": "xc30fcd3",
   "name": "my-snapend",
   "environment": "DEVELOPMENT",
   "service_definitions": [
@@ -29,14 +29,6 @@
           "redis": {}
         }
       ]
-    },
-    {
-      "id": "byosnap-go",
-      "language": "go",
-      "version": "v1.0.0",
-      "author_id": "fc461565-aad4-47ce-bd7b-aada8fd0b2a3",
-      "category": "BYOSNAP",
-      "subcategory": "SERVICE"
     },
     {
       "id": "inventory",
@@ -282,7 +274,7 @@
         }
       },
       "version": "v0.43.0",
-      "exported_at": "1737694874"
+      "exported_at": "1737696122"
     },
     {
       "id": "inventory",
@@ -306,7 +298,7 @@
         "quest_callback_items": []
       },
       "version": "v0.44.0",
-      "exported_at": "1737694874"
+      "exported_at": "1737696122"
     },
     {
       "id": "statistics",
@@ -316,45 +308,45 @@
         "statistics": [
           {
             "allow_negative": false,
-            "created_at": "1737694826",
+            "created_at": "1737696075",
             "created_by": "",
             "key": "snap_currency_coins_earned",
             "scope": "internal",
             "type": "counter",
-            "updated_at": "1737694826"
+            "updated_at": "0"
           },
           {
             "allow_negative": false,
-            "created_at": "1737694826",
+            "created_at": "1737696075",
             "created_by": "",
             "key": "snap_currency_coins_spent",
             "scope": "internal",
             "type": "counter",
-            "updated_at": "1737694826"
+            "updated_at": "0"
           },
           {
             "allow_negative": false,
-            "created_at": "1737694813",
+            "created_at": "1737696075",
             "created_by": "",
             "key": "losses",
             "scope": "external",
             "type": "counter",
-            "updated_at": "1737694813"
+            "updated_at": "0"
           },
           {
             "allow_negative": false,
-            "created_at": "1737694806",
+            "created_at": "1737696075",
             "created_by": "",
             "key": "wins",
             "scope": "external",
             "type": "counter",
-            "updated_at": "1737694806"
+            "updated_at": "0"
           }
         ]
       },
       "version": "v0.43.0",
-      "exported_at": "1737694874"
+      "exported_at": "1737696122"
     }
   ],
-  "applied_configuration": "{\"version\":\"v1\",\"id\":\"wm18ifq0\",\"name\":\"my-snapend\",\"environment\":\"DEVELOPMENT\",\"service_definitions\":[{\"id\":\"auth\",\"language\":\"go\",\"version\":\"v0.43.0\",\"author_id\":\"snapser\",\"category\":\"SNAPSER\",\"subcategory\":\"SERVICE\",\"data_dependencies\":[{\"type\":\"POSTGRES\",\"postgres\":{\"database\":\"auth\"}},{\"type\":\"POSTGRES\",\"postgres\":{\"database\":\"auth_settings\"}},{\"type\":\"REDIS\",\"redis\":{}}]},{\"id\":\"byosnap-go\",\"language\":\"go\",\"version\":\"v1.0.0\",\"author_id\":\"fc461565-aad4-47ce-bd7b-aada8fd0b2a3\",\"category\":\"BYOSNAP\",\"subcategory\":\"SERVICE\"},{\"id\":\"inventory\",\"language\":\"go\",\"version\":\"v0.44.0\",\"author_id\":\"snapser\",\"category\":\"SNAPSER\",\"subcategory\":\"SERVICE\",\"data_dependencies\":[{\"type\":\"POSTGRES\",\"postgres\":{\"database\":\"inventory_settings\"}},{\"type\":\"REDIS\",\"redis\":{}},{\"type\":\"COUCHBASE\",\"couchbase\":{}}]},{\"id\":\"statistics\",\"language\":\"go\",\"version\":\"v0.43.0\",\"author_id\":\"snapser\",\"category\":\"SNAPSER\",\"subcategory\":\"SERVICE\",\"data_dependencies\":[{\"type\":\"POSTGRES\",\"postgres\":{\"database\":\"statistics_settings\"}},{\"type\":\"REDIS\",\"redis\":{}},{\"type\":\"COUCHBASE\",\"couchbase\":{}}]}],\"settings\":[{\"id\":\"auth\",\"data\":{\"dev\":{\"anon\":{\"enabled\":true},\"app_auth\":{\"enabled\":false},\"app_verify\":{\"client_secret\":\"\",\"enabled\":false},\"apple\":{\"enabled\":false,\"key_id\":\"\",\"private_key\":\"\",\"service_id\":\"\",\"team_id\":\"\"},\"email\":{\"enabled\":false,\"otp_length\":0,\"otp_rate_limit_settings\":{\"allow_list\":[],\"deny_list\":[],\"duration_in_seconds\":60,\"limit\":5,\"lockout_duration_in_seconds\":60},\"otp_validity\":0},\"epic\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"facebook\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"google\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"password\":{\"enabled\":false},\"session_inactivity_timeout\":604800,\"session_token_validity\":2592000,\"steam\":{\"api_key\":\"\",\"app_id\":0,\"enabled\":false,\"publisher_api_key\":\"\",\"web_api_key\":\"\"},\"xbox\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false}},\"prod\":{\"anon\":{\"enabled\":false},\"app_auth\":{\"enabled\":false},\"app_verify\":{\"client_secret\":\"\",\"enabled\":false},\"apple\":{\"enabled\":false,\"key_id\":\"\",\"private_key\":\"\",\"service_id\":\"\",\"team_id\":\"\"},\"email\":{\"enabled\":false,\"otp_length\":0,\"otp_rate_limit_settings\":{\"allow_list\":[],\"deny_list\":[],\"duration_in_seconds\":60,\"limit\":5,\"lockout_duration_in_seconds\":60},\"otp_validity\":0},\"epic\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"facebook\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"google\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"password\":{\"enabled\":false},\"session_inactivity_timeout\":604800,\"session_token_validity\":2592000,\"steam\":{\"api_key\":\"\",\"app_id\":0,\"enabled\":false,\"publisher_api_key\":\"\",\"web_api_key\":\"\"},\"xbox\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false}},\"stage\":{\"anon\":{\"enabled\":false},\"app_auth\":{\"enabled\":false},\"app_verify\":{\"client_secret\":\"\",\"enabled\":false},\"apple\":{\"enabled\":false,\"key_id\":\"\",\"private_key\":\"\",\"service_id\":\"\",\"team_id\":\"\"},\"email\":{\"enabled\":false,\"otp_length\":0,\"otp_rate_limit_settings\":{\"allow_list\":[],\"deny_list\":[],\"duration_in_seconds\":60,\"limit\":5,\"lockout_duration_in_seconds\":60},\"otp_validity\":0},\"epic\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"facebook\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"google\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"password\":{\"enabled\":false},\"session_inactivity_timeout\":604800,\"session_token_validity\":2592000,\"steam\":{\"api_key\":\"\",\"app_id\":0,\"enabled\":false,\"publisher_api_key\":\"\",\"web_api_key\":\"\"},\"xbox\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false}}},\"version\":\"v0.43.0\",\"exported_at\":\"1737694874\"},{\"id\":\"inventory\",\"data\":{\"catalog_items\":[],\"currencies\":[{\"display_name\":\"coins\",\"name\":\"coins\"}],\"currency_conversions\":[],\"drop_tables\":[],\"inventory_settings\":{\"default_grant\":{\"currencies\":{},\"items\":{}}},\"quest_callback_currencies\":[],\"quest_callback_items\":[]},\"version\":\"v0.44.0\",\"exported_at\":\"1737694874\"},{\"id\":\"statistics\",\"data\":{\"quest_callback_statistics\":[],\"segments\":[],\"statistics\":[{\"allow_negative\":false,\"created_at\":\"1737694826\",\"created_by\":\"\",\"key\":\"snap_currency_coins_earned\",\"scope\":\"internal\",\"type\":\"counter\",\"updated_at\":\"1737694826\"},{\"allow_negative\":false,\"created_at\":\"1737694826\",\"created_by\":\"\",\"key\":\"snap_currency_coins_spent\",\"scope\":\"internal\",\"type\":\"counter\",\"updated_at\":\"1737694826\"},{\"allow_negative\":false,\"created_at\":\"1737694813\",\"created_by\":\"\",\"key\":\"losses\",\"scope\":\"external\",\"type\":\"counter\",\"updated_at\":\"1737694813\"},{\"allow_negative\":false,\"created_at\":\"1737694806\",\"created_by\":\"\",\"key\":\"wins\",\"scope\":\"external\",\"type\":\"counter\",\"updated_at\":\"1737694806\"}]},\"version\":\"v0.43.0\",\"exported_at\":\"1737694874\"}]}"
+  "applied_configuration": "{\"version\":\"v1\",\"id\":\"xc30fcd3\",\"name\":\"my-snapend\",\"environment\":\"DEVELOPMENT\",\"service_definitions\":[{\"id\":\"auth\",\"language\":\"go\",\"version\":\"v0.43.0\",\"author_id\":\"snapser\",\"category\":\"SNAPSER\",\"subcategory\":\"SERVICE\",\"data_dependencies\":[{\"type\":\"POSTGRES\",\"postgres\":{\"database\":\"auth\"}},{\"type\":\"POSTGRES\",\"postgres\":{\"database\":\"auth_settings\"}},{\"type\":\"REDIS\",\"redis\":{}}]},{\"id\":\"inventory\",\"language\":\"go\",\"version\":\"v0.44.0\",\"author_id\":\"snapser\",\"category\":\"SNAPSER\",\"subcategory\":\"SERVICE\",\"data_dependencies\":[{\"type\":\"POSTGRES\",\"postgres\":{\"database\":\"inventory_settings\"}},{\"type\":\"REDIS\",\"redis\":{}},{\"type\":\"COUCHBASE\",\"couchbase\":{}}]},{\"id\":\"statistics\",\"language\":\"go\",\"version\":\"v0.43.0\",\"author_id\":\"snapser\",\"category\":\"SNAPSER\",\"subcategory\":\"SERVICE\",\"data_dependencies\":[{\"type\":\"POSTGRES\",\"postgres\":{\"database\":\"statistics_settings\"}},{\"type\":\"REDIS\",\"redis\":{}},{\"type\":\"COUCHBASE\",\"couchbase\":{}}]}],\"settings\":[{\"id\":\"auth\",\"data\":{\"dev\":{\"anon\":{\"enabled\":true},\"app_auth\":{\"enabled\":false},\"app_verify\":{\"client_secret\":\"\",\"enabled\":false},\"apple\":{\"enabled\":false,\"key_id\":\"\",\"private_key\":\"\",\"service_id\":\"\",\"team_id\":\"\"},\"email\":{\"enabled\":false,\"otp_length\":0,\"otp_rate_limit_settings\":{\"allow_list\":[],\"deny_list\":[],\"duration_in_seconds\":60,\"limit\":5,\"lockout_duration_in_seconds\":60},\"otp_validity\":0},\"epic\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"facebook\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"google\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"password\":{\"enabled\":false},\"session_inactivity_timeout\":604800,\"session_token_validity\":2592000,\"steam\":{\"api_key\":\"\",\"app_id\":0,\"enabled\":false,\"publisher_api_key\":\"\",\"web_api_key\":\"\"},\"xbox\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false}},\"prod\":{\"anon\":{\"enabled\":false},\"app_auth\":{\"enabled\":false},\"app_verify\":{\"client_secret\":\"\",\"enabled\":false},\"apple\":{\"enabled\":false,\"key_id\":\"\",\"private_key\":\"\",\"service_id\":\"\",\"team_id\":\"\"},\"email\":{\"enabled\":false,\"otp_length\":0,\"otp_rate_limit_settings\":{\"allow_list\":[],\"deny_list\":[],\"duration_in_seconds\":60,\"limit\":5,\"lockout_duration_in_seconds\":60},\"otp_validity\":0},\"epic\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"facebook\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"google\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"password\":{\"enabled\":false},\"session_inactivity_timeout\":604800,\"session_token_validity\":2592000,\"steam\":{\"api_key\":\"\",\"app_id\":0,\"enabled\":false,\"publisher_api_key\":\"\",\"web_api_key\":\"\"},\"xbox\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false}},\"stage\":{\"anon\":{\"enabled\":false},\"app_auth\":{\"enabled\":false},\"app_verify\":{\"client_secret\":\"\",\"enabled\":false},\"apple\":{\"enabled\":false,\"key_id\":\"\",\"private_key\":\"\",\"service_id\":\"\",\"team_id\":\"\"},\"email\":{\"enabled\":false,\"otp_length\":0,\"otp_rate_limit_settings\":{\"allow_list\":[],\"deny_list\":[],\"duration_in_seconds\":60,\"limit\":5,\"lockout_duration_in_seconds\":60},\"otp_validity\":0},\"epic\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"facebook\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"google\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false},\"password\":{\"enabled\":false},\"session_inactivity_timeout\":604800,\"session_token_validity\":2592000,\"steam\":{\"api_key\":\"\",\"app_id\":0,\"enabled\":false,\"publisher_api_key\":\"\",\"web_api_key\":\"\"},\"xbox\":{\"client_id\":\"\",\"client_secret\":\"\",\"enabled\":false}}},\"version\":\"v0.43.0\",\"exported_at\":\"1737696122\"},{\"id\":\"inventory\",\"data\":{\"catalog_items\":[],\"currencies\":[{\"display_name\":\"coins\",\"name\":\"coins\"}],\"currency_conversions\":[],\"drop_tables\":[],\"inventory_settings\":{\"default_grant\":{\"currencies\":{},\"items\":{}}},\"quest_callback_currencies\":[],\"quest_callback_items\":[]},\"version\":\"v0.44.0\",\"exported_at\":\"1737696122\"},{\"id\":\"statistics\",\"data\":{\"quest_callback_statistics\":[],\"segments\":[],\"statistics\":[{\"allow_negative\":false,\"created_at\":\"1737696075\",\"created_by\":\"\",\"key\":\"snap_currency_coins_earned\",\"scope\":\"internal\",\"type\":\"counter\",\"updated_at\":\"0\"},{\"allow_negative\":false,\"created_at\":\"1737696075\",\"created_by\":\"\",\"key\":\"snap_currency_coins_spent\",\"scope\":\"internal\",\"type\":\"counter\",\"updated_at\":\"0\"},{\"allow_negative\":false,\"created_at\":\"1737696075\",\"created_by\":\"\",\"key\":\"losses\",\"scope\":\"external\",\"type\":\"counter\",\"updated_at\":\"0\"},{\"allow_negative\":false,\"created_at\":\"1737696075\",\"created_by\":\"\",\"key\":\"wins\",\"scope\":\"external\",\"type\":\"counter\",\"updated_at\":\"0\"}]},\"version\":\"v0.43.0\",\"exported_at\":\"1737696122\"}]}"
 }
