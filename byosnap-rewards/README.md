@@ -1,4 +1,6 @@
 # BYOSnap Rewards
+IMPORTANT: This folder is still WIP. This BYOSnap depends on functionality that is going live with
+beta-0.45.0 which goes out January 27, 2024. After this date this folder will be cleaned up.
 
 An example byosnap that congratulates a player when they join a lobby.
 
@@ -6,7 +8,7 @@ An example byosnap that congratulates a player when they join a lobby.
 
 - `byosnap-rewards` registers a custom event with a subject of `praise`, which is translated to `snapser.byo.byosnap-rewards.praise` by the EventBus.
 - A webhook is setup to subscribe to `snapser.services.lobbies.joined` events
-- The hermes/websocket transport has the `snapser.byo.byosnap-rewards.praise` toggled **on** 
+- The hermes/websocket transport has the `snapser.byo.byosnap-rewards.praise` toggled **on**
 
 Now when a player joins a lobby, `byosnap-rewards` will receive that event and publish a `praise` event with
 the subject `snapser.byo.byosnap-rewards.praise`. The payload is a string as bytes.
