@@ -1,6 +1,6 @@
 {
-    "name": "BYOSnap Rewards",
-    "description": "BYOSnap Rewards example for custom events",
+    "name": "BYOSnap Go",
+    "description": "BYOSnap Go example",
     "platform": "linux/arm64",
     "language": "go",
     "prefix": "/v1",

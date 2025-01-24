@@ -19,7 +19,7 @@
     }
   ],
   "paths": {
-    "/v1/byosnap-jinks-flask/resource-one/{req_id}": {
+    "/v1/byosnap-python/resource-one/{req_id}": {
       "get": {
         "summary": "resource_one",
         "description": "Custom Call Resource One",
@@ -80,7 +80,7 @@
         }
       }
     },
-    "/v1/byosnap-jinks-flask/resource-two/{req_id}": {
+    "/v1/byosnap-python/resource-two/{req_id}": {
       "get": {
         "summary": "resource_two",
         "description": "Custom Call Resource Two",

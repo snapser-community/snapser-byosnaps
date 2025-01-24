@@ -62,7 +62,7 @@ MARKDOWN_FILENAME = 'README.md'
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
-@app.route('/v1/byosnap-jinks-flask/openapispec', methods=["GET"])
+@app.route('/v1/byosnap-python/openapispec', methods=["GET"])
 def api_spec():
   try:
     directory = os.getcwd()
@@ -70,7 +70,7 @@ def api_spec():
   except Exception as e:
      return str(e)
 
-@app.route('/v1/byosnap-jinks-flask/markdown', methods=["GET"])
+@app.route('/v1/byosnap-python/markdown', methods=["GET"])
 def markdown_docs():
   try:
     directory = os.getcwd()
@@ -78,21 +78,21 @@ def markdown_docs():
   except Exception as e:
      return str(e)
 
-@app.route('/v1/byosnap-jinks-flask/health', methods=["GET"])
+@app.route('/healthz', methods=["GET"])
 def health():
   return "Ok Health Check"
 
-@app.route('/v1/byosnap-jinks-flask/openapispec', methods=["OPTIONS"])
-@app.route('/v1/byosnap-jinks-flask/markdown', methods=["OPTIONS"])
-@app.route('/v1/byosnap-jinks-flask/health', methods=["OPTIONS"])
-@app.route('/v1/byosnap-jinks-flask/resource-one/<req_id>', methods=['OPTIONS'])
-@app.route('/v1/byosnap-jinks-flask/resource-two/<req_id>', methods=['OPTIONS'])
+@app.route('/v1/byosnap-python/openapispec', methods=["OPTIONS"])
+@app.route('/v1/byosnap-python/markdown', methods=["OPTIONS"])
+@app.route('/v1/byosnap-python/health', methods=["OPTIONS"])
+@app.route('/v1/byosnap-python/resource-one/<req_id>', methods=['OPTIONS'])
+@app.route('/v1/byosnap-python/resource-two/<req_id>', methods=['OPTIONS'])
 @cross_origin()
 def cors_overrides(path):
   return f'{path} Ok'
 
-#https://gateway.snapser.com/$clusterId/v1/byosnap-jinks-flask
-@app.route("/v1/byosnap-jinks-flask/resource-one/<req_id>", methods=["GET"])
+#https://gateway.snapser.com/$clusterId/v1/byosnap-python
+@app.route("/v1/byosnap-python/resource-one/<req_id>", methods=["GET"])
 def resource_one(req_id):
   """Custom API Resource One.
   ---
@@ -123,7 +123,7 @@ def resource_one(req_id):
      'content': 'test'
   })
 
-@app.route("/v1/byosnap-jinks-flask/resource-two/<req_id>", methods=["GET"])
+@app.route("/v1/byosnap-python/resource-two/<req_id>", methods=["GET"])
 def resource_two(req_id):
   """Custom API Resource Two.
   ---
