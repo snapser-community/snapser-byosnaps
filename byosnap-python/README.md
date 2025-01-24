@@ -4,12 +4,15 @@ This folder has a Flask microservice written in Python with a couple restful end
 can be added to any Snapend you build on Snapser.
 
 ## Requirement
-
 ### Snapctl
 Make sure you have the [Snapctl](https://pypi.org/project/snapctl/) installed.
 
 ### Snapser Cluster Requirement
 This BYOSnap needs a Snapend with the Authentication Snap and at least the Anon Auth connector enabled.
+
+## Important Files
+1. **snapser-byosnap-profile.json**: This file holds the details of your BYOSnap. This file is required for the next step **Publish the BYOSnap**.
+2. **snapser-snapend-manifest.json**: This is the Infrastructure as Code file that holds the details of the cluster which includes the architecture and the configuration. This is required for the **Automated Setup** phase.
 
 ## Publish the BYOSnap
 Run the following command to publish your BYOSnap to your Snapser account.
