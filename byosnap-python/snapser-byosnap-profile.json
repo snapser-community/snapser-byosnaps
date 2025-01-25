@@ -1,13 +1,13 @@
 {
-    "name": "BYOSnap Rewards",
-    "description": "BYOSnap Rewards example for custom events",
+    "name": "BYOSnap Python",
+    "description": "BYOSnap Python example",
     "platform": "linux/arm64",
-    "language": "go",
+    "language": "python",
     "prefix": "/v1",
     "ingress": {
         "external_port": {
             "name": "http",
-            "port": 8080
+            "port": 5003
         },
         "internal_ports": []
     },

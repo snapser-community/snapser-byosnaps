@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export FLASK_APP=jinks_flask
+export FLASK_APP=byosnap_python
 export FLASK_DEBUG=true
 export FLASK_ENV=development
 # flask run

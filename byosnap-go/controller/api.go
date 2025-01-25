@@ -54,10 +54,10 @@ func (ps *PostgameServer) Win(c *gin.Context) {
 	}
 
 	// The inventory admin tools have a virtual currency called coins that can be granted to users.
-	_, err = ps.InventoryClient.UpdateUserVirtualCurrency(ctx, &inventorypb.UpdateUserVirtualCurrencyRequest{
+	_, err = ps.InventoryClient.IncrementUserCurrency(ctx, &inventorypb.IncrementUserCurrencyRequest{
 		UserId:       c.Param("user_id"),
 		CurrencyName: "coins",
-		Amount:       100,
+		Delta:        100,
 	})
 	if err != nil {
 		st, ok := status.FromError(err)
