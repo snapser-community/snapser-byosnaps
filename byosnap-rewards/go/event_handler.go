@@ -29,12 +29,10 @@ func (a *app) eventHandler(c *gin.Context) {
 	var wr eventbuspb.ByoWebhookRequest
 	err = proto.Unmarshal(body, &wr)
 	if err != nil {
-		// Log the body
-		fmt.Printf("Body: %s\n", body)
 		log.Fatal().Str("requestBody", string(body)).Err(err).Msg("failed to unmarshal body")
 	}
 
-	// Switch on the message type
+	// Switch on the message type, currently the only type we handle is snap events
 	switch wr.MessageType {
 	case eventbuspb.MessageType_MESSAGE_TYPE_SNAP_EVENT:
 		snapEvent := wr.GetByoSnapEvent()
