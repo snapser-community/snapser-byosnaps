@@ -19,67 +19,62 @@ func (a *app) eventHandler(c *gin.Context) {
 	ctx := c.Request.Context()
 	log := zerolog.Ctx(c.Request.Context())
 
+	// Read the body in as a byte slice
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		panic(err)
+		log.Fatal().Err(err).Msg("failed to read body")
 	}
 
-	// Parse body as eventbus.WebhookMessage
+	// Parse body as eventbus.ByoWebhookMessage
 	var wr eventbuspb.ByoWebhookRequest
 	err = proto.Unmarshal(body, &wr)
 	if err != nil {
-		// Log the body
-		fmt.Printf("Body: %s\n", body)
-		panic(err)
+		log.Fatal().Str("requestBody", string(body)).Err(err).Msg("failed to unmarshal body")
 	}
 
-	// Switch on the message type
+	// Switch on the message type, currently the only type we handle is snap events
 	switch wr.MessageType {
 	case eventbuspb.MessageType_MESSAGE_TYPE_SNAP_EVENT:
 		snapEvent := wr.GetByoSnapEvent()
+		log.Debug().Interface("snapEvent", snapEvent).Msg("received snap event")
 
-		// Switch on the service_name to know which enum to use for the event-type -> message-type
-		switch snapEvent.ServiceName {
-		case byoSnapID:
-			log.Info().Msgf("Received %s event: %v", byoSnapID, snapEvent)
-
-		case "lobbies":
-			switch snapEvent.EventId {
-			case uint32(lobbiespb.LobbiesEventType_LOBBIES_MEMBER_JOINED):
-				ev := &lobbiespb.EventLobbiesMemberJoined{}
-				if err := proto.Unmarshal([]byte(snapEvent.Payload), ev); err != nil {
-					panic(err)
-				}
-				log.Info().Msgf("got EventLobbiesMemberJoined: %v", ev)
-
-				// Some praise messages
-				var fallbackPraises = []string{
-					"You're doing amazing work!",
-					"Keep up the fantastic effort!",
-					"Your dedication is inspiring!",
-					"You're a star, keep shining!",
-					"You have the power to achieve great things!",
-					"Believe in yourself, you're unstoppable!",
-				}
-
-				randomPraise := fallbackPraises[rand.Intn(len(fallbackPraises))]
-
-				praiseReq := &eventbuspb.PublishByoEventRequest{
-					ByosnapId:  byoSnapID,
-					Subject:    "praise",
-					Payload:    []byte(fmt.Sprintf("Nice work, you joined a lobby - %s", randomPraise)),
-					Recipients: []string{ev.JoinedUserId},
-				}
-				ctx = metadata.NewOutgoingContext(ctx, metadata.Pairs("gateway", "internal"))
-				_, err := a.eventbusClient.PublishByoEvent(ctx, praiseReq)
-				if err != nil {
-					log.Error().Err(err).Msg("failed to publish event")
-				} else {
-					log.Info().Msgf("published praise event: %v", praiseReq)
-				}
-			default:
-				log.Info().Msgf("unhandled lobbies event_id: %v", snapEvent.EventId)
+		// Switch on the subject which is the recommended way to identify the event and payload
+		switch snapEvent.Subject {
+		case "snapser.services.lobbies.member.joined":
+			ev := &lobbiespb.EventLobbiesMemberJoined{}
+			if err := proto.Unmarshal([]byte(snapEvent.Payload), ev); err != nil {
+				panic(err)
 			}
+			log.Info().Msgf("got EventLobbiesMemberJoined: %v", ev)
+
+			// Some praise messages
+			var fallbackPraises = []string{
+				"You're doing amazing work!",
+				"Keep up the fantastic effort!",
+				"Your dedication is inspiring!",
+				"You're a star, keep shining!",
+				"You have the power to achieve great things!",
+				"Believe in yourself, you're unstoppable!",
+			}
+
+			randomPraise := fallbackPraises[rand.Intn(len(fallbackPraises))]
+
+			praiseReq := &eventbuspb.PublishByoEventRequest{
+				ByosnapId:  byoSnapID,
+				Subject:    "praise",
+				Payload:    []byte(fmt.Sprintf("Nice work, you joined a lobby - %s", randomPraise)),
+				Recipients: []string{ev.JoinedUserId},
+			}
+			ctx = metadata.NewOutgoingContext(ctx, metadata.Pairs("gateway", "internal"))
+			_, err := a.eventbusClient.PublishByoEvent(ctx, praiseReq)
+			if err != nil {
+				log.Error().Err(err).Msg("failed to publish event")
+			} else {
+				log.Info().Msgf("published praise event: %v", praiseReq)
+			}
+		default:
+			log.Warn().Msgf("unhandled event: [eventTypeId=%d, subject=%s, serviceName=%s]",
+				snapEvent.EventTypeId, snapEvent.Subject, snapEvent.ServiceName)
 		}
 	default:
 		log.Printf("unhandled message type: %v", wr.MessageType)
