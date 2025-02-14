@@ -46,7 +46,7 @@ func (pgs *PostgameServer) NewRouter() *gin.Engine {
 	router.Use(cors.New(cors.Config{
 		AllowAllOrigins: true,
 		AllowMethods:    []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:    []string{"Origin", "Authorization", "Content-Type", "User-Id", "Token", "App-Key"},
+		AllowHeaders:    []string{"Origin", "Authorization", "Content-Type", "User-Id", "Token", "App-Key", "Api-Key"},
 	}))
 	router.GET("/healthz", pgs.Healthz)
 
