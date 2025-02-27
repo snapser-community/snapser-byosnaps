@@ -33,7 +33,7 @@
     {
       "id": "byosnap-characters",
       "language": "python",
-      "version": "v0.0.4",
+      "version": "v0.0.1",
       "author_id": "fc461565-aad4-47ce-bd7b-aada8fd0b2a3",
       "category": "BYOSNAP",
       "subcategory": "SERVICE"
@@ -285,7 +285,7 @@
           "version": "v1.0.0"
         }
       },
-      "version": "v0.0.4",
+      "version": "v0.0.1",
       "exported_at": "1740687229"
     },
     {
