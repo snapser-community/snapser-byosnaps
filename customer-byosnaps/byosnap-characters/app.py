@@ -402,6 +402,40 @@ def validate_settings():
     return make_response(jsonify(response), 200)
 # End: Used by Snapser's built-in configuration import export system
 
+# Start: User Tool: Delete and Reset User data
+
+
+@app.route("/v1/byosnap-characters/settings/users/<user_id>/data", methods=["DELETE"])
+def delete_user_data(user_id):
+    gateway = request.headers.get('Gateway')
+    if not gateway or gateway.lower() != 'internal':
+        return make_response(jsonify({
+            'error_message': 'Unauthorized'
+        }), 401)
+    # Delete the character blob from storage
+    storage_configuration = snapser.Configuration(
+        host=os.environ['SNAPEND_STORAGE_HTTP_URL']
+    )
+    with snapser.ApiClient(configuration=storage_configuration) as storage_api_client:
+        storage_api_instance = snapser.StorageServiceApi(storage_api_client)
+        try:
+            # Get blob
+            storage_api_response = storage_api_instance.storage_internal_delete_blob(
+                access_type='private',
+                blob_key='characters',
+                owner_id=user_id,
+                gateway=os.environ['SNAPEND_INTERNAL_HEADER']
+            )
+            if storage_api_response is None:
+                return make_response(jsonify({
+                    'error_message': 'No blob'
+                }), 400)
+        except ApiException:
+            pass
+    return make_response(jsonify({}), 200)
+
+# End: User Tool: Delete and Reset User data
+
 # Used by the Snap Configuration Tool
 
 
