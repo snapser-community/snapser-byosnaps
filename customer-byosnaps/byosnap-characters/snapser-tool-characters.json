@@ -1,0 +1,30 @@
+{
+  "version": "v1.0.0",
+  "id": "characters",
+  "endpoint": "",
+  "title": "Register Characters",
+  "description": "Register available characters in game",
+  "category": "flat_form",
+  "env_support": "single",
+  "snap_version": "",
+  "sections": [
+    {
+      "id": "registration",
+      "title": "Registration",
+      "subtitle": "",
+      "help_text": "These are the characters that the user can create in game",
+      "components": [
+        {
+          "type": "textarea",
+          "id": "characters",
+          "label": "Character Ids",
+          "placeholder": "Please enter comma separated character Ids",
+          "required": true,
+          "disabled": false,
+          "min_rows": 4,
+          "value": ""
+        }
+      ]
+    }
+  ]
+}
