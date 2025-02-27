@@ -3,6 +3,9 @@ bin/
 obj/
 *.log
 
+#Python
+__pycache__/
+
 # User-specific files
 *.rsuser
 *.suo
