@@ -106,6 +106,8 @@ def cors_overrides(path):
 
 # https://gateway.snapser.com/$clusterId/v1/byosnap-characters
 
+# SYSTEM: Used by Snapser's API Explorer and Configuration tool
+
 
 @app.route('/v1/byosnap-characters/openapispec', methods=["GET"])
 def api_spec():
@@ -123,13 +125,14 @@ def markdown_docs():
         return send_file(directory + '/' + MARKDOWN_FILENAME)
     except Exception as e:
         return str(e)
+# END: SYSTEM: Used by Snapser's API Explorer and Configuration tool
 
 
 @app.route('/healthz', methods=["GET"])
 def health():
     return "Ok Health Check"
 
-# Used by Snapser's built-in configuration import export system
+# SYSTEM: Used by Snapser's built-in configuration import export system
 
 
 @app.route("/v1/byosnap-characters/settings/export", methods=["GET"])
@@ -400,9 +403,9 @@ def validate_settings():
         except ApiException as e:
             pass
     return make_response(jsonify(response), 200)
-# End: Used by Snapser's built-in configuration import export system
+# End: SYSTEM: Used by Snapser's built-in configuration import export system
 
-# Start: User Tool: Delete and Reset User data
+# SYSTEM: User Tool: Delete and Reset User data
 
 
 @app.route("/v1/byosnap-characters/settings/users/<user_id>/data", methods=["DELETE"])
@@ -434,9 +437,9 @@ def delete_user_data(user_id):
             pass
     return make_response(jsonify({}), 200)
 
-# End: User Tool: Delete and Reset User data
+# End: SYSTEM: User Tool: Delete and Reset User data
 
-# Used by the Snap Configuration Tool
+# SYSTEM: Used by the Snap Configuration Tool
 
 
 @app.route("/v1/byosnap-characters/settings", methods=["GET"])
@@ -554,7 +557,7 @@ def update_settings():
             return make_response(jsonify({
                 'error_message': 'Server Exception: ' + str(e)
             }), 500)
-# End: Used by the Snap Configuration Tool
+# End: SYSTEM: Used by the Snap Configuration Tool
 
 
 # Regular API Endpoints exposed by the Snap
