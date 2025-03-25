@@ -33,7 +33,7 @@ snapctl snapend clone --manifest-path=manifest.json --game-id=$game_id --name=fr
 
 1. Publish this BYOSnap to your Snapend with:
     ```shell
-    snapctl byosnap publish byosnap-rewards --version v1.0.0 --path .
+    snapctl byosnap publish --byosnap-id byosnap-rewards --version v1.0.0 --path .
     ```
 1. Add `byosnap-rewards` to an existing Snapend, or create a new Snapend with the `byosnap-rewards` BYOSnap and required Snaps above.
 2. In the EventBus configuration for Websocket toggle on these two events: `snapser.services.lobbies.member.joined` and `snapser.byo.byosnap-rewards.praise events`
