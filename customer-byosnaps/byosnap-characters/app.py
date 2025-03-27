@@ -94,9 +94,9 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 
 @app.route('/v1/byosnap-characters/openapispec', methods=["OPTIONS"])
 @app.route('/v1/byosnap-characters/markdown', methods=["OPTIONS"])
-@app.route('/v1/byosnap-characters/settings', methods=["OPTIONS"])
-@app.route("/v1/byosnap-characters/settings/export", methods=["OPTIONS"])
-@app.route("/v1/byosnap-characters/settings/import", methods=["OPTIONS"])
+# @app.route('/v1/byosnap-characters/settings', methods=["OPTIONS"])
+# @app.route("/v1/byosnap-characters/settings/export", methods=["OPTIONS"])
+# @app.route("/v1/byosnap-characters/settings/import", methods=["OPTIONS"])
 @app.route('/v1/byosnap-characters/health', methods=["OPTIONS"])
 @app.route('/v1/byosnap-characters/users/<user_id>/characters', methods=['OPTIONS'])
 @app.route('/v1/byosnap-characters/users/<user_id>/characters/<character_id>/activate', methods=['OPTIONS'])
@@ -403,6 +403,7 @@ def validate_settings():
         except ApiException as e:
             pass
     return make_response(jsonify(response), 200)
+
 # End: SYSTEM: Used by Snapser's built-in configuration import export system
 
 # SYSTEM: User Tool: Delete and Reset User data
@@ -510,9 +511,9 @@ def update_settings():
             }), 400)
         blob_data['sections'][0]['components'][0]['value'] = ','.join(
             character_list)
-    except:
+    except Exception as e:
         return make_response(jsonify({
-            'error_message': 'Invalid JSON'
+            'error_message': 'Invalid JSON ' + str(e)
         }), 500)
 
     configuration = snapser.Configuration(
@@ -557,6 +558,7 @@ def update_settings():
             return make_response(jsonify({
                 'error_message': 'Server Exception: ' + str(e)
             }), 500)
+
 # End: SYSTEM: Used by the Snap Configuration Tool
 
 

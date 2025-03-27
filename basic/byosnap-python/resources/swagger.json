@@ -1,0 +1,213 @@
+{
+    "paths": {
+        "/v1/byosnap-python-basic/users/{user_id}/game": {
+            "get": {
+                "summary": "API One",
+                "description": "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
+                "operationId": "API One",
+                "x-require-auth": "user",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "user_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "A successful response"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    }
+                }
+            },
+            "post": {
+                "summary": "API Two",
+                "description": "This API will work only with Api-Key auth. You can access this API with a valid api-key.",
+                "operationId": "API Two",
+                "x-require-auth": "api-key",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "user_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "A successful response"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-python-basic/users/{user_id}": {
+            "get": {
+                "summary": "API Three",
+                "description": "This API will work only when the call is coming from within the Snapend.",
+                "operationId": "API Three",
+                "x-require-auth": "api-key",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "user_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "A successful response"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        }
+    },
+    "info": {
+        "title": "BYOSnap Basic Python Example",
+        "version": "1.0.0"
+    },
+    "openapi": "3.0.2",
+    "components": {
+        "schemas": {
+            "ErrorResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "error_message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SuccessResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "target_user_id": {
+                        "type": "string"
+                    },
+                    "api": {
+                        "type": "string"
+                    },
+                    "auth_type": {
+                        "type": "string"
+                    },
+                    "source_user_id": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
