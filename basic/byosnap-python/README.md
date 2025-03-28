@@ -1,56 +1,100 @@
-# BYOSnap Characters
+# BYOSnap Python Basic Tutorial
 
-BYOSnap created to support characters in game. This BYOSnap creates a character map,
-containing an ID and a Session token for each character, allowing game studios to start
-storing information into the Snaps for each character.
+## Application
+- The main application logic is in **app.py**
+- This example is built using Flask and is served via gunicorn
 
-## Requirement
-### Snapctl
-Make sure you have the [Snapctl](https://pypi.org/project/snapctl/) installed.
+### Pre-Requisites
 
-## Important Files
-1. **snapser-byosnap-profile.json**: This file holds the details of your BYOSnap. This file is required for the next step **Publish the BYOSnap**.
-2. **snapser-snapend-manifest.json**: This is the Infrastructure as Code file that holds the details of the cluster which includes the architecture and the configuration. This is required for the **Setup** phase.
-3. **snapser-tool-characters.json**: This is the tools file. Snapser allows game studios, to
-build custom tools for their BYOSnaps using the **BYOSnap Tool Builder**. That tool, outputs
-this file which allows the Snapser web portal to render your custom tool, under the
-Snapend BYOSnap Configuration tools page.
-
-## Setup
-### 1. Publish the BYOSnap
-Run the following command to publish your BYOSnap to your Snapser account.
+#### A. Python Virtual Environment
+Create a python virtualenv and then activate the virtualenv
+```bash
+# Mac
+python3 -m venv venv
+source snapctl/venv/bin/activate
 ```
-snapctl byosnap publish byosnap-python --version "v1.0.0" --path $pathToThisFolder
+```bash
+# Windows
+# Go to the root of the folder and start the virtualenv
+.\venv\Scripts\activate
 ```
 
-### 2. Create your cluster
-#### Automated Setup
-Snapser supports infrastructure as code. In this folder you will find a file called `snapser-snapend-manifest.json`. You can use this file to directly create your cluster on Snapser.
-- Go to your Game on the Web portal.
-- Click on **Create a Snapend**.
-- Give your Snapend a name and hit Continue.
-- Click on the Blue button icon and pick **Import**.
-- There select the `snapser-snapend-manifest.json` from this folder and hit **Import**.
-- Next, search for your BYOSnap and add that in.
-- Now keep hitting **Continue** till you reach the Review stage and then click **Snap it**.
-- Your custom cluster should be up in about 2-4 minutes.
+#### B. Snapctl Setup
+You need to have a valid setup for Snapctl, which is Snapsers CLI tool. Please follow the step by step (tutorial)[https://snapser.com/docs/guides/tutorials/setup-snapctl] if you do not have Snapctl installed on your machine. You can run the following command to confirm you have a valid snapctl setup.
 
-#### Manual Setup
-- Go to your Game on the Web portal.
-- Click on **Create a Snapend**.
-- Give your Snapend a name and hit Continue.
-- Pick **Authentication**, **Storage** and **BYOSnap Characters** snaps
-- Now keep hitting **Continue** till you reach the Review stage and then click **Snap it**.
-- Your custom cluster should be up in about 2-4 minutes.
-- Now, go into your Snapend and then click on the **Snapend Configuration**.
-- Click on the Authentication Snap and then click on the **Connector** tool. There select **Anon** and hit Save.
-- Now, go into the Storage snaps configuration tool and add two blobs: **characters** and
-  **character_settings** and select type=blob, access=private and scope=internal.
-- Now, go into the BYOSnaps configuration tool. In this tool, you can add a comma separated
-  ids of your characters. eg: **ember,wade,bernice** and hit Save.
+```bash
+# Validate if your snapctl setup is correct
+snapctl validate
+```
 
-## Testing
-- Go to the Snapend API explorer, which you can find under **Quick Links** on the Snapend Home page.
-- Use the Authentication.AnonLogin to create a test user.
-- The API Explorer History button will show you details of the created users Id and session token.
-- Then you can go to the BYOSnap API, add the users session token, and access the BYOSnap endpoint to Get characters and Activate characters.
+#### C. Docker
+Make sure Docker engine is running on your machine. Open up Docker desktop and settings. Also, please make sure the setting **Use containerd for pulling and storing images** is **disabled**. You can find this setting in the Docker Desktop settings.
+
+## Resources
+All the files that are required by the Snapctl are under this folder
+- **.env**: Environment file that powers this tutorial. You should check out the **BYOSNAP_NAME** variable and update it to something custom. This makes sure two devs in the same company going through this tutorial do not stomp on each other.
+- **Dockerfile**: BYOSnap needs a Dockerfile. Snapser uses this file to containerize your application and deploy it.
+- **snapser-byosnap-profile.json**: You can use this file to tell Snapser about your BYOSnaps hardware, networking and configuration requirements.
+- **swagger.json**: (Recommended but optional) If you have a valid Swagger 3.X file with your BYOSnap, Snapser also
+  generates a SDK for your code and enables this BYOSnap to be usable in its API Explorer.
+- **README.md**: (Optional) Optionally you can add a Readme for your devs. This file will be rendered on the Snapser web app.
+
+
+## Helper Scripts
+- **generate_swagger.py**: Script that generates a swagger.json based on the method annotations in app.py. This script stores the swagger.json under the `resources/` folder.
+
+Usage
+```bash
+python generate_swagger.py
+```
+
+- **byosnap_publish.py**: Script that uses snapctl under the hood to publish your BYOSnap.
+
+Usage
+```bash
+# $version needs to be in the format "vX.Y.Z" eg: "v1.0.0"
+#   [IMPORTANT] You have to increment the version number for each subsequent publish
+python byosnap_publish.py $version
+```
+
+- **snapend_create.py**: Script to create a new Snapend with an Auth snap and your BYOSnap. You will need your companyId and gameId, which you can retrieve from the Snapser web app.
+Usage
+```bash
+# $version needs to be in the format "vX.Y.Z" eg: "v1.0.0"
+#   [IMPORTANT] You have to increment the version number for each subsequent publish
+# $snapendId is the ID of your Snapend
+python snapend_create.py $companyId $gameId $version
+```
+
+- **byosnap_sync.py**: Script to sync your local BYOSnap code and push it to a non-production Snapend. The command you should use during active development. Will only work once you have an active Snapend where you want to keep syncing your BYOSnap to.
+
+Usage
+```bash
+# $version needs to be in the format "vX.Y.Z" eg: "v1.0.0"
+#   [IMPORTANT] You have to increment the version number for each subsequent publish
+# $snapendId is the ID of your Snapend
+python byosnap_sync.py $version $snapendId
+```
+
+
+## Development Process
+### A. Get up and running initially
+1. Update your code in app.py
+2. Run `python generate_swagger.py` to build a new swagger.
+3. Run `python byosnap_publish.py $version` to publish your new BYOSnap to Snapser.
+4. Run `python create_snapend.py $companyId $gameId $byosnapVersion` which first updates your `resources/snapser-snapend-manifest.json` file and then deploys it to Snapser via Snapctl.
+
+At the end, you will have a new Snapend running with an Auth Snap & your BYOSnap and you will
+get a **$snapendId**. Keep a note of your `snapendId` as you will need this for the next stage.
+
+
+### B. Development
+#### Actively Coding
+1. Update your code in app.py
+2. Generate a new swagger if you need to by running `python generate_swagger.py`.
+3. Run `python byosnap_sync.py $version $snapendId` to sync your new BYOSnap to Snapser. Sync essentially is taking your local code and making it live on your Snapend.
+
+#### Commit
+1. Once you are happy with the state of your BYOSnap, you can publish it as a new version. This way, other team members can consume it.
+2. Run `python byosnap_publish.py $version` to publish your new BYOSnap version to Snapser. Make sure your new version is greater than the version that is presently on Snapser.
+3. Any new or existing Snapend can now just use this new version of your BYOSnap. There is a handy command `snapctl snapend update byosnaps ...` that allows you to "Commit" your changes to any existing BYOSnap using the CLI. You can always do this using the web app as well.

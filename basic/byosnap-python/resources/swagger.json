@@ -5,19 +5,15 @@
                 "summary": "API One",
                 "description": "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
                 "operationId": "API One",
-                "x-require-auth": "user",
+                "x-snapser-auth-types": [
+                    "user",
+                    "api-key",
+                    "internal"
+                ],
                 "parameters": [
                     {
                         "in": "path",
                         "name": "user_id",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    },
-                    {
-                        "in": "header",
-                        "name": "Token",
                         "schema": {
                             "type": "string"
                         },
@@ -61,19 +57,14 @@
                 "summary": "API Two",
                 "description": "This API will work only with Api-Key auth. You can access this API with a valid api-key.",
                 "operationId": "API Two",
-                "x-require-auth": "api-key",
+                "x-snapser-auth-types": [
+                    "api-key",
+                    "internal"
+                ],
                 "parameters": [
                     {
                         "in": "path",
                         "name": "user_id",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    },
-                    {
-                        "in": "header",
-                        "name": "Token",
                         "schema": {
                             "type": "string"
                         },
@@ -128,10 +119,52 @@
                             "type": "string"
                         },
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "A successful response"
                     },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-python-basic/hello/{user_name}": {
+            "get": {
+                "summary": "API Four",
+                "description": "This API will work only when the call is coming from within the Snapend.",
+                "operationId": "API Four",
+                "x-require-auth": "api-key",
+                "parameters": [
                     {
-                        "in": "header",
-                        "name": "Token",
+                        "in": "path",
+                        "name": "user_name",
                         "schema": {
                             "type": "string"
                         },
@@ -180,6 +213,22 @@
     "openapi": "3.0.2",
     "components": {
         "schemas": {
+            "UserIdParameterSchema": {
+                "type": "object",
+                "properties": {
+                    "user_id": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UserNameParameterSchema": {
+                "type": "object",
+                "properties": {
+                    "user_name": {
+                        "type": "string"
+                    }
+                }
+            },
             "ErrorResponseSchema": {
                 "type": "object",
                 "properties": {
@@ -194,7 +243,7 @@
                     "message": {
                         "type": "string"
                     },
-                    "target_user_id": {
+                    "path_user_id": {
                         "type": "string"
                     },
                     "api": {
@@ -203,7 +252,7 @@
                     "auth_type": {
                         "type": "string"
                     },
-                    "source_user_id": {
+                    "header_user_id": {
                         "type": "string"
                     }
                 }

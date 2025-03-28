@@ -7,8 +7,8 @@ from flask import Flask
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
-from models.schemas import TokenHeaderSchema, UserIdParameterSchema, ErrorResponseSchema, SuccessResponseSchema
-from app import api_one, api_two, api_three
+from models.schemas import UserIdParameterSchema, UserNameParameterSchema, ErrorResponseSchema, SuccessResponseSchema
+from app import api_one, api_two, api_three, api_four
 
 # Constants
 RESOURCES_DIR = 'resources'
@@ -24,6 +24,8 @@ app.add_url_rule('/v1/byosnap-python-basic/users/<user_id>/game',
                  view_func=api_two, methods=['POST'])
 app.add_url_rule('/v1/byosnap-python-basic/users/<user_id>',
                  view_func=api_three, methods=['DELETE'])
+app.add_url_rule('/v1/byosnap-python-basic/hello/<user_name>',
+                 view_func=api_four, methods=['PUT'])
 
 # Initialize APISpec
 spec = APISpec(
@@ -32,6 +34,9 @@ spec = APISpec(
     openapi_version="3.0.2",
     plugins=[FlaskPlugin(), MarshmallowPlugin()],
 )
+spec.components.schema("UserIdParameterSchema", schema=UserIdParameterSchema)
+spec.components.schema("UserNameParameterSchema",
+                       schema=UserNameParameterSchema)
 spec.components.schema("ErrorResponseSchema", schema=ErrorResponseSchema)
 spec.components.schema("SuccessResponseSchema", schema=SuccessResponseSchema)
 
@@ -41,6 +46,7 @@ with app.test_request_context():
     spec.path(view=api_one)
     spec.path(view=api_two)
     spec.path(view=api_three)
+    spec.path(view=api_four)
 
 # Save to JSON
 if not os.path.exists(RESOURCES_DIR):
