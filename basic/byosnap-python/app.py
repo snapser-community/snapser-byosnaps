@@ -70,7 +70,7 @@ def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
 
             # Check if the provided auth_type is within the allowed types for this endpoint
             if not validation_passed:
-                return make_response(jsonify({'error_message': 'Unauthorized or unsupported authentication type'}), 400)
+                return make_response(jsonify({'error_message': 'Unauthorized'}), 401)
             return f(*args, **kwargs)
         return decorated_function
     return decorator
@@ -83,9 +83,9 @@ def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
 #
 
 
-@app.route('/v1/byosnap-python-basic/users/<user_id>/game', methods=['OPTIONS'])
-@app.route('/v1/byosnap-python-basic/users/<user_id>', methods=['OPTIONS'])
-@app.route('/v1/byosnap-python-basic/users/<user_id>/profile', methods=['OPTIONS'])
+@app.route('/v1/byosnap-basic/users/<user_id>/game', methods=['OPTIONS'])
+@app.route('/v1/byosnap-basic/users/<user_id>', methods=['OPTIONS'])
+@app.route('/v1/byosnap-basic/users/<user_id>/profile', methods=['OPTIONS'])
 @cross_origin()
 def cors_overrides(path):
     return f'{path} Ok'
@@ -103,7 +103,7 @@ def health():
 
 # @GOTCHAS 👋 - Externally available APIs
 #     1. The Snapend Id is NOT part of the URL. This allows you to use the same BYOSnap in multiple Snapends.
-#     2. All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-python-basic and remaining_path = /users/<user_id>.
+#     2. All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-basic and remaining_path = /users/<user_id>.
 #     3. The YAML comment below is used to generate the swagger.json file.
 #     4. Notice the x-snapser-auth-types tags in the swagger.json. They tell Snapser if it should expose this API in
 #        the SDK and the API Explorer. Note: but you should still validate the auth type in the code.
@@ -114,7 +114,7 @@ def health():
 #       the Gateway header.
 
 
-@app.route("/v1/byosnap-python-basic/users/<user_id>/game", methods=["GET"])
+@app.route("/v1/byosnap-basic/users/<user_id>/game", methods=["GET"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def api_one(user_id):
     """API that is accessible by User, Api-Key and Internal auth
@@ -140,7 +140,7 @@ def api_one(user_id):
           content:
             application/json:
               schema: ErrorResponseSchema
-          description: 'Unauthorized'
+          description: 'Bad Request'
         401:
           content:
             application/json:
@@ -160,7 +160,7 @@ def api_one(user_id):
     }), 200)
 
 
-@app.route("/v1/byosnap-python-basic/users/<user_id>/game", methods=["POST"])
+@app.route("/v1/byosnap-basic/users/<user_id>/game", methods=["POST"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def api_two(user_id):
     """API that is accessible by Api-Key and Internal auth. User auth will not be allowed. Code does this by checking the Auth-Type header.
@@ -185,7 +185,7 @@ def api_two(user_id):
           content:
             application/json:
               schema: ErrorResponseSchema
-          description: 'Unauthorized'
+          description: 'Bad Request'
         401:
           content:
             application/json:
@@ -210,7 +210,7 @@ def api_two(user_id):
     }), 200)
 
 
-@app.route("/v1/byosnap-python-basic/users/<user_id>", methods=["DELETE"])
+@app.route("/v1/byosnap-basic/users/<user_id>", methods=["DELETE"])
 @validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def api_three(user_id):
     """API that is only accessible via Internal auth. Both User Auth calls and Api-Key Auth calls will NOT work, as they are external calls. This is done by checking the Gateway header.
@@ -234,7 +234,7 @@ def api_three(user_id):
           content:
             application/json:
               schema: ErrorResponseSchema
-          description: 'Unauthorized'
+          description: 'Bad Request'
         401:
           content:
             application/json:
@@ -252,7 +252,7 @@ def api_three(user_id):
     }), 200)
 
 
-@app.route("/v1/byosnap-python-basic/users/<user_id>/profile", methods=["PUT"])
+@app.route("/v1/byosnap-basic/users/<user_id>/profile", methods=["PUT"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def api_four(user_id):
     """TODO: API for you to update
@@ -278,7 +278,7 @@ def api_four(user_id):
           content:
             application/json:
               schema: ErrorResponseSchema
-          description: 'Unauthorized'
+          description: 'Bad Request'
         401:
           content:
             application/json:
