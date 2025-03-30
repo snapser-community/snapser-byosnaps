@@ -1,0 +1,6 @@
+@ByoSnapCSharp_HostAddress = http://localhost:5121
+
+GET {{ByoSnapCSharp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
