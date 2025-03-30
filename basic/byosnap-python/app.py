@@ -254,7 +254,7 @@ def api_three(user_id):
 
 @app.route("/v1/byosnap-python-basic/users/<user_id>/profile", methods=["PUT"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
-def api_four(resource_name):
+def api_four(user_id):
     """TODO: API for you to update
     ---
     put:
@@ -291,7 +291,7 @@ def api_four(resource_name):
         'api': api_four.__name__,
         'auth-type': gateway_header,
         'header-user-id': user_id_header if user_id_header else 'N/A',
-        'path-resource-name': resource_name,
+        'path-resource-name': user_id,
         # TODO: Add a message
         'message': 'TODO: Add a message',
     }), 200)

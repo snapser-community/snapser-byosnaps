@@ -238,19 +238,19 @@
             "SuccessResponseSchema": {
                 "type": "object",
                 "properties": {
-                    "header_user_id": {
-                        "type": "string"
-                    },
-                    "auth_type": {
+                    "path_user_id": {
                         "type": "string"
                     },
                     "api": {
                         "type": "string"
                     },
-                    "path_user_id": {
+                    "message": {
                         "type": "string"
                     },
-                    "message": {
+                    "auth_type": {
+                        "type": "string"
+                    },
+                    "header_user_id": {
                         "type": "string"
                     }
                 }
