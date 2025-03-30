@@ -18,13 +18,13 @@ API_SPEC_FILENAME = 'swagger.json'
 app = Flask(__name__)
 
 # Register your endpoints
-app.add_url_rule('/v1/byosnap-python-basic/users/<user_id>/game',
+app.add_url_rule('/v1/byosnap-basic/users/<user_id>/game',
                  view_func=api_one, methods=['GET'])
-app.add_url_rule('/v1/byosnap-python-basic/users/<user_id>/game',
+app.add_url_rule('/v1/byosnap-basic/users/<user_id>/game',
                  view_func=api_two, methods=['POST'])
-app.add_url_rule('/v1/byosnap-python-basic/users/<user_id>',
+app.add_url_rule('/v1/byosnap-basic/users/<user_id>',
                  view_func=api_three, methods=['DELETE'])
-app.add_url_rule('/v1/byosnap-python-basic/users/<user_id>/profile',
+app.add_url_rule('/v1/byosnap-basic/users/<user_id>/profile',
                  view_func=api_four, methods=['PUT'])
 
 # Initialize APISpec

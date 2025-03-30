@@ -1,6 +1,6 @@
 {
     "paths": {
-        "/v1/byosnap-python-basic/users/{user_id}/game": {
+        "/v1/byosnap-basic/users/{user_id}/game": {
             "get": {
                 "summary": "API One",
                 "description": "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
@@ -39,7 +39,7 @@
                                 }
                             }
                         },
-                        "description": "Unauthorized"
+                        "description": "Bad Request"
                     },
                     "401": {
                         "content": {
@@ -90,7 +90,7 @@
                                 }
                             }
                         },
-                        "description": "Unauthorized"
+                        "description": "Bad Request"
                     },
                     "401": {
                         "content": {
@@ -105,7 +105,7 @@
                 }
             }
         },
-        "/v1/byosnap-python-basic/users/{user_id}": {
+        "/v1/byosnap-basic/users/{user_id}": {
             "delete": {
                 "summary": "API Three",
                 "description": "This API will work only when the call is coming from within the Snapend.",
@@ -142,7 +142,7 @@
                                 }
                             }
                         },
-                        "description": "Unauthorized"
+                        "description": "Bad Request"
                     },
                     "401": {
                         "content": {
@@ -157,7 +157,7 @@
                 }
             }
         },
-        "/v1/byosnap-python-basic/users/{user_id}/profile": {
+        "/v1/byosnap-basic/users/{user_id}/profile": {
             "put": {
                 "summary": "API Four",
                 "description": "This API will work for all auth types.",
@@ -196,7 +196,7 @@
                                 }
                             }
                         },
-                        "description": "Unauthorized"
+                        "description": "Bad Request"
                     },
                     "401": {
                         "content": {
@@ -241,7 +241,7 @@
                     "path_user_id": {
                         "type": "string"
                     },
-                    "api": {
+                    "header_user_id": {
                         "type": "string"
                     },
                     "message": {
@@ -250,7 +250,7 @@
                     "auth_type": {
                         "type": "string"
                     },
-                    "header_user_id": {
+                    "api": {
                         "type": "string"
                     }
                 }
