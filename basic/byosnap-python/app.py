@@ -252,9 +252,9 @@ def api_three(user_id):
     }), 200)
 
 
-@app.route("/v1/byosnap-python-basic/hello/<user_name>", methods=["PUT"])
+@app.route("/v1/byosnap-python-basic/hello/<resource_name>", methods=["PUT"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
-def api_four(user_name):
+def api_four(resource_name):
     """TODO: API for you to update
     ---
     get:
@@ -267,7 +267,7 @@ def api_four(user_name):
         - internal
       parameters:
       - in: path
-        schema: UserNameParameterSchema
+        schema: ResourceNameSchema
       responses:
         200:
           content:
@@ -291,7 +291,7 @@ def api_four(user_name):
         'api': api_four.__name__,
         'auth-type': gateway_header,
         'header-user-id': user_id_header if user_id_header else 'N/A',
-        'path-user-name': user_name,
+        'path-resource-name': resource_name,
         # TODO: Add a message
         'message': 'TODO: Add a message',
     }), 200)

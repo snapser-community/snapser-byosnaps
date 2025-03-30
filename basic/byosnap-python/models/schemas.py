@@ -1,12 +1,16 @@
 from marshmallow import Schema, fields
 
 
+class TokenHeaderSchema(Schema):
+    Token = fields.Str(required=True)
+
+
 class UserIdParameterSchema(Schema):
     user_id = fields.Str()
 
 
-class UserNameParameterSchema(Schema):
-    user_name = fields.Str()
+class ResourceNameSchema(Schema):
+    resource_name = fields.Str()
 
 
 class SuccessResponseSchema(Schema):

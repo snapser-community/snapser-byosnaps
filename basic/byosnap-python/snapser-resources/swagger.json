@@ -110,7 +110,9 @@
                 "summary": "API Three",
                 "description": "This API will work only when the call is coming from within the Snapend.",
                 "operationId": "API Three",
-                "x-require-auth": "api-key",
+                "x-snapser-auth-types": [
+                    "internal"
+                ],
                 "parameters": [
                     {
                         "in": "path",
@@ -158,13 +160,17 @@
         "/v1/byosnap-python-basic/hello/{user_name}": {
             "get": {
                 "summary": "API Four",
-                "description": "This API will work only when the call is coming from within the Snapend.",
+                "description": "This API will work for all auth types.",
                 "operationId": "API Four",
-                "x-require-auth": "api-key",
+                "x-snapser-auth-types": [
+                    "user",
+                    "api-key",
+                    "internal"
+                ],
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "user_name",
+                        "name": "resource_name",
                         "schema": {
                             "type": "string"
                         },
@@ -221,10 +227,10 @@
                     }
                 }
             },
-            "UserNameParameterSchema": {
+            "ResourceNameSchema": {
                 "type": "object",
                 "properties": {
-                    "user_name": {
+                    "resource_name": {
                         "type": "string"
                     }
                 }
@@ -240,16 +246,16 @@
             "SuccessResponseSchema": {
                 "type": "object",
                 "properties": {
-                    "message": {
-                        "type": "string"
-                    },
-                    "path_user_id": {
-                        "type": "string"
-                    },
                     "api": {
                         "type": "string"
                     },
                     "auth_type": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "path_user_id": {
                         "type": "string"
                     },
                     "header_user_id": {

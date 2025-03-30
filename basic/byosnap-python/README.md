@@ -48,15 +48,6 @@ Usage
 python generate_swagger.py
 ```
 
-- **byosnap_publish.py**: Script that uses snapctl under the hood to publish your BYOSnap.
-
-Usage
-```bash
-# $version needs to be in the format "vX.Y.Z" eg: "v1.0.0"
-#   [IMPORTANT] You have to increment the version number for each subsequent publish
-python byosnap_publish.py $version
-```
-
 - **snapend_create.py**: Script to create a new Snapend with an Auth snap and your BYOSnap. You will need your companyId and gameId, which you can retrieve from the Snapser web app.
 Usage
 ```bash
@@ -66,23 +57,13 @@ Usage
 python snapend_create.py $companyId $gameId $version
 ```
 
-- **byosnap_sync.py**: Script to sync your local BYOSnap code and push it to a non-production Snapend. The command you should use during active development. Will only work once you have an active Snapend where you want to keep syncing your BYOSnap to.
-
-Usage
-```bash
-# $version needs to be in the format "vX.Y.Z" eg: "v1.0.0"
-#   [IMPORTANT] You have to increment the version number for each subsequent publish
-# $snapendId is the ID of your Snapend
-python byosnap_sync.py $version $snapendId
-```
-
 
 ## Development Process
 ### A. Get up and running initially
 1. Update your code in app.py
 2. Run `python generate_swagger.py` to build a new swagger.
-3. Run `python byosnap_publish.py $version` to publish your new BYOSnap to Snapser.
-4. Run `python create_snapend.py $companyId $gameId $byosnapVersion` which first updates your `resources/snapser-snapend-manifest.json` file and then deploys it to Snapser via Snapctl.
+3. Run `snapctl byosnap publish --byosnap-id byosnap-$byosnapName --version $version --path $rootCodePath --resources-path $rootCodePath/snapser-resources` to publish your new BYOSnap to Snapser.
+4. Run `python create_snapend.py $companyId $gameId $byosnapVersion` which first updates your `snapser-resources/snapser-snapend-manifest.json` file and then deploys it to Snapser via Snapctl.
 
 At the end, you will have a new Snapend running with an Auth Snap & your BYOSnap and you will
 get a **$snapendId**. Keep a note of your `snapendId` as you will need this for the next stage.
@@ -92,9 +73,9 @@ get a **$snapendId**. Keep a note of your `snapendId` as you will need this for 
 #### Actively Coding
 1. Update your code in app.py
 2. Generate a new swagger if you need to by running `python generate_swagger.py`.
-3. Run `python byosnap_sync.py $version $snapendId` to sync your new BYOSnap to Snapser. Sync essentially is taking your local code and making it live on your Snapend.
+3. Run `snapctl byosnap sync --snapend-id $snapendId --byosnap-id byosnap-$byosnapName --version $version --path $rootCodePath --resources-path $rootCodePath/snapser-resources` to sync your new BYOSnap to Snapser. Sync essentially is taking your local code and making it live on your Snapend.
 
 #### Commit
 1. Once you are happy with the state of your BYOSnap, you can publish it as a new version. This way, other team members can consume it.
-2. Run `python byosnap_publish.py $version` to publish your new BYOSnap version to Snapser. Make sure your new version is greater than the version that is presently on Snapser.
+2. Run `snapctl byosnap publish --byosnap-id byosnap-$byosnapName --version $newVersion --path $rootCodePath --resources-path $rootCodePath/snapser-resources` to publish your new BYOSnap version to Snapser. Make sure your new version is greater than the version that is presently on Snapser.
 3. Any new or existing Snapend can now just use this new version of your BYOSnap. There is a handy command `snapctl snapend update byosnaps ...` that allows you to "Commit" your changes to any existing BYOSnap using the CLI. You can always do this using the web app as well.

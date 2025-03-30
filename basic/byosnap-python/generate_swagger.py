@@ -7,11 +7,11 @@ from flask import Flask
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
-from models.schemas import UserIdParameterSchema, UserNameParameterSchema, ErrorResponseSchema, SuccessResponseSchema
+from models.schemas import UserIdParameterSchema, ResourceNameSchema, ErrorResponseSchema, SuccessResponseSchema
 from app import api_one, api_two, api_three, api_four
 
 # Constants
-RESOURCES_DIR = 'resources'
+RESOURCES_DIR = 'snapser-resources'
 API_SPEC_FILENAME = 'swagger.json'
 
 # Initialize Flask App
@@ -35,8 +35,8 @@ spec = APISpec(
     plugins=[FlaskPlugin(), MarshmallowPlugin()],
 )
 spec.components.schema("UserIdParameterSchema", schema=UserIdParameterSchema)
-spec.components.schema("UserNameParameterSchema",
-                       schema=UserNameParameterSchema)
+spec.components.schema("ResourceNameSchema",
+                       schema=ResourceNameSchema)
 spec.components.schema("ErrorResponseSchema", schema=ErrorResponseSchema)
 spec.components.schema("SuccessResponseSchema", schema=SuccessResponseSchema)
 
