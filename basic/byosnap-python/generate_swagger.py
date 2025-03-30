@@ -7,7 +7,7 @@ from flask import Flask
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
-from models.schemas import UserIdParameterSchema, ResourceNameSchema, ErrorResponseSchema, SuccessResponseSchema
+from models.schemas import UserIdParameterSchema, ErrorResponseSchema, SuccessResponseSchema
 from app import api_one, api_two, api_three, api_four
 
 # Constants
@@ -24,7 +24,7 @@ app.add_url_rule('/v1/byosnap-python-basic/users/<user_id>/game',
                  view_func=api_two, methods=['POST'])
 app.add_url_rule('/v1/byosnap-python-basic/users/<user_id>',
                  view_func=api_three, methods=['DELETE'])
-app.add_url_rule('/v1/byosnap-python-basic/hello/<resource_name>',
+app.add_url_rule('/v1/byosnap-python-basic/users/<user_id>/profile',
                  view_func=api_four, methods=['PUT'])
 
 # Initialize APISpec
@@ -35,8 +35,6 @@ spec = APISpec(
     plugins=[FlaskPlugin(), MarshmallowPlugin()],
 )
 spec.components.schema("UserIdParameterSchema", schema=UserIdParameterSchema)
-spec.components.schema("ResourceNameSchema",
-                       schema=ResourceNameSchema)
 spec.components.schema("ErrorResponseSchema", schema=ErrorResponseSchema)
 spec.components.schema("SuccessResponseSchema", schema=SuccessResponseSchema)
 

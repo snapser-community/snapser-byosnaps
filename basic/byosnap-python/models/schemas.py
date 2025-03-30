@@ -9,10 +9,6 @@ class UserIdParameterSchema(Schema):
     user_id = fields.Str()
 
 
-class ResourceNameSchema(Schema):
-    resource_name = fields.Str()
-
-
 class SuccessResponseSchema(Schema):
     api = fields.Str()
     auth_type = fields.Str()

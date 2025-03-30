@@ -85,7 +85,7 @@ def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
 
 @app.route('/v1/byosnap-python-basic/users/<user_id>/game', methods=['OPTIONS'])
 @app.route('/v1/byosnap-python-basic/users/<user_id>', methods=['OPTIONS'])
-@app.route('/v1/byosnap-python-basic/hello/<resource_name>', methods=['OPTIONS'])
+@app.route('/v1/byosnap-python-basic/users/<user_id>/profile', methods=['OPTIONS'])
 @cross_origin()
 def cors_overrides(path):
     return f'{path} Ok'
@@ -252,7 +252,7 @@ def api_three(user_id):
     }), 200)
 
 
-@app.route("/v1/byosnap-python-basic/hello/<resource_name>", methods=["PUT"])
+@app.route("/v1/byosnap-python-basic/users/<user_id>/profile", methods=["PUT"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def api_four(resource_name):
     """TODO: API for you to update
@@ -267,7 +267,7 @@ def api_four(resource_name):
         - internal
       parameters:
       - in: path
-        schema: ResourceNameSchema
+        schema: UserIdParameterSchema
       responses:
         200:
           content:

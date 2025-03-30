@@ -157,7 +157,7 @@
                 }
             }
         },
-        "/v1/byosnap-python-basic/hello/{resource_name}": {
+        "/v1/byosnap-python-basic/users/{user_id}/profile": {
             "put": {
                 "summary": "API Four",
                 "description": "This API will work for all auth types.",
@@ -170,7 +170,7 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "resource_name",
+                        "name": "user_id",
                         "schema": {
                             "type": "string"
                         },
@@ -227,14 +227,6 @@
                     }
                 }
             },
-            "ResourceNameSchema": {
-                "type": "object",
-                "properties": {
-                    "resource_name": {
-                        "type": "string"
-                    }
-                }
-            },
             "ErrorResponseSchema": {
                 "type": "object",
                 "properties": {
@@ -246,6 +238,9 @@
             "SuccessResponseSchema": {
                 "type": "object",
                 "properties": {
+                    "header_user_id": {
+                        "type": "string"
+                    },
                     "auth_type": {
                         "type": "string"
                     },
@@ -253,9 +248,6 @@
                         "type": "string"
                     },
                     "path_user_id": {
-                        "type": "string"
-                    },
-                    "header_user_id": {
                         "type": "string"
                     },
                     "message": {
