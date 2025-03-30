@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using ByoSnapCSharp.Middleware;
+using ByoSnapCSharp.Filters;
 
 namespace ByoSnapCSharp
 {
@@ -25,28 +25,25 @@ namespace ByoSnapCSharp
 
       services.AddSwaggerGen(c =>
       {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "ByoSnapCSharp", Version = "v1" });
-        c.AddSecurityDefinition("Token", new OpenApiSecurityScheme
+        c.SwaggerDoc("v1", new OpenApiInfo
         {
-          In = ParameterLocation.Header,
-          Description = "Please insert token",
-          Name = "Token",
-          Type = SecuritySchemeType.ApiKey
-        });
-        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+          Title = "BYOSnap Basic C# Example",
+          Version = "v1",
+          Description = "A simple example BYOSnap example",
+          TermsOfService = new Uri("https://snapser.com/resources/tos"),
+          Contact = new OpenApiContact
           {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Token"
-                            }
-                        },
-                        new string[] { }
-                    }
-          });
+            Name = "Snapser Admin",
+            Email = "admin@snapser.com",
+            Url = new Uri("https://twitter.com/example"),
+          },
+        });
+        //Adds the Auth Types to the Swagger UI
+        c.OperationFilter<SnapserAuthTypesOperationFilter>();
+        //CSharp automatically adds text/plain, application/json and application/xml to the response content types. This filter removes all but application/json.
+        c.OperationFilter<RemoveFormatParametersFilter>();
+        //Enabled Annotations - So the SwaggerOperation attributes in the UsersController.cs file are recognized
+        c.EnableAnnotations();
       });
     }
 
@@ -61,8 +58,6 @@ namespace ByoSnapCSharp
       app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ByoSnapCSharp v1"));
 
       app.UseRouting();
-
-      app.UseMiddleware<AuthorizationMiddleware>();
 
       // Enable CORS
       app.UseCors("AllowSpecificOrigin");

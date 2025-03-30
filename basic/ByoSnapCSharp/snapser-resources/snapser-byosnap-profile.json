@@ -1,6 +1,6 @@
 {
-    "name": "BYOSnap Csharp",
-    "description": "BYOSnap Csharp example",
+    "name": "Byosnap CSharp Basic",
+    "description": "Basic CSharp microservice to demonstrate BYOSnap",
     "platform": "linux/arm64",
     "language": "csharp",
     "prefix": "/v1",
@@ -12,8 +12,8 @@
         "internal_ports": []
     },
     "readiness_probe_config": {
-        "initial_delay_seconds": null,
-        "path": null
+        "initial_delay_seconds": 5,
+        "path": "/healthz"
     },
     "dev_template": {
         "cpu": 100,
