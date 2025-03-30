@@ -1,5 +1,6 @@
-# Use the official .NET 8.0 SDK image to build the application for arm64
-FROM --platform=linux/arm64 mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Use the official .NET 9.0 SDK image to build the application for arm64
+ARG PLATFORM=linux/arm64
+FROM --platform=$PLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /app
 
 # Optionally clear NuGet caches
@@ -14,7 +15,7 @@ COPY . ./
 RUN dotnet publish -c Release -o out
 
 # Use the official ASP.NET Core runtime image for .NET 8.0, targeting arm64
-FROM --platform=linux/arm64 mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM --platform=$PLATFORM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 
 # Copy the build output to the runtime image

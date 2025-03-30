@@ -73,20 +73,22 @@ python snapend_create.py $companyId $gameId $version
 
 ## Development Process
 ### A. Get up and running initially
-1. Update your code in app.py
+1. Update your code in UsersContoller.cs
 2. Run `dotnet run generate-swagger` to build a new swagger.
-3. Run `snapctl byosnap publish --byosnap-id $byosnapId --version $version --path $rootCodePath --resources-path $rootCodePath/snapser-resources` to publish your new BYOSnap to Snapser.
+3. Run `snapctl byosnap publish --byosnap-id $byosnapId --version $version --path $rootCodePath --resources-path $rootCodePath/snapser-resources` to publish your new BYOSnap to Snapser. BYOSnap Id
+has to start with `byosnap-` Eg: `byosnap-basic`.
 4. Run `python create_snapend.py $companyId $gameId $byosnapId $byosnapVersion` which first updates your `snapser-resources/snapser-snapend-manifest.json` file and then deploys it to Snapser via Snapctl.
 
 At the end, you will have a new Snapend running with an Auth Snap & your BYOSnap and you will
 get a **$snapendId**. Keep a note of your `snapendId` as you will need this for the next stage.
+It should be noted that every subsequent `byosnap publish` will need to have a higher version number.
 
 
 ### B. Development
 #### Actively Coding
-1. Update your code in app.py
-2. Generate a new swagger if you need to by running `python generate_swagger.py`.
-3. Run `snapctl byosnap sync --snapend-id $snapendId --byosnap-id byosnap-$byosnapName --version $version --path $rootCodePath --resources-path $rootCodePath/snapser-resources` to sync your new BYOSnap to Snapser. Sync essentially is taking your local code and making it live on your Snapend.
+1. Update your code in UsersContoller.cs
+2. Generate a new swagger if you need to by running `dotnet run generate-swagger`.
+3. Run `snapctl byosnap sync --snapend-id $snapendId --byosnap-id $byosnapId --version $version --path $rootCodePath --resources-path $rootCodePath/snapser-resources` to sync your new BYOSnap to Snapser. Sync essentially is taking your local code and making it live on your Snapend.
 
 #### Commit
 1. Once you are happy with the state of your BYOSnap, you can publish it as a new version. This way, other team members can consume it.
