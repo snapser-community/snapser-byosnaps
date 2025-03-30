@@ -106,7 +106,7 @@
             }
         },
         "/v1/byosnap-python-basic/users/{user_id}": {
-            "get": {
+            "delete": {
                 "summary": "API Three",
                 "description": "This API will work only when the call is coming from within the Snapend.",
                 "operationId": "API Three",
@@ -157,8 +157,8 @@
                 }
             }
         },
-        "/v1/byosnap-python-basic/hello/{user_name}": {
-            "get": {
+        "/v1/byosnap-python-basic/hello/{resource_name}": {
+            "put": {
                 "summary": "API Four",
                 "description": "This API will work for all auth types.",
                 "operationId": "API Four",
@@ -246,19 +246,19 @@
             "SuccessResponseSchema": {
                 "type": "object",
                 "properties": {
-                    "api": {
-                        "type": "string"
-                    },
                     "auth_type": {
                         "type": "string"
                     },
-                    "message": {
+                    "api": {
                         "type": "string"
                     },
                     "path_user_id": {
                         "type": "string"
                     },
                     "header_user_id": {
+                        "type": "string"
+                    },
+                    "message": {
                         "type": "string"
                     }
                 }

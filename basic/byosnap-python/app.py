@@ -83,9 +83,9 @@ def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
 #
 
 
-@app.route('/v1/byosnap-python-basic/health', methods=["OPTIONS"])
-@app.route('/v1/byosnap-python-basic/resource-one/<req_id>', methods=['OPTIONS'])
-@app.route('/v1/byosnap-python-basic/resource-two/<req_id>', methods=['OPTIONS'])
+@app.route('/v1/byosnap-python-basic/users/<user_id>/game', methods=['OPTIONS'])
+@app.route('/v1/byosnap-python-basic/users/<user_id>', methods=['OPTIONS'])
+@app.route('/v1/byosnap-python-basic/hello/<resource_name>', methods=['OPTIONS'])
 @cross_origin()
 def cors_overrides(path):
     return f'{path} Ok'
@@ -215,7 +215,7 @@ def api_two(user_id):
 def api_three(user_id):
     """API that is only accessible via Internal auth. Both User Auth calls and Api-Key Auth calls will NOT work, as they are external calls. This is done by checking the Gateway header.
     ---
-    get:
+    delete:
       summary: 'API Three'
       description: This API will work only when the call is coming from within the Snapend.
       operationId: 'API Three'
@@ -257,7 +257,7 @@ def api_three(user_id):
 def api_four(resource_name):
     """TODO: API for you to update
     ---
-    get:
+    put:
       summary: 'API Four'
       description: This API will work for all auth types.
       operationId: 'API Four'

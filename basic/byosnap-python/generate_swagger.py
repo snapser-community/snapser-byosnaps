@@ -24,7 +24,7 @@ app.add_url_rule('/v1/byosnap-python-basic/users/<user_id>/game',
                  view_func=api_two, methods=['POST'])
 app.add_url_rule('/v1/byosnap-python-basic/users/<user_id>',
                  view_func=api_three, methods=['DELETE'])
-app.add_url_rule('/v1/byosnap-python-basic/hello/<user_name>',
+app.add_url_rule('/v1/byosnap-python-basic/hello/<resource_name>',
                  view_func=api_four, methods=['PUT'])
 
 # Initialize APISpec
