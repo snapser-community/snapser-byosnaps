@@ -1,12 +1,23 @@
-# BYOSnap Python Basic Tutorial
+# BYOSnap Node Typescript Basic Tutorial
 
 ## Application
-- The main application logic is in **app.py**
-- This example is built using Flask and is served via gunicorn
+- The main application logic is in **usersController.ts**
+- This example is built using Express
 
 ## Pre-Requisites
 
-### A. Python Virtual Environment
+### A. Install required packages
+You need to have npm installed. Once you have it, please install the dependencies.
+```bash
+npm install
+```
+Here is a list of the original dependencies
+```bash
+npm install express tsoa @types/express body-parser cors
+npm install typescript ts-node @types/node @types/cors --save-dev
+```
+
+### B. Python Virtual Environment
 Create a python virtualenv and then activate the virtualenv
 ```bash
 # Mac
@@ -19,7 +30,7 @@ source snapctl/venv/bin/activate
 .\venv\Scripts\activate
 ```
 
-### B. Snapctl Setup
+### C. Snapctl Setup
 You need to have a valid setup for Snapctl, which is Snapsers CLI tool. Please follow the step by step (tutorial)[https://snapser.com/docs/guides/tutorials/setup-snapctl] if you do not have Snapctl installed on your machine. You can run the following command to confirm you have a valid snapctl setup.
 
 ```bash
@@ -27,7 +38,7 @@ You need to have a valid setup for Snapctl, which is Snapsers CLI tool. Please f
 snapctl validate
 ```
 
-### C. Docker
+### D. Docker
 Make sure Docker engine is running on your machine. Open up Docker desktop and settings. Also, please make sure the setting **Use containerd for pulling and storing images** is **disabled**. You can find this setting in the Docker Desktop settings.
 
 ## Resources
@@ -40,11 +51,18 @@ All the files that are required by the Snapctl are under this folder
 
 
 ## Helper Scripts
-- **generate_swagger.py**: Script that generates a swagger.json based on the method annotations in app.py. This script stores the swagger.json under the `snapser-resources/` folder.
+- **generate_routes.sh**: Script that generates routes for all the controller code.
 
 Usage
 ```bash
-python generate_swagger.py
+./generate_routes.sh
+```
+
+- **generate_swagger.sh**: Script that generates a swagger.json based on the method annotations in your code base. This script stores the swagger.json under the `snapser-resources/` folder.
+
+Usage
+```bash
+./generate_swagger.sh
 ```
 
 - **snapend_create.py**: Script to create a new Snapend with an Auth snap and your BYOSnap. You will need your companyId and gameId, which you can retrieve from the Snapser web app.
@@ -57,7 +75,6 @@ Usage
 #   [IMPORTANT] You have to increment the version number for each subsequent publish
 python snapend_create.py $companyId $gameId $byosnapId $version
 ```
-
 
 ## Development Process
 ### Pre-requisites - Read the Gotchas

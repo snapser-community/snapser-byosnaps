@@ -65,10 +65,12 @@ dotnet run generate-swagger
 - **snapend_create.py**: Script to create a new Snapend with an Auth snap and your BYOSnap. You will need your companyId and gameId, which you can retrieve from the Snapser web app.
 Usage
 ```bash
+# $companyId = Your company Id
+# $gameId = Your game ID
+# $byosnapId is the ID of your BYOSnap. For the tutorial, we are using `byosnap-basic`
 # $version needs to be in the format "vX.Y.Z" eg: "v1.0.0"
 #   [IMPORTANT] You have to increment the version number for each subsequent publish
-# $snapendId is the ID of your Snapend
-python snapend_create.py $companyId $gameId $version
+python snapend_create.py $companyId $gameId $byosnapId $version
 ```
 
 ## Development Process
@@ -85,6 +87,9 @@ It should be noted that every subsequent `byosnap publish` will need to have a h
 
 
 ### B. Development
+### Pre-requisites - Read the Gotchas
+- Please read the GOTCHAS.md before you begin Development
+
 #### Actively Coding
 1. Update your code in UsersContoller.cs
 2. Generate a new swagger if you need to by running `dotnet run generate-swagger`.

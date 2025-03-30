@@ -1,0 +1,241 @@
+{
+  "openapi": "3.0.0",
+  "components": {
+    "examples": {},
+    "headers": {},
+    "parameters": {},
+    "requestBodies": {},
+    "responses": {},
+    "schemas": {
+      "SuccessResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "pathUserId": {
+            "type": "string"
+          },
+          "headerUserId": {
+            "type": "string"
+          },
+          "authType": {
+            "type": "string"
+          },
+          "api": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message",
+          "pathUserId",
+          "authType",
+          "api"
+        ],
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error_message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error_message"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {}
+  },
+  "info": {
+    "title": "byosnap-node-ts",
+    "version": "1.0.0",
+    "description": "BYOSnap written in Node.js with TypeScript",
+    "license": {
+      "name": "MIT"
+    },
+    "contact": {}
+  },
+  "paths": {
+    "/v1/byosnap-basic/users/{userId}/game": {
+      "get": {
+        "operationId": "GetGame",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Api One",
+        "security": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-snapser-auth-types": [
+          "user",
+          "api-key",
+          "internal"
+        ],
+        "description": "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API."
+      },
+      "post": {
+        "operationId": "PostGame",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Api Two",
+        "security": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-snapser-auth-types": [
+          "api-key",
+          "internal"
+        ],
+        "description": "This API will work only with Api-Key auth. You can access this API with a valid api-key."
+      }
+    },
+    "/v1/byosnap-basic/users/{userId}": {
+      "delete": {
+        "operationId": "DeleteUser",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Api Three",
+        "security": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-snapser-auth-types": [
+          "internal"
+        ],
+        "description": "This API will work only when the call is coming from within the Snapend."
+      }
+    },
+    "/v1/byosnap-basic/users/{userId}/profile": {
+      "put": {
+        "operationId": "UpdateProfile",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Api Four",
+        "security": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-snapser-auth-types": [
+          "user",
+          "api-key",
+          "internal"
+        ],
+        "description": "This API will work for all auth types."
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ]
+}
