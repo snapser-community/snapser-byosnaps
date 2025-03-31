@@ -1,6 +1,6 @@
 # Start from the official Golang image to create a build artifact.
 # Specify the ARM64 version of the Golang image.
-FROM --platform=linux/arm64 golang:1.16-alpine as builder
+FROM golang:1.21-alpine AS builder
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
@@ -19,7 +19,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o main .
 
 # Start a new stage from scratch using an ARM64 Alpine base image
-FROM --platform=linux/arm64 alpine:latest
+FROM alpine:latest
 
 # We'll create a non-root user and a group to run our application
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
