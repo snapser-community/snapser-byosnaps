@@ -27,10 +27,10 @@ def api_one(user_id):
         - internal
 ```
 
-IMPORTANT: But you also have to pass those auth types to the middleware so that you get Authorization checks for free. Just adding those tags are not going to do the authorization check for you.
+IMPORTANT: But you also have to pass those auth types to the middleware so that you get Authorization checks for free. Just adding those tags for swagger, are not going to do the authorization check for you.
 ```python
 @app.route("/v1/byosnap-basic/users/<user_id>/game", methods=["GET"])
-@validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")  #//(👈 This tells the middleware that user auth, app auth and internal auth are allowed for this method)
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")  # (👈 This tells the middleware that user auth, app auth and internal auth are allowed for this method)
 ```
 - Snapser tech automatically adds the correct header to the SDK and API Explorer for your API. So you do not need to add the headers here against your API. Eg: For APIs exposed over User Auth, both the SDK and API Explorer will expose the Token header for you to fill in. For Api-Key Auth, the API Explorer will expose the Api-Key header for you to fill in. For internal APIs, the SDK and API Explorer will expose the Gateway header.
 ```python
