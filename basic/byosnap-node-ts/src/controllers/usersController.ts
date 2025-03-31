@@ -17,7 +17,7 @@ export class UserController extends Controller {
     @Response<SuccessResponse>(200, "Successful Response")
     @Response<ErrorResponse>(401, "Unauthorized")
     @Middlewares([authMiddleware(["user", "api-key", "internal"])])
-    public async getGame(
+    public async apiOne(
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
         @Request() req: ExpressRequest
@@ -43,7 +43,7 @@ export class UserController extends Controller {
     @Response<SuccessResponse>(200, "Successful Response")
     @Response<ErrorResponse>(401, "Unauthorized")
     @Middlewares([authMiddleware(["api-key", "internal"])])
-    public async postGame(
+    public async apiTwo(
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
         @Request() req: ExpressRequest
@@ -69,7 +69,7 @@ export class UserController extends Controller {
     @Response<SuccessResponse>(200, "Successful Response")
     @Response<ErrorResponse>(401, "Unauthorized")
     @Middlewares([authMiddleware(["internal"])])
-    public async deleteUser(
+    public async apiThree(
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
         @Request() req: ExpressRequest
@@ -95,7 +95,7 @@ export class UserController extends Controller {
     @Response<SuccessResponse>(200, "Successful Response")
     @Response<ErrorResponse>(401, "Unauthorized")
     @Middlewares([authMiddleware(["user", "api-key", "internal"])])
-    public async updateProfile(
+    public async apiFour(
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
         @Request() req: ExpressRequest

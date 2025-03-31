@@ -39,27 +39,27 @@ export function RegisterRoutes(app: Router) {
 
 
     
-        const argsUserController_getGame: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsUserController_apiOne: Record<string, TsoaRoute.ParameterSchema> = {
                 _unauthorized: {"in":"res","name":"401","required":true,"ref":"ErrorResponse"},
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.get('/v1/byosnap-basic/users/:userId/game',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
-            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.getGame)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.apiOne)),
 
-            async function UserController_getGame(request: ExRequest, response: ExResponse, next: any) {
+            async function UserController_apiOne(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_getGame, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_apiOne, request, response });
 
                 const controller = new UserController();
 
               await templateService.apiHandler({
-                methodName: 'getGame',
+                methodName: 'apiOne',
                 controller,
                 response,
                 next,
@@ -71,27 +71,27 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsUserController_postGame: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsUserController_apiTwo: Record<string, TsoaRoute.ParameterSchema> = {
                 _unauthorized: {"in":"res","name":"401","required":true,"ref":"ErrorResponse"},
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.post('/v1/byosnap-basic/users/:userId/game',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
-            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.postGame)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.apiTwo)),
 
-            async function UserController_postGame(request: ExRequest, response: ExResponse, next: any) {
+            async function UserController_apiTwo(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_postGame, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_apiTwo, request, response });
 
                 const controller = new UserController();
 
               await templateService.apiHandler({
-                methodName: 'postGame',
+                methodName: 'apiTwo',
                 controller,
                 response,
                 next,
@@ -103,27 +103,27 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsUserController_deleteUser: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsUserController_apiThree: Record<string, TsoaRoute.ParameterSchema> = {
                 _unauthorized: {"in":"res","name":"401","required":true,"ref":"ErrorResponse"},
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.delete('/v1/byosnap-basic/users/:userId',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
-            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.deleteUser)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.apiThree)),
 
-            async function UserController_deleteUser(request: ExRequest, response: ExResponse, next: any) {
+            async function UserController_apiThree(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_deleteUser, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_apiThree, request, response });
 
                 const controller = new UserController();
 
               await templateService.apiHandler({
-                methodName: 'deleteUser',
+                methodName: 'apiThree',
                 controller,
                 response,
                 next,
@@ -135,27 +135,27 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsUserController_updateProfile: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsUserController_apiFour: Record<string, TsoaRoute.ParameterSchema> = {
                 _unauthorized: {"in":"res","name":"401","required":true,"ref":"ErrorResponse"},
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.put('/v1/byosnap-basic/users/:userId/profile',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
-            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.updateProfile)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.apiFour)),
 
-            async function UserController_updateProfile(request: ExRequest, response: ExResponse, next: any) {
+            async function UserController_apiFour(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_updateProfile, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_apiFour, request, response });
 
                 const controller = new UserController();
 
               await templateService.apiHandler({
-                methodName: 'updateProfile',
+                methodName: 'apiFour',
                 controller,
                 response,
                 next,
