@@ -1,8 +1,8 @@
 {
-    "name": "Byosnap Python Basic",
-    "description": "Basic Python microservice to demonstrate BYOSnap",
+    "name": "Byosnap Typescript Basic",
+    "description": "Basic Node Typescript microservice to demonstrate BYOSnap",
     "platform": "linux/arm64",
-    "language": "python",
+    "language": "typescript",
     "prefix": "/v1",
     "ingress": {
         "external_port": {

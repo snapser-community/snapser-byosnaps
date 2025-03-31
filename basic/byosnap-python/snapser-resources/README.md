@@ -13,7 +13,7 @@
 **[IMPORTANT]**: It should be noted that all external calls viz calls coming over user or api-key auth, get validated for you by your Gateway+Auth Snap. However, for internal calls your API should check for the "Gateway: Internal" header to confirm the call is indeed coming from within your Snapend. Check the **validate_authorization** decorator in your main application file, to understand this.
 
  ## Endpoints
- 1. api_one: The endpoint that this method exposes is accessible both externally (over user and api-key auth) and internally.
- 1. api_two: The endpoint that this method exposes is accessible only over api-key auth and internally.
- 1. api_three: The endpoint that this method exposes is only available internally.
- 1. api_four: This is for you to update as part of the tutorial.
+ 1. api one: The endpoint that this method exposes is accessible both externally (over user and api-key auth) and internally.
+ 1. api two: The endpoint that this method exposes is accessible only over api-key auth and internally.
+ 1. api three: The endpoint that this method exposes is only available internally.
+ 1. api four: This is for you to update as part of the tutorial.
