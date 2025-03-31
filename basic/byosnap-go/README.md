@@ -1,26 +1,31 @@
-# BYOSnap Python Basic Tutorial
+# BYOSnap Go Basic Tutorial
 
 ## Application
-- The main application logic is in **app.py**
-- This example is built using Flask and is served via gunicorn
+- The main application logic is in **main.go**
 
 ## Pre-Requisites
 
-### A. Python Virtual Environment
-Create a python virtualenv and then activate the virtualenv
+### A. Install Go
+Follow the setup (instructions)[https://go.dev/dl/] to get install Go on your machine.
+
+To confirm your setup is working run
 ```bash
-# Mac
-python3 -m venv venv
-source snapctl/venv/bin/activate
+go version
 ```
+
+IMPORTANT: Please add the Go bin to your PATH. Add this to your `.bash_profile` and then run `source ~/.bash_profile`
 ```bash
-# Windows
-# Go to the root of the folder and start the virtualenv
-.\venv\Scripts\activate
+# Setting Go path
+export PATH=$PATH:$HOME/go/bin
 ```
+
 #### Install dependencies
+Run the following to install dependencies
 ```bash
-pip isntall -r requirements.txt
+go get -u github.com/gorilla/mux
+go get -u github.com/gorilla/handlers
+go get -u github.com/go-openapi/runtime/middleware // For Swagger
+go install github.com/go-swagger/go-swagger/cmd/swagger@latest
 ```
 
 ### B. Snapctl Setup
@@ -44,11 +49,11 @@ All the files that are required by the Snapctl are under this folder
 
 
 ## Helper Scripts
-- **generate_swagger.py**: Script that generates a swagger.json based on the method annotations in app.py. This script stores the swagger.json under the `snapser-resources/` folder.
+- **generate_swagger.sh**: Script that generates a swagger.json based on the method annotations in app.py. This script stores the swagger.json under the `snapser-resources/` folder.
 
 Usage
 ```bash
-python generate_swagger.py
+./generate_swagger.sh
 ```
 
 - **snapend_create.py**: Script to create a new Snapend with an Auth snap and your BYOSnap. You will need your companyId and gameId, which you can retrieve from the Snapser web app.
@@ -72,7 +77,7 @@ For this tutorial, we want to update `api_four` return message, deploy it to Sna
 ### Step 2 Build
 - Build your swagger
 ```bash
-python generate_swagger.py
+./generate_swagger.sh
 ```
 - Build your server
 ```bash
@@ -114,13 +119,9 @@ At the end, you will have a new Snapend running with an Auth Snap & your BYOSnap
 - Please read the GOTCHAS.md before you begin Development
 
 ### A. Running the Server Locally
-- Make sure you have installed the dependencies
-```bash
-pip isntall -r requirements.txt
-```
 - Build your swagger
 ```bash
-python generate_swagger.py
+./generate_swagger.sh
 ```
 - Run your server
 ```bash
@@ -131,7 +132,7 @@ python generate_swagger.py
 If you want to rapidly test your BYOSnap changes on an already deployed BYOSnap you can use the `snapctl byosnap sync` command. Note: The sync command only works if your BYOSnap was deployed to a Snapend. If you have followed this tutorial, you will need the $snapendId of the deployed Snapend to use this command along with the `$version` that you had deployed the BYOSnap with.
 
 1. Update your code.
-2. Generate a new swagger if you need to by running `python generate_swagger.py`.
+2. Generate a new swagger if you need to by running `./generate_swagger.sh`.
 3. Run `snapctl byosnap sync --snapend-id $snapendId --byosnap-id $byosnapId --version $version --path $rootCodePath --resources-path $rootCodePath/snapser-resources` to sync your new BYOSnap to Snapser. Sync essentially is taking your local code and making it live on your Snapend.
 
 IMPORTANT: The Sync command reuses the published `$version` tag but keeps building and updating the remote image. This is how your Snapend can quickly download and run your latest code.
@@ -139,6 +140,6 @@ IMPORTANT: The Sync command reuses the published `$version` tag but keeps buildi
 ### C. Committing your BYOSnap
 Once you are happy with the state of your BYOSnap and you want to "commit" it. Which essentially means you are ready to bump the version number.
 
-1. Generate a new swagger if you need to by running `python generate_swagger.py`.
+1. Generate a new swagger if you need to by running `./generate_swagger.sh`.
 2. Run `snapctl byosnap publish --byosnap-id byosnap-$byosnapName --version $newVersion --path $rootCodePath --resources-path $rootCodePath/snapser-resources` to publish your new BYOSnap version to Snapser. IMPORTANT: Make sure your new version is greater than the version that is presently on Snapser.
 3. Any new or existing Snapend can now just use this new version of your BYOSnap. There is a handy command `snapctl snapend update byosnaps ...` that allows you to "Commit" your changes to any existing BYOSnap using the CLI. You can always do this using the web app as well by clicking on `Edit Snapend`.
