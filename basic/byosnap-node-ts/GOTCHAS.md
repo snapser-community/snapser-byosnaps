@@ -21,6 +21,35 @@ export class UserController extends Controller {
 ```typescript
 @Extension("x-snapser-auth-types", ["user", "api-key", "internal"])
 ```
+IMPORTANT: But you also have to pass those auth types to the middleware so that you get Authorization checks for free. Just adding those tags for swagger, are not going to do the authorization check for you.
+```typescript
+/**
+ * @summary Api One
+ */
+@Get("{userId}/game")
+@Extension("x-description", 'This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.')
+@Extension("x-snapser-auth-types", ["user", "api-key", "internal"]) //(👈 This controls the x-snapser-auth-types tags in the swagger)
+@Response<SuccessResponse>(200, "Successful Response")
+@Response<ErrorResponse>(401, "Unauthorized")
+@Middlewares([authMiddleware(["user", "api-key", "internal"])]) // (👈 This tells the middleware that user auth, app auth and internal auth are allowed for this method)
+public async apiOne(
+    @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
+    @Path() userId: string,
+    @Request() req: ExpressRequest
+): Promise<SuccessResponse> {
+    const expressReq = req as ExpressRequest;
+    const authType = expressReq.header("Auth-Type");
+    const headerUserId = expressReq.header("User-Id");
+    return {
+    api: 'getGame',
+    authType: authType ?? 'N/A',
+    headerUserId: headerUserId ?? 'N/A',
+    pathUserId: userId,
+    message: 'success'
+    };
+}
+```
+
 - Snapser tech automatically adds the correct header to the SDK and API Explorer for your API. So you do not need to add the headers here against your API. Eg: For APIs exposed over User Auth, both the SDK and API Explorer will expose the Token header for you to fill in. For Api-Key Auth, the API Explorer will expose the Api-Key header for you to fill in. For internal APIs, the SDK and API Explorer will expose the Gateway header.
 ```typescript
 //As you can see, we are not adding any Token or Api-Key Auth headers. Snapser handles that for you.

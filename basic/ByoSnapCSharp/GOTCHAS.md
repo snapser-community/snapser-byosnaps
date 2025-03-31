@@ -36,6 +36,30 @@ namespace ByoSnapCSharp.Controllers
   }
 }
 ```
+
+IMPORTANT: But you also have to pass those auth types to the middleware so that you get Authorization checks for free. Just adding those tags for swagger, are not going to do the authorization check for you.
+```csharp
+[HttpGet("game")]
+[SnapserAuth("user", "api-key", "internal")] // (👈 This is just for the swagger)
+[ValidateAuthorization("user", "api-key", "internal")] // (👈 This tells the middleware that user auth, app auth and internal auth are allowed)
+[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
+[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
+[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
+[SwaggerOperation(Summary = "API One", Description = "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.", OperationId = "API One")]
+public ActionResult<SuccessResponseSchema> ApiOne([FromRoute] UserIdParameterSchema userParams)
+{
+  var authTypeHeader = HttpContext.Request.Headers["Auth-Type"].FirstOrDefault();
+  var userIdHeader = HttpContext.Request.Headers["User-Id"].FirstOrDefault();
+  return Ok(new SuccessResponseSchema
+  {
+    Api = "GetGame",
+    AuthType = authTypeHeader ?? "N/A",
+    HeaderUserId = userIdHeader ?? "N/A",
+    PathUserId = userParams.UserId,
+    Message = "success"
+  });
+}
+```
 - Snapser tech automatically adds the correct header to the SDK and API Explorer for your API. So you do not need to add the headers here against your API. Eg: For APIs exposed over User Auth, both the SDK and API Explorer will expose the Token header for you to fill in. For Api-Key Auth, the API Explorer will expose the Api-Key header for you to fill in. For internal APIs, the SDK and API Explorer will expose the Gateway header.
 ```csharp
 [ApiController]

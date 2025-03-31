@@ -39,7 +39,7 @@
                                 }
                             }
                         },
-                        "description": "Bad Request"
+                        "description": "Unauthorized"
                     },
                     "401": {
                         "content": {
@@ -90,7 +90,7 @@
                                 }
                             }
                         },
-                        "description": "Bad Request"
+                        "description": "Unauthorized"
                     },
                     "401": {
                         "content": {
@@ -142,7 +142,7 @@
                                 }
                             }
                         },
-                        "description": "Bad Request"
+                        "description": "Unauthorized"
                     },
                     "401": {
                         "content": {
@@ -196,7 +196,7 @@
                                 }
                             }
                         },
-                        "description": "Bad Request"
+                        "description": "Unauthorized"
                     },
                     "401": {
                         "content": {
@@ -247,10 +247,10 @@
                     "message": {
                         "type": "string"
                     },
-                    "auth_type": {
+                    "api": {
                         "type": "string"
                     },
-                    "api": {
+                    "auth_type": {
                         "type": "string"
                     }
                 }

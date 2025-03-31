@@ -1,26 +1,31 @@
-# BYOSnap Python Basic Tutorial
+# BYOSnap Go Basic Tutorial
 
 ## Application
-- The main application logic is in **app.py**
-- This example is built using Flask and is served via gunicorn
+- The main application logic is in **main.go**
 
 ## Pre-Requisites
 
-### A. Python Virtual Environment
-Create a python virtualenv and then activate the virtualenv
+### A. Install Go
+Follow the setup (instructions)[https://go.dev/dl/] to get install Go on your machine.
+
+To confirm your setup is working run
 ```bash
-# Mac
-python3 -m venv venv
-source snapctl/venv/bin/activate
+go version
 ```
+
+IMPORTANT: Please add the Go bin to your PATH. Add this to your `.bash_profile` and then run `source ~/.bash_profile`
 ```bash
-# Windows
-# Go to the root of the folder and start the virtualenv
-.\venv\Scripts\activate
+# Setting Go path
+export PATH=$PATH:$HOME/go/bin
 ```
+
 #### Install dependencies
+Run the following to install dependencies
 ```bash
-pip isntall -r requirements.txt
+go get -u github.com/gorilla/mux
+go get -u github.com/gorilla/handlers
+go get -u github.com/go-openapi/runtime/middleware // For Swagger
+go install github.com/go-swagger/go-swagger/cmd/swagger@latest
 ```
 
 ### B. Snapctl Setup
@@ -114,7 +119,7 @@ At the end, you will have a new Snapend running with an Auth Snap & your BYOSnap
 - Please read the GOTCHAS.md before you begin Development
 
 ### A. Running the Server Locally
-- Make sure you have installed the dependencies
+- Install dependencies
 ```bash
 pip isntall -r requirements.txt
 ```
