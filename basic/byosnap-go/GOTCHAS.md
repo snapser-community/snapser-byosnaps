@@ -81,58 +81,65 @@ func ApiOneHandler(w http.ResponseWriter, r *http.Request) {
 // Health Check Endpoint
 r.HandleFunc("/healthz", HealthCheckHandler).Methods("GET")
 ```
-- We use go-swagger to convert annotations to swagger.json. But go-swagger only supports 2.X. Snapser is built on the swagger 3.x platform, so we use openApi to convert the 2.x swagger to 3.x. Swagger generation also has some gotchas. Please see the section below.
+- We use go-swagger to convert annotations to swagger.json. But **go-swagger** only supports 2.X. Snapser is built on the swagger 3.x platform, so we use openApi to convert the 2.x swagger to 3.x. Swagger generation also has some gotchas. Please see the section below.
 
 ## Swagger generation
-- This repo uses ApiSpec and MarshmallowPlugin to convert flask controller annotations to a Swagger. There are a few gotchas that you need to be aware of.
-- In order to keep the API and Swagger generation code separate, you have a `generate_swagger.py` file that handles the generation of the swagger.
-- If you add a new API, register them in `generate_swagger.py`. You have to do this at two places
-```python
-# Register your endpoints
-app.add_url_rule('/v1/byosnap-basic/users/<user_id>/game',
-                 view_func=api_one, methods=['GET']) # (👈 #1 Add the rule)
+- This repo uses **go-swagger** and method annotations to create a Swagger. There are a few gotchas that you need to be aware of.
+- The comment at the top of the main.go file is what generates the **info** object in the swagger.
+```go
+// Package main BYOSnap Basic Go Example
+//
+// BYOSnap Basic Go Example
+// with restful endpoints
+//
+//		Schemes: https
+//	  Host: localhost:5003
+//		Version: 1.0.0
+//		License: Apache 2.0 http://www.apache.org/licenses/LICENSE-2.0.html
+//		Contact:
+//		  Name: Snapser Admin
+//		  URL: https://snapser.com
+//		  Email: admin@snapser.com
+//
+//		Consumes:
+//		- application/json
+//
+//		Produces:
+//		- application/json
+//
+// swagger:meta
+package main
 
-# Generate paths using the FlaskPlugin
-with app.test_request_context():
-    spec.path(view=api_one) # (👈 #1 Add the path)
+import (
+	"encoding/json"
+  ...
+)
 ```
-- If you add any new Schemas make sure you register them here
-```python
-spec.components.schema("UserIdParameterSchema", schema=UserIdParameterSchema)
+- Every API needs to have an annotation like this. Check all the gotcha callouts below
+```go
+// ApiOneHandler handles the GET request for an API endpoint
+// swagger:operation GET /v1/byosnap-basic/users/{user_id}/game apiOne (👈 This is just for you. The ApiSpec does not use this)
+// ---
+// summary: Retrieves game data for a specified user (👈 required: Add a short summary about the API)
+// description: This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API. (👈 required: Add a verbose description about the API)
+// operationId: apiOneHandler (👈 required: This is what gets converted to the method name in the SDK and API Explorer)
+// x-snapser-auth-types: ["user", "api-key", "internal"] (👈 required: Tells the SDK and API explorer if you want to see this API in the user, api-key and internal SDKs and API Explorer tabs)
+// parameters:
+//   - name: user_id
+//     in: path
+//     required: true
+//     description: Unique identifier of the user
+//     type: string
+// responses:
+//   200:
+//     description: Successfully retrieved data
+//     schema:
+//       $ref: '#/definitions/SuccessResponseSchema'
+//   401:
+//     description: Unauthorized access
+//     schema:
+//       $ref: '#/definitions/ErrorResponseSchema'
+func ApiOneHandler(w http.ResponseWriter, r *http.Request) {
+  ...
+}
 ```
-
-- Then, in your main code, every API needs to have an annotation like this. Check all the gotcha callouts below
-```python
-"""API that is accessible by User, Api-Key and Internal auth (👈 This is just for you. The ApiSpec does not use this)
-    ---
-    get:
-      summary: 'API One' (👈 [Required] Give any short name)
-      description: This API will work with User and Api-Key auth. With a valid user token and api-key,you can access this API. (👈 [Required] Give any verbose description)
-      operationId: 'API One' (👈 [Required] Powers the API Name in the SDK and the Api Explorer)
-      x-snapser-auth-types: (👈 [Required] So Snapser shows or hides this API in the SDK and API Explorer)
-        - user
-        - api-key
-        - internal
-      parameters: (👈 [Required] No need to add any Token or Api-Key headers. Snapser handles this)
-      - in: path
-        schema: UserIdParameterSchema
-      responses:
-        200:
-          content:
-            application/json:
-              schema: SuccessResponseSchema
-          description: 'A successful response'
-        400:
-          content:
-            application/json:
-              schema: ErrorResponseSchema
-          description: 'Unauthorized'
-        401:
-          content:
-            application/json:
-               schema: ErrorResponseSchema
-          description: 'Unauthorized'
-    """
-```
-
--
