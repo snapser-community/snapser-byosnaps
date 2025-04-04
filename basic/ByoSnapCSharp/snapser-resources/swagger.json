@@ -17,13 +17,22 @@
         "tags": [
           "Users"
         ],
-        "summary": "API One",
+        "summary": "Game APIs",
         "description": "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
-        "operationId": "API One",
+        "operationId": "Get Game",
         "parameters": [
           {
             "name": "UserId",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "User Session Token",
             "required": true,
             "schema": {
               "type": "string"
@@ -72,13 +81,22 @@
         "tags": [
           "Users"
         ],
-        "summary": "API Two",
+        "summary": "Game APIs",
         "description": "This API will work only with Api-Key auth. You can access this API with a valid api-key.",
-        "operationId": "API Two",
+        "operationId": "Save Game",
         "parameters": [
           {
             "name": "UserId",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "User Session Token",
             "required": true,
             "schema": {
               "type": "string"
@@ -128,13 +146,22 @@
         "tags": [
           "Users"
         ],
-        "summary": "API Three",
+        "summary": "User APIs",
         "description": "This API will work only when the call is coming from within the Snapend.",
-        "operationId": "API Three",
+        "operationId": "Delete User",
         "parameters": [
           {
             "name": "UserId",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "User Session Token",
             "required": true,
             "schema": {
               "type": "string"
@@ -183,13 +210,22 @@
         "tags": [
           "Users"
         ],
-        "summary": "API Four",
+        "summary": "User APIs",
         "description": "This API will work for all auth types.",
-        "operationId": "API Four",
+        "operationId": "Update User Profile",
         "parameters": [
           {
             "name": "UserId",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "User Session Token",
             "required": true,
             "schema": {
               "type": "string"

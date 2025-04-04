@@ -14,14 +14,14 @@ What to Watch Out For When Working in This Repo
 ```python
 @app.route("/v1/byosnap-python-basic/users/<user_id>/game", methods=["GET"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
-def api_one(user_id):
+def get_game(user_id):
     """API that is accessible by User, Api-Key and Internal auth
     ---
     get:
-      summary: 'API One'
+      summary: 'Game APIs'
       description: This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.
-      operationId: 'API One'
-      x-snapser-auth-types: (👈 This)
+      operationId: 'Get Game'
+      x-snapser-auth-types:
         - user
         - api-key
         - internal
@@ -36,20 +36,22 @@ IMPORTANT: But you also have to pass those auth types to the middleware so that 
 ```python
 @app.route("/v1/byosnap-python-basic/users/<user_id>/game", methods=["GET"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
-def api_one(user_id):
+def get_game(user_id):
     """API that is accessible by User, Api-Key and Internal auth
     ---
     get:
-      summary: 'API One'
+      summary: 'Game APIs'
       description: This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.
-      operationId: 'API One'
+      operationId: 'Get Game'
       x-snapser-auth-types:
         - user
         - api-key
         - internal
-      parameters: (👈 No headers added to params)
+      parameters:
       - in: path
         schema: UserIdParameterSchema
+      - in: header (👈 [NOTE] No need to add this from RC0.48. Snapser handles this)
+        schema: TokenHeaderSchema
       responses:
         200:
           content:
@@ -72,7 +74,7 @@ def api_one(user_id):
     user_id_header = request.headers.get(USER_ID_HEADER_KEY)
     # Success state
     return make_response(jsonify({
-        'api': api_one.__name__,
+        'api': get_game.__name__,
         'auth-type': auth_type_header,
         'header-user-id': user_id_header if user_id_header else 'N/A',
         'path-user-id': user_id,
@@ -94,11 +96,11 @@ def health():
 ```python
 # Register your endpoints
 app.add_url_rule('/v1/byosnap-basic/users/<user_id>/game',
-                 view_func=api_one, methods=['GET']) # (👈 #1 Add the rule)
+                 view_func=get_game, methods=['GET']) # (👈 #1 Add the rule)
 
 # Generate paths using the FlaskPlugin
 with app.test_request_context():
-    spec.path(view=api_one) # (👈 #1 Add the path)
+    spec.path(view=get_game) # (👈 #1 Add the path)
 ```
 - If you add any new Schemas make sure you register them here
 ```python
@@ -110,16 +112,19 @@ spec.components.schema("UserIdParameterSchema", schema=UserIdParameterSchema)
 """API that is accessible by User, Api-Key and Internal auth (👈 This is just for you. The ApiSpec does not use this)
     ---
     get:
-      summary: 'API One' (👈 [Required] Give any short name)
+      summary: 'Game APIs' (👈 [Required] Give any short name. This is used to group APIs together)
       description: This API will work with User and Api-Key auth. With a valid user token and api-key,you can access this API. (👈 [Required] Give any verbose description)
-      operationId: 'API One' (👈 [Required] Powers the API Name in the SDK and the Api Explorer)
+      operationId: 'Get Game' (👈 [Required] Powers the API Name in the SDK and the Api Explorer)
       x-snapser-auth-types: (👈 [Required] So Snapser shows or hides this API in the SDK and API Explorer)
         - user
         - api-key
         - internal
-      parameters: (👈 [Required] No need to add any Token or Api-Key headers. Snapser handles this)
+      parameters:
       - in: path
         schema: UserIdParameterSchema
+      - in: header (👈 [NOTE] No need to add this from RC0.48. Snapser handles this)
+        schema: TokenHeaderSchema
+
       responses:
         200:
           content:
