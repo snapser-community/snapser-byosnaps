@@ -16,11 +16,19 @@
     "/v1/byosnap-basic/users/{user_id}" : {
       "delete" : {
         "description" : "This API will work only when the call is coming from within the Snapend.",
-        "operationId" : "API Three",
+        "operationId" : "Delete User",
         "parameters" : [ {
           "description" : "Unique identifier of the user",
           "in" : "path",
           "name" : "user_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "User Session Token",
+          "in" : "header",
+          "name" : "Token",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -48,18 +56,26 @@
             "description" : "Unauthorized access"
           }
         },
-        "summary" : "API Three",
+        "summary" : "User APIs",
         "x-snapser-auth-types" : [ "internal" ]
       }
     },
     "/v1/byosnap-basic/users/{user_id}/game" : {
       "get" : {
         "description" : "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
-        "operationId" : "apiOneHandler",
+        "operationId" : "Get Game",
         "parameters" : [ {
           "description" : "Unique identifier of the user",
           "in" : "path",
           "name" : "user_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "User Session Token",
+          "in" : "header",
+          "name" : "Token",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -87,16 +103,24 @@
             "description" : "Unauthorized access"
           }
         },
-        "summary" : "Retrieves game data for a specified user",
+        "summary" : "Game APIs",
         "x-snapser-auth-types" : [ "user", "api-key", "internal" ]
       },
       "post" : {
         "description" : "This API will work only with Api-Key auth. You can access this API with a valid api-key.",
-        "operationId" : "API Two",
+        "operationId" : "Save Game",
         "parameters" : [ {
           "description" : "Unique identifier of the user",
           "in" : "path",
           "name" : "user_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "User Session Token",
+          "in" : "header",
+          "name" : "Token",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -124,18 +148,26 @@
             "description" : "Unauthorized access"
           }
         },
-        "summary" : "API Two",
+        "summary" : "Game APIs",
         "x-snapser-auth-types" : [ "api-key", "internal" ]
       }
     },
     "/v1/byosnap-basic/users/{user_id}/profile" : {
       "put" : {
         "description" : "This API will work only when the call is coming from within the Snapend.",
-        "operationId" : "API Four",
+        "operationId" : "Update User Profile",
         "parameters" : [ {
           "description" : "Unique identifier of the user",
           "in" : "path",
           "name" : "user_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "User Session Token",
+          "in" : "header",
+          "name" : "Token",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -163,7 +195,7 @@
             "description" : "Unauthorized access"
           }
         },
-        "summary" : "API Four",
+        "summary" : "User APIs",
         "x-snapser-auth-types" : [ "user", "api-key", "internal" ]
       }
     }

@@ -2,9 +2,9 @@
     "paths": {
         "/v1/byosnap-basic/users/{user_id}/game": {
             "get": {
-                "summary": "API One",
+                "summary": "Game APIs",
                 "description": "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
-                "operationId": "API One",
+                "operationId": "Get Game",
                 "x-snapser-auth-types": [
                     "user",
                     "api-key",
@@ -14,6 +14,14 @@
                     {
                         "in": "path",
                         "name": "user_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "Token",
                         "schema": {
                             "type": "string"
                         },
@@ -54,9 +62,9 @@
                 }
             },
             "post": {
-                "summary": "API Two",
+                "summary": "Game APIs",
                 "description": "This API will work only with Api-Key auth. You can access this API with a valid api-key.",
-                "operationId": "API Two",
+                "operationId": "Save Game",
                 "x-snapser-auth-types": [
                     "api-key",
                     "internal"
@@ -65,6 +73,14 @@
                     {
                         "in": "path",
                         "name": "user_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "Token",
                         "schema": {
                             "type": "string"
                         },
@@ -107,9 +123,9 @@
         },
         "/v1/byosnap-basic/users/{user_id}": {
             "delete": {
-                "summary": "API Three",
+                "summary": "User APIs",
                 "description": "This API will work only when the call is coming from within the Snapend.",
-                "operationId": "API Three",
+                "operationId": "Delete User",
                 "x-snapser-auth-types": [
                     "internal"
                 ],
@@ -117,6 +133,14 @@
                     {
                         "in": "path",
                         "name": "user_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "Token",
                         "schema": {
                             "type": "string"
                         },
@@ -159,9 +183,9 @@
         },
         "/v1/byosnap-basic/users/{user_id}/profile": {
             "put": {
-                "summary": "API Four",
+                "summary": "User APIs",
                 "description": "This API will work for all auth types.",
-                "operationId": "API Four",
+                "operationId": "Update User Profile",
                 "x-snapser-auth-types": [
                     "user",
                     "api-key",
@@ -171,6 +195,14 @@
                     {
                         "in": "path",
                         "name": "user_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "Token",
                         "schema": {
                             "type": "string"
                         },
@@ -219,6 +251,17 @@
     "openapi": "3.0.2",
     "components": {
         "schemas": {
+            "TokenHeaderSchema": {
+                "type": "object",
+                "properties": {
+                    "Token": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "Token"
+                ]
+            },
             "UserIdParameterSchema": {
                 "type": "object",
                 "properties": {
@@ -238,19 +281,19 @@
             "SuccessResponseSchema": {
                 "type": "object",
                 "properties": {
-                    "path_user_id": {
+                    "api": {
                         "type": "string"
                     },
                     "header_user_id": {
                         "type": "string"
                     },
+                    "auth_type": {
+                        "type": "string"
+                    },
                     "message": {
                         "type": "string"
                     },
-                    "api": {
-                        "type": "string"
-                    },
-                    "auth_type": {
+                    "path_user_id": {
                         "type": "string"
                     }
                 }

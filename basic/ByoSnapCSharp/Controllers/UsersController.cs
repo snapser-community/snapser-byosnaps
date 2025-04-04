@@ -5,11 +5,14 @@ using System.Linq;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+
 
 namespace ByoSnapCSharp.Controllers
 {
   [ApiController]
   [Route("v1/byosnap-basic/users/{UserId}")]
+  [Produces("application/json")]
   public class UsersController : ControllerBase
   {
     [HttpGet("game")]
@@ -18,8 +21,9 @@ namespace ByoSnapCSharp.Controllers
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
-    [SwaggerOperation(Summary = "API One", Description = "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.", OperationId = "API One")]
-    public ActionResult<SuccessResponseSchema> ApiOne([FromRoute] UserIdParameterSchema userParams)
+    [SwaggerOperation(OperationId = "Get Game", Summary = "Game APIs", Description = "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.")]
+
+    public ActionResult<SuccessResponseSchema> GetGame([FromRoute] UserIdParameterSchema userParams)
     {
       var authTypeHeader = HttpContext.Request.Headers["Auth-Type"].FirstOrDefault();
       var userIdHeader = HttpContext.Request.Headers["User-Id"].FirstOrDefault();
@@ -39,14 +43,14 @@ namespace ByoSnapCSharp.Controllers
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
-    [SwaggerOperation(Summary = "API Two", Description = "This API will work only with Api-Key auth. You can access this API with a valid api-key.", OperationId = "API Two")]
-    public ActionResult<SuccessResponseSchema> ApiTwo([FromRoute] UserIdParameterSchema userParams)
+    [SwaggerOperation(OperationId = "Save Game", Summary = "Game APIs", Description = "This API will work only with Api-Key auth. You can access this API with a valid api-key.")]
+    public ActionResult<SuccessResponseSchema> SaveGame([FromRoute] UserIdParameterSchema userParams)
     {
       var authTypeHeader = HttpContext.Request.Headers["Auth-Type"].FirstOrDefault();
       var userIdHeader = HttpContext.Request.Headers["User-Id"].FirstOrDefault();
       return Ok(new SuccessResponseSchema
       {
-        Api = "PostGame",
+        Api = "SaveGame",
         AuthType = authTypeHeader ?? "N/A",
         HeaderUserId = userIdHeader ?? "N/A",
         PathUserId = userParams.UserId,
@@ -60,8 +64,8 @@ namespace ByoSnapCSharp.Controllers
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
-    [SwaggerOperation(Summary = "API Three", Description = "This API will work only when the call is coming from within the Snapend.", OperationId = "API Three")]
-    public ActionResult<SuccessResponseSchema> ApiThree([FromRoute] UserIdParameterSchema userParams)
+    [SwaggerOperation(OperationId = "Delete User", Summary = "User APIs", Description = "This API will work only when the call is coming from within the Snapend.")]
+    public ActionResult<SuccessResponseSchema> DeleteUser([FromRoute] UserIdParameterSchema userParams)
     {
       var gatewayHeader = HttpContext.Request.Headers["Gateway"].FirstOrDefault();
       var userIdHeader = HttpContext.Request.Headers["User-Id"].FirstOrDefault();
@@ -81,14 +85,14 @@ namespace ByoSnapCSharp.Controllers
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
-    [SwaggerOperation(Summary = "API Four", Description = "This API will work for all auth types.", OperationId = "API Four")]
-    public ActionResult<SuccessResponseSchema> ApiFour([FromRoute] UserIdParameterSchema userParams)
+    [SwaggerOperation(OperationId = "Update User Profile", Summary = "User APIs", Description = "This API will work for all auth types.")]
+    public ActionResult<SuccessResponseSchema> UpdateUserProfile([FromRoute] UserIdParameterSchema userParams)
     {
       var gatewayHeader = HttpContext.Request.Headers["Gateway"].FirstOrDefault();
       var userIdHeader = HttpContext.Request.Headers["User-Id"].FirstOrDefault();
       return Ok(new SuccessResponseSchema
       {
-        Api = "UpdateProfile",
+        Api = "UpdateUserProfile",
         AuthType = gatewayHeader ?? "N/A",
         HeaderUserId = userIdHeader ?? "N/A",
         PathUserId = userParams.UserId,

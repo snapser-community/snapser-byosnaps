@@ -9,7 +9,7 @@ import { Controller, Route, Get, Path, Post, Put, Delete, Extension, Header, Mid
 export class UserController extends Controller {
 
     /**
-     * @summary Api One
+     * @summary Game APIs
      */
     @Get("{userId}/game")
     @Extension("x-description", 'This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.')
@@ -17,9 +17,10 @@ export class UserController extends Controller {
     @Response<SuccessResponse>(200, "Successful Response")
     @Response<ErrorResponse>(401, "Unauthorized")
     @Middlewares([authMiddleware(["user", "api-key", "internal"])])
-    public async apiOne(
+    public async getGame(
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
+        @Header('Token') token: string,
         @Request() req: ExpressRequest
     ): Promise<SuccessResponse> {
       const expressReq = req as ExpressRequest;
@@ -35,7 +36,7 @@ export class UserController extends Controller {
     }
 
     /**
-     * @summary Api Two
+     * @summary Game APIs
      */
     @Post("{userId}/game")
     @Extension("x-description", 'This API will work only with Api-Key auth. You can access this API with a valid api-key.')
@@ -43,7 +44,8 @@ export class UserController extends Controller {
     @Response<SuccessResponse>(200, "Successful Response")
     @Response<ErrorResponse>(401, "Unauthorized")
     @Middlewares([authMiddleware(["api-key", "internal"])])
-    public async apiTwo(
+    public async saveGame(
+        @Header('Token') token: string,
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
         @Request() req: ExpressRequest
@@ -52,7 +54,7 @@ export class UserController extends Controller {
       const authType = expressReq.header("Auth-Type");
       const headerUserId = expressReq.header("User-Id");
       return {
-        api: 'postGame',
+        api: 'saveGame',
         authType: authType ?? 'N/A',
         headerUserId: headerUserId ?? 'N/A',
         pathUserId: userId,
@@ -61,7 +63,7 @@ export class UserController extends Controller {
     }
 
     /**
-     * @summary Api Three
+     * @summary User APIs
      */
     @Delete("{userId}")
     @Extension("x-description", 'This API will work only when the call is coming from within the Snapend.')
@@ -70,6 +72,7 @@ export class UserController extends Controller {
     @Response<ErrorResponse>(401, "Unauthorized")
     @Middlewares([authMiddleware(["internal"])])
     public async apiThree(
+        @Header('Token') token: string,
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
         @Request() req: ExpressRequest
@@ -87,7 +90,7 @@ export class UserController extends Controller {
     }
 
     /**
-     * @summary Api Four
+     * @summary User APIs
      */
     @Put("{userId}/profile")
     @Extension("x-description", 'This API will work for all auth types.')
@@ -95,7 +98,8 @@ export class UserController extends Controller {
     @Response<SuccessResponse>(200, "Successful Response")
     @Response<ErrorResponse>(401, "Unauthorized")
     @Middlewares([authMiddleware(["user", "api-key", "internal"])])
-    public async apiFour(
+    public async updateUserProfile(
+        @Header('Token') token: string,
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
         @Request() req: ExpressRequest
@@ -104,7 +108,7 @@ export class UserController extends Controller {
       const authType = expressReq.header("Auth-Type");
       const headerUserId = expressReq.header("User-Id");
       return {
-        api: 'updateProfile',
+        api: 'updateUserProfile',
         authType: authType ?? 'N/A',
         headerUserId: headerUserId ?? 'N/A',
         pathUserId: userId,

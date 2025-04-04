@@ -119,13 +119,13 @@ def health():
 
 @app.route("/v1/byosnap-basic/users/<user_id>/game", methods=["GET"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
-def api_one(user_id):
+def get_game(user_id):
     """API that is accessible by User, Api-Key and Internal auth
     ---
     get:
-      summary: 'API One'
+      summary: 'Game APIs'
       description: This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.
-      operationId: 'API One'
+      operationId: 'Get Game'
       x-snapser-auth-types:
         - user
         - api-key
@@ -133,6 +133,8 @@ def api_one(user_id):
       parameters:
       - in: path
         schema: UserIdParameterSchema
+      - in: header
+        schema: TokenHeaderSchema
       responses:
         200:
           content:
@@ -155,7 +157,7 @@ def api_one(user_id):
     user_id_header = request.headers.get(USER_ID_HEADER_KEY)
     # Success state
     return make_response(jsonify({
-        'api': api_one.__name__,
+        'api': get_game.__name__,
         'auth-type': auth_type_header,
         'header-user-id': user_id_header if user_id_header else 'N/A',
         'path-user-id': user_id,
@@ -165,19 +167,21 @@ def api_one(user_id):
 
 @app.route("/v1/byosnap-basic/users/<user_id>/game", methods=["POST"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
-def api_two(user_id):
+def save_game(user_id):
     """API that is accessible by Api-Key and Internal auth. User auth will not be allowed. Code does this by checking the Auth-Type header.
     ---
     post:
-      summary: 'API Two'
+      summary: 'Game APIs'
       description: This API will work only with Api-Key auth. You can access this API with a valid api-key.
-      operationId: 'API Two'
+      operationId: 'Save Game'
       x-snapser-auth-types:
         - api-key
         - internal
       parameters:
       - in: path
         schema: UserIdParameterSchema
+      - in: header
+        schema: TokenHeaderSchema
       responses:
         200:
           content:
@@ -198,7 +202,7 @@ def api_two(user_id):
     auth_type_header = request.headers.get(AUTH_TYPE_HEADER_KEY)
     user_id_header = request.headers.get(USER_ID_HEADER_KEY)
     return make_response(jsonify({
-        'api': api_two.__name__,
+        'api': save_game.__name__,
         'auth-type': auth_type_header,
         'header-user-id': user_id_header if user_id_header else 'N/A',
         'path-user-id': user_id,
@@ -208,18 +212,20 @@ def api_two(user_id):
 
 @app.route("/v1/byosnap-basic/users/<user_id>", methods=["DELETE"])
 @validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
-def api_three(user_id):
+def delete_user(user_id):
     """API that is only accessible via Internal auth. Both User Auth calls and Api-Key Auth calls will NOT work, as they are external calls. This is done by checking the Gateway header.
     ---
     delete:
-      summary: 'API Three'
+      summary: 'User APIs'
       description: This API will work only when the call is coming from within the Snapend.
-      operationId: 'API Three'
+      operationId: 'Delete User'
       x-snapser-auth-types:
         - internal
       parameters:
       - in: path
         schema: UserIdParameterSchema
+      - in: header
+        schema: TokenHeaderSchema
       responses:
         200:
           content:
@@ -240,7 +246,7 @@ def api_three(user_id):
     gateway_header = request.headers.get(GATEWAY_HEADER_KEY)
     user_id_header = request.headers.get(USER_ID_HEADER_KEY)
     return make_response(jsonify({
-        'api': api_three.__name__,
+        'api': delete_user.__name__,
         'auth-type': gateway_header,
         'header-user-id': user_id_header if user_id_header else 'N/A',
         'path-user-id': user_id,
@@ -250,13 +256,13 @@ def api_three(user_id):
 
 @app.route("/v1/byosnap-basic/users/<user_id>/profile", methods=["PUT"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
-def api_four(user_id):
+def update_user_profile(user_id):
     """TODO: API for you to update
     ---
     put:
-      summary: 'API Four'
+      summary: 'User APIs'
       description: This API will work for all auth types.
-      operationId: 'API Four'
+      operationId: 'Update User Profile'
       x-snapser-auth-types:
         - user
         - api-key
@@ -264,6 +270,8 @@ def api_four(user_id):
       parameters:
       - in: path
         schema: UserIdParameterSchema
+      - in: header
+        schema: TokenHeaderSchema
       responses:
         200:
           content:
@@ -284,7 +292,7 @@ def api_four(user_id):
     gateway_header = request.headers.get(GATEWAY_HEADER_KEY)
     user_id_header = request.headers.get(USER_ID_HEADER_KEY)
     return make_response(jsonify({
-        'api': api_four.__name__,
+        'api': update_user_profile.__name__,
         'auth-type': gateway_header,
         'header-user-id': user_id_header if user_id_header else 'N/A',
         'path-user-id': user_id,
