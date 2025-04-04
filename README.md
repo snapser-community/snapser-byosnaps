@@ -20,6 +20,8 @@ We also encourage contributions from our vibrant community. If you have develope
 
 ## Legacy Examples
 
+NOTE: We are in the process of moving these under the appropriate folders like `intermediate/` and `advanced/` tutorials.
+
 Below are some of the examples available in this repository:
 
 1. **[Go Example](https://github.com/snapser-community/snapser-byosnaps/tree/main/legacy/byosnap-go)**
