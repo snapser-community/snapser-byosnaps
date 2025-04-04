@@ -43,17 +43,17 @@ func main() {
 	r.HandleFunc("/healthz", HealthCheckHandler).Methods("GET")
 
 	// API Endpoints
-	apiOneHandler := http.HandlerFunc(ApiOneHandler)
-	r.Handle("/v1/byosnap-basic/users/{user_id}/game", validateAuthorization([]string{AuthTypeHeaderValueUserAuth, AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "user_id")(apiOneHandler)).Methods("GET")
+	getGameHandler := http.HandlerFunc(GetGame)
+	r.Handle("/v1/byosnap-basic/users/{user_id}/game", validateAuthorization([]string{AuthTypeHeaderValueUserAuth, AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "user_id")(getGameHandler)).Methods("GET")
 
-	apiTwoHandler := http.HandlerFunc(ApiTwoHandler)
-	r.Handle("/v1/byosnap-basic/users/{user_id}/game", validateAuthorization([]string{AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "user_id")(apiTwoHandler)).Methods("POST")
+	saveGameHandler := http.HandlerFunc(SaveGame)
+	r.Handle("/v1/byosnap-basic/users/{user_id}/game", validateAuthorization([]string{AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "user_id")(saveGameHandler)).Methods("POST")
 
-	apiThreeHandler := http.HandlerFunc(ApiThreeHandler)
-	r.Handle("/v1/byosnap-basic/users/{user_id}", validateAuthorization([]string{GatewayHeaderValueInternalOrigin}, "user_id")(apiThreeHandler)).Methods("DELETE")
+	deleteUserHandler := http.HandlerFunc(DeleteUser)
+	r.Handle("/v1/byosnap-basic/users/{user_id}", validateAuthorization([]string{GatewayHeaderValueInternalOrigin}, "user_id")(deleteUserHandler)).Methods("DELETE")
 
-	apiFourHandler := http.HandlerFunc(ApiFourHandler)
-	r.Handle("/v1/byosnap-basic/users/{user_id}/profile", validateAuthorization([]string{AuthTypeHeaderValueUserAuth, AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "user_id")(apiFourHandler)).Methods("PUT")
+	updateUserProfileHandler := http.HandlerFunc(UpdateUserProfile)
+	r.Handle("/v1/byosnap-basic/users/{user_id}/profile", validateAuthorization([]string{AuthTypeHeaderValueUserAuth, AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "user_id")(updateUserProfileHandler)).Methods("PUT")
 
 	// Start server
 	log.Println("Starting server on :5003")
@@ -66,18 +66,23 @@ func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Ok"))
 }
 
-// ApiOneHandler handles the GET request for an API endpoint
-// swagger:operation GET /v1/byosnap-basic/users/{user_id}/game apiOne
+// PostGameHandler handles the GET request for an API endpoint
+// swagger:operation GET /v1/byosnap-basic/users/{user_id}/game postGame
 // ---
-// summary: Retrieves game data for a specified user
+// summary: Game APIs
 // description: This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.
-// operationId: apiOneHandler
+// operationId: Get Game
 // x-snapser-auth-types: ["user", "api-key", "internal"]
 // parameters:
 //   - name: user_id
 //     in: path
 //     required: true
 //     description: Unique identifier of the user
+//     type: string
+//   - name: Token
+//     in: header
+//     required: true
+//     description: User Session Token
 //     type: string
 // responses:
 //   200:
@@ -88,13 +93,13 @@ func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 //     description: Unauthorized access
 //     schema:
 //       $ref: '#/definitions/ErrorResponseSchema'
-func ApiOneHandler(w http.ResponseWriter, r *http.Request) {
+func GetGame(w http.ResponseWriter, r *http.Request) {
 	// Simulate fetching data or processing something
 	// Get the header auth-type from the request
 	authType := r.Header.Get("Auth-Type")
 	userIdHeader := r.Header.Get("User-Id")
 	response := SuccessResponseSchema{
-		API:          "ApiOneHandler",
+		API:          "GetGame",
 		AuthType:     authType,
 		HeaderUserID: userIdHeader,
 		PathUserID:   mux.Vars(r)["user_id"],
@@ -114,12 +119,12 @@ func ApiOneHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonResponse)
 }
 
-// ApiTwoHandler handles the POST request for an API endpoint
-// swagger:operation POST /v1/byosnap-basic/users/{user_id}/game apiTwo
+// SaveGameHandler handles the POST request for an API endpoint
+// swagger:operation POST /v1/byosnap-basic/users/{user_id}/game saveGame
 // ---
-// summary: API Two
+// summary: Game APIs
 // description: This API will work only with Api-Key auth. You can access this API with a valid api-key.
-// operationId: API Two
+// operationId: Save Game
 // x-snapser-auth-types: ["api-key", "internal"]
 // parameters:
 //   - name: user_id
@@ -127,6 +132,11 @@ func ApiOneHandler(w http.ResponseWriter, r *http.Request) {
 //     required: true
 //     description: Unique identifier of the user
 //     type: string
+//   - name: Token
+//     in: header
+//     required: true
+//     description: User Session Token
+//     type: string
 // responses:
 //   200:
 //     description: Successfully retrieved data
@@ -136,7 +146,7 @@ func ApiOneHandler(w http.ResponseWriter, r *http.Request) {
 //     description: Unauthorized access
 //     schema:
 //       $ref: '#/definitions/ErrorResponseSchema'
-func ApiTwoHandler(w http.ResponseWriter, r *http.Request) {
+func SaveGame(w http.ResponseWriter, r *http.Request) {
 	// Simulate fetching data or processing something
 	// Get the header auth-type from the request
 	authType := r.Header.Get("Auth-Type")
@@ -145,7 +155,7 @@ func ApiTwoHandler(w http.ResponseWriter, r *http.Request) {
 		userIdHeader = "N/A"
 	}
 	response := SuccessResponseSchema{
-		API:          "ApiTwoHandler",
+		API:          "PostGame",
 		AuthType:     authType,
 		HeaderUserID: userIdHeader,
 		PathUserID:   mux.Vars(r)["user_id"],
@@ -165,12 +175,12 @@ func ApiTwoHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonResponse)
 }
 
-// ApiThreeHandler handles the DELETE request for an API endpoint
-// swagger:operation DELETE /v1/byosnap-basic/users/{user_id} apiThree
+// DeleteUserHandler handles the DELETE request for an API endpoint
+// swagger:operation DELETE /v1/byosnap-basic/users/{user_id} deleteUser
 // ---
-// summary: API Three
+// summary: User APIs
 // description: This API will work only when the call is coming from within the Snapend.
-// operationId: API Three
+// operationId: Delete User
 // x-snapser-auth-types: ["internal"]
 // parameters:
 //   - name: user_id
@@ -178,6 +188,11 @@ func ApiTwoHandler(w http.ResponseWriter, r *http.Request) {
 //     required: true
 //     description: Unique identifier of the user
 //     type: string
+//   - name: Token
+//     in: header
+//     required: true
+//     description: User Session Token
+//     type: string
 // responses:
 //   200:
 //     description: Successfully retrieved data
@@ -187,7 +202,7 @@ func ApiTwoHandler(w http.ResponseWriter, r *http.Request) {
 //     description: Unauthorized access
 //     schema:
 //       $ref: '#/definitions/ErrorResponseSchema'
-func ApiThreeHandler(w http.ResponseWriter, r *http.Request) {
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	// Simulate fetching data or processing something
 	// Get the header auth-type from the request
 	authType := r.Header.Get("Auth-Type")
@@ -196,7 +211,7 @@ func ApiThreeHandler(w http.ResponseWriter, r *http.Request) {
 		userIdHeader = "N/A"
 	}
 	response := SuccessResponseSchema{
-		API:          "ApiThreeHandler",
+		API:          "DeleteUser",
 		AuthType:     authType,
 		HeaderUserID: userIdHeader,
 		PathUserID:   mux.Vars(r)["user_id"],
@@ -216,18 +231,23 @@ func ApiThreeHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonResponse)
 }
 
-// ApiFourHandler handles the PUT request for an API endpoint. TODO: For you to update
-// swagger:operation PUT /v1/byosnap-basic/users/{user_id}/profile apiFour
+// UpdateUserProfileHandler handles the PUT request for an API endpoint. TODO: For you to update
+// swagger:operation PUT /v1/byosnap-basic/users/{user_id}/profile updateUserProfile
 // ---
-// summary: API Four
+// summary: User APIs
 // description: This API will work only when the call is coming from within the Snapend.
-// operationId: API Four
+// operationId: Update User Profile
 // x-snapser-auth-types: ["user", "api-key", "internal"]
 // parameters:
 //   - name: user_id
 //     in: path
 //     required: true
 //     description: Unique identifier of the user
+//     type: string
+//   - name: Token
+//     in: header
+//     required: true
+//     description: User Session Token
 //     type: string
 // responses:
 //   200:
@@ -238,7 +258,7 @@ func ApiThreeHandler(w http.ResponseWriter, r *http.Request) {
 //     description: Unauthorized access
 //     schema:
 //       $ref: '#/definitions/ErrorResponseSchema'
-func ApiFourHandler(w http.ResponseWriter, r *http.Request) {
+func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
 	// Simulate fetching data or processing something
 	// Get the header auth-type from the request
 	authType := r.Header.Get("Auth-Type")
@@ -247,7 +267,7 @@ func ApiFourHandler(w http.ResponseWriter, r *http.Request) {
 		userIdHeader = "N/A"
 	}
 	response := SuccessResponseSchema{
-		API:          "ApiFourHandler",
+		API:          "UpdateUserProfile",
 		AuthType:     authType,
 		HeaderUserID: userIdHeader,
 		PathUserID:   mux.Vars(r)["user_id"],

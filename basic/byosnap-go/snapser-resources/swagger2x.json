@@ -23,14 +23,21 @@
     "/v1/byosnap-basic/users/{user_id}": {
       "delete": {
         "description": "This API will work only when the call is coming from within the Snapend.",
-        "summary": "API Three",
-        "operationId": "API Three",
+        "summary": "User APIs",
+        "operationId": "Delete User",
         "parameters": [
           {
             "type": "string",
             "description": "Unique identifier of the user",
             "name": "user_id",
             "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "User Session Token",
+            "name": "Token",
+            "in": "header",
             "required": true
           }
         ],
@@ -56,14 +63,21 @@
     "/v1/byosnap-basic/users/{user_id}/game": {
       "get": {
         "description": "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
-        "summary": "Retrieves game data for a specified user",
-        "operationId": "apiOneHandler",
+        "summary": "Game APIs",
+        "operationId": "Get Game",
         "parameters": [
           {
             "type": "string",
             "description": "Unique identifier of the user",
             "name": "user_id",
             "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "User Session Token",
+            "name": "Token",
+            "in": "header",
             "required": true
           }
         ],
@@ -89,14 +103,21 @@
       },
       "post": {
         "description": "This API will work only with Api-Key auth. You can access this API with a valid api-key.",
-        "summary": "API Two",
-        "operationId": "API Two",
+        "summary": "Game APIs",
+        "operationId": "Save Game",
         "parameters": [
           {
             "type": "string",
             "description": "Unique identifier of the user",
             "name": "user_id",
             "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "User Session Token",
+            "name": "Token",
+            "in": "header",
             "required": true
           }
         ],
@@ -123,14 +144,21 @@
     "/v1/byosnap-basic/users/{user_id}/profile": {
       "put": {
         "description": "This API will work only when the call is coming from within the Snapend.",
-        "summary": "API Four",
-        "operationId": "API Four",
+        "summary": "User APIs",
+        "operationId": "Update User Profile",
         "parameters": [
           {
             "type": "string",
             "description": "Unique identifier of the user",
             "name": "user_id",
             "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "User Session Token",
+            "name": "Token",
+            "in": "header",
             "required": true
           }
         ],

@@ -45,8 +45,8 @@ IMPORTANT: But you also have to pass those auth types to the middleware so that 
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
 [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
 [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
-[SwaggerOperation(Summary = "API One", Description = "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.", OperationId = "API One")]
-public ActionResult<SuccessResponseSchema> ApiOne([FromRoute] UserIdParameterSchema userParams)
+[SwaggerOperation(OperationId = "Get Game", Summary = "Game APIs", Description = "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.")]
+public ActionResult<SuccessResponseSchema> GetGame([FromRoute] UserIdParameterSchema userParams)
 {
   var authTypeHeader = HttpContext.Request.Headers["Auth-Type"].FirstOrDefault();
   var userIdHeader = HttpContext.Request.Headers["User-Id"].FirstOrDefault();
@@ -72,8 +72,8 @@ public ActionResult<SuccessResponseSchema> ApiOne([FromRoute] UserIdParameterSch
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
-    [SwaggerOperation(Summary = "API One", Description = "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.", OperationId = "API One")] // (👈 Notice no header has been added here)
-    public ActionResult<SuccessResponseSchema> ApiOne([FromRoute] UserIdParameterSchema userParams)
+    [SwaggerOperation(OperationId = "Get Game", Summary = "Game APIs", Description = "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.")] // (👈 Notice no header has been added here)
+    public ActionResult<SuccessResponseSchema> GetGame([FromRoute] UserIdParameterSchema userParams)
     {
       var authTypeHeader = HttpContext.Request.Headers["Auth-Type"].FirstOrDefault();
       var userIdHeader = HttpContext.Request.Headers["User-Id"].FirstOrDefault();
@@ -141,7 +141,7 @@ public class UsersController : ControllerBase
   [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
   [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
   [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
-  [SwaggerOperation(Summary = "API One", Description = "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.", OperationId = "API One")] // (👈 OperationId is used to generate the method name in the SDK and in the API Explorer. Summary and Description fields are required.)
+  [SwaggerOperation(OperationId = "Get Game", Summary = "Game APIs", Description = "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.")] // (👈 OperationId is used to generate the method name in the SDK and in the API Explorer. Summary and Description fields are required.)
 ...
   }
 ```

@@ -12,7 +12,7 @@ What to Watch Out For When Working in This Repo
 export class UserController extends Controller {
 
     /**
-     * @summary Api One
+     * @summary Game APIs
      */
     @Get("{userId}/game")
     ...
@@ -24,7 +24,7 @@ export class UserController extends Controller {
 IMPORTANT: But you also have to pass those auth types to the middleware so that you get Authorization checks for free. Just adding those tags for swagger, are not going to do the authorization check for you.
 ```typescript
 /**
- * @summary Api One
+ * @summary Game APIs
  */
 @Get("{userId}/game")
 @Extension("x-description", 'This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.')
@@ -32,7 +32,7 @@ IMPORTANT: But you also have to pass those auth types to the middleware so that 
 @Response<SuccessResponse>(200, "Successful Response")
 @Response<ErrorResponse>(401, "Unauthorized")
 @Middlewares([authMiddleware(["user", "api-key", "internal"])]) // (👈 This tells the middleware that user auth, app auth and internal auth are allowed for this method)
-public async apiOne(
+public async getGame(
     @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
     @Path() userId: string,
     @Request() req: ExpressRequest
@@ -54,7 +54,7 @@ public async apiOne(
 ```typescript
 //As you can see, we are not adding any Token or Api-Key Auth headers. Snapser handles that for you.
 /**
- * @summary Api One
+ * @summary Game APIs
  */
 @Get("{userId}/game")
 @Extension("x-description", 'This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.')
@@ -92,7 +92,7 @@ import { ErrorResponse, SuccessResponse } from '../types/responses';
 - The @summary comment you see in the controller is actually used to create the swagger summary for the API. So make sure every API has a JDOC
 ```typescript
 /**
- * @summary Api One
+ * @summary Game APIs
  */
 @Get("{userId}/game")
 @Extension("x-description", 'This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.')

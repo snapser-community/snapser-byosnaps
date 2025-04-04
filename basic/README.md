@@ -16,17 +16,22 @@ accessible via the Snapser API Explorer tool and you will also be able to genera
 ### A. Snapser CLI
 Before you begin, make sure you have access to use the Snapser CLI tool.
 
-#### Setup Snapser CLI
+<div className="parent">
+  <div className="tutorialBox">
+    # Setup Snapser CLI
 
-You can go through the Setup Snapser CLI [tutorial](https://github.com/snapser-community/snapser-byosnaps/tree/main/basic/SETUP.md) to install and configure Snapctl.
+    You can go through the Setup Snapser CLI [tutorial](https://github.com/snapser-community/snapser-byosnaps/tree/main/basic/SETUP.md) to install and configure Snapctl.
 
+  </div>
+</div>
 
 <Checkpoint step={0}>
   You are now ready to begin the tutorial.
 </Checkpoint>
 
 ## Step 1: Check out the example code
-We have BYOSnap examples in multiple languages that you can use to get started. Check out the snapser-community BYOSnap [repo](https://github.com/snapser-community/snapser-byosnaps/tree/main/basic)
+We have BYOSnap examples in multiple languages that you can use to get started. Check out the snapser-community BYOSnap [repo](https://github.com/snapser-community/snapser-byosnaps/tree/main/basic).
+
 Snapser has examples for the following languages:
   - C#
   - Go
@@ -452,3 +457,4 @@ to generate the Swagger spec for you. This is how you will generate the Swagger 
 We are in the process of creating more advanced tutorisl
 1. Tutorial to show you how you can talk to your Snapend Snaps from your BYOSnap.
 2. Tutorial to show how to integrated your BYOSnap with the various Snapend hooks like, configuration import, user reset and event bus events.
+
