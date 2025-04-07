@@ -53,8 +53,8 @@ namespace ByoSnapCSharp.Filters
       // Get User Id Header
       var userIdHeaderValue = request.Headers[AppConstants.userIdHeaderKey].FirstOrDefault() ?? "";
       var targetUser = ExtractUserId(context);
-      var isTargetUser = userIdHeaderValue.ToLower() == targetUser && !string.IsNullOrEmpty(userIdHeaderValue);
-      logger.LogInformation("User ID auth detected." + userIdHeaderValue + " == " + targetUser);
+      var isTargetUser = userIdHeaderValue == targetUser && !string.IsNullOrEmpty(userIdHeaderValue);
+      // logger.LogInformation("User ID auth detected." + userIdHeaderValue + " == " + targetUser);
 
       // Validate
       bool validationPassed = false;

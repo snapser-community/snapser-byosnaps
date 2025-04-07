@@ -50,7 +50,7 @@ def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
             user_id_header_value = request.headers.get(USER_ID_HEADER_KEY, "")
             target_user = kwargs.get(user_id_resource_key, "")
             is_target_user = \
-                user_id_header_value.lower() == target_user and user_id_header_value != ""
+                user_id_header_value == target_user and user_id_header_value != ""
 
             # Validate
             validation_passed = False
