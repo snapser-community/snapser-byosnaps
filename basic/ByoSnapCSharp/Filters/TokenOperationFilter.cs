@@ -5,7 +5,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
 
 //TODO: Deprecate this once 0.48 goes out, as Snapser handles this for users for free.
-public class AddHeaderAttribute : IOperationFilter
+public class TokenOperationFilter : IOperationFilter
 {
   public void Apply(OpenApiOperation operation, OperationFilterContext context)
   {

@@ -12,7 +12,7 @@ namespace ByoSnapCSharp.Controllers
   ...
 }
 ```
-- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-python-basic and remaining_path = /users/<user_id>.
+- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-basic and remaining_path = /users/<user_id>.
 ```csharp
 namespace ByoSnapCSharp.Controllers
 {
@@ -22,7 +22,7 @@ namespace ByoSnapCSharp.Controllers
   ...
 }
 ```
-- Notice the `x-snapser-auth-types` tags in the endpoint annotations and swagger.json. They tell Snapser if it should expose this API in the SDK and the API Explorer. Note: but you should still validate the auth type in the code.
+- Notice the `x-snapser-auth-types` tags in the endpoint annotations and swagger.json. They tell Snapser if it should expose this API in the SDK and the API Explorer. Note: but you should still validate the auth type in the code. Hence you will always see every API annotated with `ValidateAuthorization`.
 ```csharp
 namespace ByoSnapCSharp.Controllers
 {
@@ -31,7 +31,7 @@ namespace ByoSnapCSharp.Controllers
   public class UsersController : ControllerBase
   {
     [HttpGet("game")]
-    [SnapserAuth("user", "api-key", "internal")] // (👈 This gets converted to x-snapser-auth-types in swagger.json)
+    [SnapserAuth(AppConstants.userAuthType, AppConstants.apiKeyAuthType, AppConstants.internalAuthType)] // (👈 This gets converted to x-snapser-auth-types in swagger.json)
     ...
   }
 }
@@ -40,7 +40,7 @@ namespace ByoSnapCSharp.Controllers
 IMPORTANT: But you also have to pass those auth types to the middleware so that you get Authorization checks for free. Just adding those tags for swagger, are not going to do the authorization check for you.
 ```csharp
 [HttpGet("game")]
-[SnapserAuth("user", "api-key", "internal")] // (👈 This is just for the swagger)
+[SnapserAuth(AppConstants.userAuthType, AppConstants.apiKeyAuthType, AppConstants.internalAuthType)] // (👈 This is just for the swagger)
 [ValidateAuthorization("user", "api-key", "internal")] // (👈 This tells the middleware that user auth, app auth and internal auth are allowed)
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
 [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
@@ -67,7 +67,7 @@ public ActionResult<SuccessResponseSchema> GetGame([FromRoute] UserIdParameterSc
   public class UsersController : ControllerBase
   {
     [HttpGet("game")]
-    [SnapserAuth("user", "api-key", "internal")]
+    [SnapserAuth(AppConstants.userAuthType, AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]
     [ValidateAuthorization("user", "api-key", "internal")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
@@ -117,7 +117,7 @@ namespace ByoSnapCSharp.Controllers
 public class UsersController : ControllerBase
 {
   [HttpGet("game")]
-  [SnapserAuth("user", "api-key", "internal")] // (👈 This is used to create x-snapser-auth-types)
+  [SnapserAuth(AppConstants.userAuthType, AppConstants.apiKeyAuthType, AppConstants.internalAuthType)] // (👈 This is used to create x-snapser-auth-types)
   ...
 }
 ```
@@ -126,7 +126,7 @@ public class UsersController : ControllerBase
 public class UsersController : ControllerBase
 {
   [HttpGet("game")]
-  [SnapserAuth("user", "api-key", "internal")]
+  [SnapserAuth(AppConstants.userAuthType, AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]
   [ValidateAuthorization("user", "api-key", "internal")] // (👈 Use this to validate one of user, api-key, internal auth for this endpoint)
   ...
 }
@@ -136,7 +136,7 @@ public class UsersController : ControllerBase
 public class UsersController : ControllerBase
 {
   [HttpGet("game")]
-  [SnapserAuth("user", "api-key", "internal")]
+  [SnapserAuth(AppConstants.userAuthType, AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]
   [ValidateAuthorization("user", "api-key", "internal")]
   [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
   [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Linq;
 using ByoSnapCSharp.Models;
+using ByoSnapCSharp.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace ByoSnapCSharp.Filters
@@ -15,12 +16,26 @@ namespace ByoSnapCSharp.Filters
     public ValidateAuthorizationAttribute(params string[] allowedAuthTypes)
     {
       _allowedAuthTypes = allowedAuthTypes;
-      _userIdResourceKey = "user_id"; // Default key, can be set differently if needed
+      _userIdResourceKey = "userParams"; // Default key, can be set differently if needed
+    }
+
+    private string ExtractUserId(ActionExecutingContext context)
+    {
+      if (context.ActionArguments.TryGetValue(_userIdResourceKey, out var userParams))
+      {
+        // Try to cast the object to UserIdParameterSchema
+        if (userParams is UserIdParameterSchema userIdParams)
+        {
+          // Now you can access the UserId property
+          return userIdParams.UserId;
+        }
+      }
+      return "";
     }
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-      // var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<ValidateAuthorizationAttribute>>(); // Get the logger
+      var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<ValidateAuthorizationAttribute>>(); // Get the logger
       // logger.LogInformation("Starting authorization check.");
       // logger.LogInformation($"Allowed Auth Types: {string.Join(", ", _allowedAuthTypes)}");
 
@@ -28,37 +43,42 @@ namespace ByoSnapCSharp.Filters
       var request = httpContext.Request;
 
       // Get Gateway Header
-      var gatewayHeader = request.Headers["Gateway"].FirstOrDefault() ?? "";
-      var isInternalCall = gatewayHeader == "internal";
+      var gatewayHeaderValue = request.Headers[AppConstants.gatewayHeaderKey].FirstOrDefault() ?? "";
+      var isInternalCall = gatewayHeaderValue == AppConstants.internalAuthType;
 
       // Get Auth Type Header
-      var authTypeHeader = request.Headers["Auth-Type"].FirstOrDefault() ?? "";
-      var isApiKeyAuth = authTypeHeader == "api-key";
+      var authTypeHeaderValue = request.Headers[AppConstants.authTypeHeaderKey].FirstOrDefault() ?? "";
+      var isApiKeyAuth = authTypeHeaderValue == AppConstants.apiKeyAuthType;
 
       // Get User Id Header
-      var userIdHeader = request.Headers["User-Id"].FirstOrDefault() ?? "";
-      var targetUser = context.ActionArguments.ContainsKey(_userIdResourceKey) ? context.ActionArguments[_userIdResourceKey]?.ToString() : "";
-      var isTargetUser = userIdHeader == targetUser;
+      var userIdHeaderValue = request.Headers[AppConstants.userIdHeaderKey].FirstOrDefault() ?? "";
+      var targetUser = ExtractUserId(context);
 
+      var actionArguments = string.Join(", ", context.ActionArguments.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
+      logger.LogInformation("Action arguments: {ActionArguments}", actionArguments);
+
+      var isTargetUser = userIdHeaderValue == targetUser && !string.IsNullOrEmpty(userIdHeaderValue);
+      logger.LogInformation("User ID auth detected." + userIdHeaderValue + " == " + targetUser);
       // Validate
       bool validationPassed = false;
       foreach (var authType in _allowedAuthTypes)
       {
-        if (authType == "internal" && isInternalCall)
+        if (authType == AppConstants.internalAuthType && isInternalCall)
         {
-          // logger.LogInformation("Internal call detected.");
+          logger.LogInformation("Internal call detected.");
           validationPassed = true;
           break;
         }
-        else if (authType == "api-key" && !isInternalCall && isApiKeyAuth)
+        else if (authType == AppConstants.apiKeyAuthType && isApiKeyAuth && !isInternalCall)
         {
-          // logger.LogInformation("API Key auth detected.");
+          logger.LogInformation("API Key auth detected.");
           validationPassed = true;
           break;
         }
-        else if (authType == "user" && !isInternalCall && !isApiKeyAuth && !isTargetUser)
+        else if (authType == AppConstants.userAuthType && isTargetUser && !isInternalCall && !isApiKeyAuth)
         {
-          // logger.LogInformation("User auth detected.");
+          logger.LogInformation("User ID auth detected." + userIdHeaderValue + " == " + targetUser);
+          logger.LogInformation("User auth detected.");
           validationPassed = true;
           break;
         }

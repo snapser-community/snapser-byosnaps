@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ByoSnapCSharp.Filters;
 using ByoSnapCSharp.Models;
+using ByoSnapCSharp.Utilities;
 using System.Linq;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
@@ -16,17 +17,16 @@ namespace ByoSnapCSharp.Controllers
   public class UsersController : ControllerBase
   {
     [HttpGet("game")]
-    [SnapserAuth("user", "api-key", "internal")]
-    [ValidateAuthorization("user", "api-key", "internal")]
+    [SnapserAuth(AppConstants.userAuthType, AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]
+    [ValidateAuthorization(AppConstants.userAuthType, AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
     [SwaggerOperation(OperationId = "Get Game", Summary = "Game APIs", Description = "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.")]
-
     public ActionResult<SuccessResponseSchema> GetGame([FromRoute] UserIdParameterSchema userParams)
     {
-      var authTypeHeader = HttpContext.Request.Headers["Auth-Type"].FirstOrDefault();
-      var userIdHeader = HttpContext.Request.Headers["User-Id"].FirstOrDefault();
+      var authTypeHeader = HttpContext.Request.Headers[AppConstants.authTypeHeaderKey].FirstOrDefault();
+      var userIdHeader = HttpContext.Request.Headers[AppConstants.userIdHeaderKey].FirstOrDefault();
       return Ok(new SuccessResponseSchema
       {
         Api = "GetGame",
@@ -38,16 +38,16 @@ namespace ByoSnapCSharp.Controllers
     }
 
     [HttpPost("game")]
-    [SnapserAuth("api-key", "internal")]
-    [ValidateAuthorization("api-key", "internal")]
+    [SnapserAuth(AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]
+    [ValidateAuthorization(AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
     [SwaggerOperation(OperationId = "Save Game", Summary = "Game APIs", Description = "This API will work only with Api-Key auth. You can access this API with a valid api-key.")]
     public ActionResult<SuccessResponseSchema> SaveGame([FromRoute] UserIdParameterSchema userParams)
     {
-      var authTypeHeader = HttpContext.Request.Headers["Auth-Type"].FirstOrDefault();
-      var userIdHeader = HttpContext.Request.Headers["User-Id"].FirstOrDefault();
+      var authTypeHeader = HttpContext.Request.Headers[AppConstants.authTypeHeaderKey].FirstOrDefault();
+      var userIdHeader = HttpContext.Request.Headers[AppConstants.userIdHeaderKey].FirstOrDefault();
       return Ok(new SuccessResponseSchema
       {
         Api = "SaveGame",
@@ -59,16 +59,16 @@ namespace ByoSnapCSharp.Controllers
     }
 
     [HttpDelete("")]
-    [SnapserAuth("internal")]
-    [ValidateAuthorization("internal")]
+    [SnapserAuth(AppConstants.internalAuthType)]
+    [ValidateAuthorization(AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
     [SwaggerOperation(OperationId = "Delete User", Summary = "User APIs", Description = "This API will work only when the call is coming from within the Snapend.")]
     public ActionResult<SuccessResponseSchema> DeleteUser([FromRoute] UserIdParameterSchema userParams)
     {
-      var gatewayHeader = HttpContext.Request.Headers["Gateway"].FirstOrDefault();
-      var userIdHeader = HttpContext.Request.Headers["User-Id"].FirstOrDefault();
+      var gatewayHeader = HttpContext.Request.Headers[AppConstants.gatewayHeaderKey].FirstOrDefault();
+      var userIdHeader = HttpContext.Request.Headers[AppConstants.userIdHeaderKey].FirstOrDefault();
       return Ok(new SuccessResponseSchema
       {
         Api = "DeleteUser",
@@ -80,16 +80,16 @@ namespace ByoSnapCSharp.Controllers
     }
 
     [HttpPut("profile")]
-    [SnapserAuth("user", "api-key", "internal")]
-    [ValidateAuthorization("user", "api-key", "internal")]
+    [SnapserAuth(AppConstants.userAuthType, AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]
+    [ValidateAuthorization(AppConstants.userAuthType, AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
     [SwaggerOperation(OperationId = "Update User Profile", Summary = "User APIs", Description = "This API will work for all auth types.")]
     public ActionResult<SuccessResponseSchema> UpdateUserProfile([FromRoute] UserIdParameterSchema userParams)
     {
-      var gatewayHeader = HttpContext.Request.Headers["Gateway"].FirstOrDefault();
-      var userIdHeader = HttpContext.Request.Headers["User-Id"].FirstOrDefault();
+      var gatewayHeader = HttpContext.Request.Headers[AppConstants.gatewayHeaderKey].FirstOrDefault();
+      var userIdHeader = HttpContext.Request.Headers[AppConstants.userIdHeaderKey].FirstOrDefault();
       return Ok(new SuccessResponseSchema
       {
         Api = "UpdateUserProfile",

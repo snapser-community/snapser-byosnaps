@@ -1,7 +1,3 @@
-export const meta = {
-  author: 'AJ Apte',
-}
-
 # Setup Snapctl
 
 Snapctl is a command-line interface (CLI) tool built by Snapser that allows you to interact with your Snapser account.
