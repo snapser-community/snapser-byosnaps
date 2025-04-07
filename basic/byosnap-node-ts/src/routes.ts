@@ -42,7 +42,6 @@ export function RegisterRoutes(app: Router) {
         const argsUserController_getGame: Record<string, TsoaRoute.ParameterSchema> = {
                 _unauthorized: {"in":"res","name":"401","required":true,"ref":"ErrorResponse"},
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
-                token: {"in":"header","name":"Token","required":true,"dataType":"string"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.get('/v1/byosnap-basic/users/:userId/game',

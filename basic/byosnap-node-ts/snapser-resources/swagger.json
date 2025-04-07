@@ -92,14 +92,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "in": "header",
-            "name": "Token",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "x-snapser-auth-types": [

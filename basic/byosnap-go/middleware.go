@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -11,13 +12,13 @@ import (
 func validateAuthorization(allowedAuthTypes []string, userIDResourceKey string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			gatewayHeader := r.Header.Get(GatewayHeaderKey)
-			isInternalCall := gatewayHeader == GatewayHeaderValueInternalOrigin
-			authTypeHeader := r.Header.Get(AuthTypeHeaderKey)
-			isApiKeyAuth := authTypeHeader == AuthTypeHeaderValueApiKeyAuth
-			userIDHeader := r.Header.Get(UserIDHeaderKey)
+			gatewayHeaderValue := r.Header.Get(GatewayHeaderKey)
+			isInternalCall := strings.ToLower(gatewayHeaderValue) == GatewayHeaderValueInternalOrigin
+			authTypeHeaderValue := r.Header.Get(AuthTypeHeaderKey)
+			isApiKeyAuth := strings.ToLower(authTypeHeaderValue) == AuthTypeHeaderValueApiKeyAuth
+			userIDHeaderValue := r.Header.Get(UserIDHeaderKey)
 			targetUser := mux.Vars(r)[userIDResourceKey]
-			isTargetUser := userIDHeader == targetUser
+			isTargetUser := userIDHeaderValue == targetUser && userIDHeaderValue != ""
 
 			validationPassed := false
 			for _, authType := range allowedAuthTypes {

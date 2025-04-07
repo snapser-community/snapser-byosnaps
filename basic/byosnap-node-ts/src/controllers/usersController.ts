@@ -20,8 +20,8 @@ export class UserController extends Controller {
     public async getGame(
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
-        @Header('Token') token: string,
-        @Request() req: ExpressRequest
+        @Request() req: ExpressRequest,
+        @Header('Token') token?: string
     ): Promise<SuccessResponse> {
       const expressReq = req as ExpressRequest;
       const authType = expressReq.header("Auth-Type");
@@ -45,10 +45,10 @@ export class UserController extends Controller {
     @Response<ErrorResponse>(401, "Unauthorized")
     @Middlewares([authMiddleware(["api-key", "internal"])])
     public async saveGame(
-        @Header('Token') token: string,
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
-        @Request() req: ExpressRequest
+        @Request() req: ExpressRequest,
+        @Header('Token') token?: string
     ): Promise<SuccessResponse> {
       const expressReq = req as ExpressRequest;
       const authType = expressReq.header("Auth-Type");
@@ -72,10 +72,10 @@ export class UserController extends Controller {
     @Response<ErrorResponse>(401, "Unauthorized")
     @Middlewares([authMiddleware(["internal"])])
     public async apiThree(
-        @Header('Token') token: string,
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
-        @Request() req: ExpressRequest
+        @Request() req: ExpressRequest,
+        @Header('Token') token?: string
     ): Promise<SuccessResponse> {
       const expressReq = req as ExpressRequest;
       const gatewayHeader = expressReq.header("Gateway");
@@ -99,10 +99,10 @@ export class UserController extends Controller {
     @Response<ErrorResponse>(401, "Unauthorized")
     @Middlewares([authMiddleware(["user", "api-key", "internal"])])
     public async updateUserProfile(
-        @Header('Token') token: string,
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
-        @Request() req: ExpressRequest
+        @Request() req: ExpressRequest,
+        @Header('Token') token?: string
     ): Promise<SuccessResponse> {
       const expressReq = req as ExpressRequest;
       const authType = expressReq.header("Auth-Type");
