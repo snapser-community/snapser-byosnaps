@@ -9,14 +9,13 @@ from functools import wraps
 
 
 # Constants
-# Auth Types
+# Header Keys
 AUTH_TYPE_HEADER_KEY = 'Auth-Type'
+GATEWAY_HEADER_KEY = 'Gateway'
+USER_ID_HEADER_KEY = 'User-Id'
+# Header Values
 AUTH_TYPE_HEADER_VALUE_USER_AUTH = 'user'
 AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH = 'api-key'
-# User Id
-USER_ID_HEADER_KEY = 'User-Id'
-# Gateway
-GATEWAY_HEADER_KEY = 'Gateway'
 GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE = 'internal'
 # ALL Auth Types
 ALL_AUTH_TYPES = [AUTH_TYPE_HEADER_VALUE_USER_AUTH,
@@ -39,15 +38,19 @@ def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             # Get Gateway Header
-            gateway_header = request.headers.get(GATEWAY_HEADER_KEY, "")
-            is_internal_call = gateway_header == GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE
+            gateway_header_value = request.headers.get(GATEWAY_HEADER_KEY, "")
+            is_internal_call = \
+                gateway_header_value.lower() == GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE
             # Get Auth Type Header
-            auth_type_header = request.headers.get(AUTH_TYPE_HEADER_KEY, "")
-            is_api_key_auth = auth_type_header == AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH
+            auth_type_header_value = request.headers.get(
+                AUTH_TYPE_HEADER_KEY, "")
+            is_api_key_auth = \
+                auth_type_header_value.lower() == AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH
             # Get User Id Header
-            user_id_header = request.headers.get(USER_ID_HEADER_KEY, "")
+            user_id_header_value = request.headers.get(USER_ID_HEADER_KEY, "")
             target_user = kwargs.get(user_id_resource_key, "")
-            is_target_user = user_id_header == target_user
+            is_target_user = \
+                user_id_header_value.lower() == target_user and user_id_header_value != ""
 
             # Validate
             validation_passed = False
