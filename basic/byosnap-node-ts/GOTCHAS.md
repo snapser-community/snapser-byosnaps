@@ -6,7 +6,7 @@ What to Watch Out For When Working in This Repo
 ```typescript
 @Route('/v1/byosnap-basic/users')
 ```
-- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-python-basic and remaining_path = /users/<user_id>.
+- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-basic and remaining_path = /users/<user_id>.
 ```typescript
 @Route('/v1/byosnap-basic/users')
 export class UserController extends Controller {

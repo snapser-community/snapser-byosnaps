@@ -11,31 +11,41 @@ const AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH = 'api-key';
 
 export const authMiddleware = (allowedAuthTypes: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const gatewayHeader = req.headers[GATEWAY_HEADER_KEY];
-    const authTypeHeader = req.headers[AUTH_TYPE_HEADER_KEY];
-    const userIdHeader = req.headers[USER_ID_HEADER_KEY];
-    const targetUser = req.params['userId'];
-
-    const isInternalCall = gatewayHeader === GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE;
-    const isApiKeyAuth = authTypeHeader === AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH;
-    const isTargetUser = userIdHeader === targetUser;
+    const gatewayHeaders = req.headers[GATEWAY_HEADER_KEY.toLowerCase()];
+    const authTypeHeaders = req.headers[AUTH_TYPE_HEADER_KEY.toLowerCase()];
+    const userIdHeaders = req.headers[USER_ID_HEADER_KEY.toLowerCase()];
+    let gatewayHeader: string = ''
+    let authTypeHeader: string = ''
+    let userIdHeader: string = ''
+    if(gatewayHeaders) {
+        gatewayHeader = Array.isArray(gatewayHeaders) ? gatewayHeaders[0].toLowerCase() : gatewayHeaders.toLowerCase();
+    }
+    if(authTypeHeaders) {
+        authTypeHeader = Array.isArray(authTypeHeaders) ? authTypeHeaders[0].toLowerCase() : authTypeHeaders.toLowerCase();
+    }
+    if(userIdHeaders) {
+        userIdHeader = Array.isArray(userIdHeaders) ? userIdHeaders[0].toLowerCase() : userIdHeaders.toLowerCase();
+    }
+    const targetUser = req.params['userId'] ?? '';
+    const isInternalCall = gatewayHeader === GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE.toLowerCase();
+    const isApiKeyAuth = authTypeHeader === AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH.toLowerCase();
+    const isTargetUser = userIdHeader === targetUser.toLowerCase();
 
     let isAuthorized = false;
     for(let i = 0; i < allowedAuthTypes.length; i++) {
-        const authType = allowedAuthTypes[i];
-        if(authType === GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE) {
+        if(authTypeHeader === GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE.toLowerCase()) {
             if(!isInternalCall) {
                 continue;
             }
             isAuthorized = true;
         }
-        else if(authType === AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH) {
+        else if(authTypeHeader === AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH.toLowerCase()) {
             if(!isInternalCall && !isApiKeyAuth) {
                 continue;
             }
             isAuthorized = true;
         }
-        else if(authType === AUTH_TYPE_HEADER_VALUE_USER_AUTH) {
+        else if(authTypeHeader === AUTH_TYPE_HEADER_VALUE_USER_AUTH.toLowerCase()) {
             if(!isInternalCall && !isApiKeyAuth && !isTargetUser) {
                 continue;
             }
@@ -49,7 +59,6 @@ export const authMiddleware = (allowedAuthTypes: string[]) => {
         };
         return res.status(401).json(errorResponse);
     }
-
     next();
   };
 };

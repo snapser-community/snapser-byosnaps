@@ -82,7 +82,7 @@ python generate_swagger.py
 ### Step 3: Publish the BYOSnap
 Run the following command to publish your BYOSnap to your Snapser account.
 ```
-snapctl byosnap publish byosnap-basic --version "v1.0.0" --path $pathToThisFolder --resources-path $pathToThisFolder/snapser-resources/
+snapctl byosnap publish --byosnap-id byosnap-basic --version "v1.0.0" --path $pathToThisFolder --resources-path $pathToThisFolder/snapser-resources/
 ```
 
 ### Step 4: Create your cluster

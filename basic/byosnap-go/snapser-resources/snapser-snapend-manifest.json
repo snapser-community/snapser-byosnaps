@@ -32,7 +32,7 @@
         },
         {
             "id": "byosnap-basic",
-            "language": "python",
+            "language": "go",
             "version": "v1.0.0",
             "author_id": "fc461565-aad4-47ce-bd7b-aada8fd0b2a3",
             "category": "BYOSNAP",

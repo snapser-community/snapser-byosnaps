@@ -22,7 +22,7 @@ def load_env(parent_folder, env_file='.env'):
 
 # Check if enough arguments have been passed
 if len(sys.argv) < 5:
-    print("Usage: python create_snapend.py $companyId $gameId $byosnapId $byosnapVersion")
+    print("Usage: python snapend_create.py $companyId $gameId $byosnapId $byosnapVersion")
     print("Note: For $byosnapId please enter the BYOSnap prefix of `byosnap-` as well. eg: byosnap-py-basic")
     sys.exit(1)
 
@@ -46,7 +46,7 @@ if SNAPS_VERSION is not None and SNAPS_VERSION != 'production':
     SNAPS_VERSION_PREFIX = f'-{SNAPS_VERSION}'
 AUTH_SNAP_VERSION = os.getenv(
     'AUTH_SNAP_VERSION', 'v0.47.0') + SNAPS_VERSION_SUFFIX
-LANGUAGE = os.getenv('LANGUAGE', 'python')
+LANGUAGE = os.getenv('LANGUAGE', 'go')
 SNAPEND_ENV = os.getenv('SNAPEND_ENV', 'development')
 
 
@@ -103,7 +103,7 @@ except Exception as e:
     sys.exit(1)
 
 # Now lets create the Snapend
-# snapctl snapend clone --game-id 6e0d68e9-a679-461d-a4c5-f5e29e655a87 --name byosnap-python-aj-demo --env development --manifest-path-filename "C:\Users\name\Downloads\snapser-ox1bcyim-manifest.json" --blocking
+# snapctl snapend clone --game-id 6e0d68e9-a679-461d-a4c5-f5e29e655a87 --name byosnap-demo --env development --manifest-path-filename "C:\Users\name\Downloads\snapser-ox1bcyim-manifest.json" --blocking
 snapend_name = byosnap_id.split('-')[-1]
 print(
     f"Creating Snapend with name: {snapend_name}-demo in environment: {SNAPEND_ENV}")

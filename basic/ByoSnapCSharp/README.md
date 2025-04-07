@@ -1,4 +1,4 @@
-# BYOSnap Csharp Basic Tutorial
+# BYOSnap CSharp Basic Tutorial
 
 ## Application
 - The main application logic is in **UsersController.cs**.
@@ -46,7 +46,7 @@ You need to have a valid setup for Snapctl, which is Snapsers CLI tool. Please f
 snapctl validate
 ```
 
-## Resources
+## Snapser Resources
 All the files that are required by the Snapctl are under this folder
 - **Dockerfile**: BYOSnap needs a Dockerfile. Snapser uses this file to containerize your application and deploy it.
 - **snapser-byosnap-profile.json**: You can use this file to tell Snapser about your BYOSnaps hardware, networking and configuration requirements.
@@ -62,7 +62,7 @@ Usage
 dotnet run generate-swagger
 ```
 
-- **snapend_create.py**: Script to create a new Snapend with an Auth snap and your BYOSnap. You will need your companyId and gameId, which you can retrieve from the Snapser web app.
+- **snapend_create.py**: [Only used if you are going through the automated tutorial] Script to create a new Snapend with an Auth snap and your BYOSnap. You will need your companyId and gameId, which you can retrieve from the Snapser web app.
 Usage
 ```bash
 # $companyId = Your company Id
@@ -78,7 +78,7 @@ python snapend_create.py $companyId $gameId $byosnapId $version
 - Please read the GOTCHAS.md before you begin Development
 
 ### Step 1: Update Code
-For this tutorial, we want to update `ApiFour` return message, deploy it to Snapser and see it live. Please go to `/Controllers/UsersController.cs` and search for `ApiFour` and update the return message.
+For this tutorial, we want to update `UpdateUserProfile` return message, deploy it to Snapser and see it live. Please go to `/Controllers/UsersController.cs` and search for `UpdateUserProfile` and update the return message.
 
 ### Step 2 Build
 - Next, build your swagger
@@ -94,7 +94,7 @@ dotnet build
 ### Step 3: Publish the BYOSnap
 Run the following command to publish your BYOSnap to your Snapser account.
 ```
-snapctl byosnap publish byosnap-basic --version "v1.0.0" --path $pathToThisFolder --resources-path $pathToThisFolder/snapser-resources/
+snapctl byosnap publish --byosnap-id byosnap-basic --version "v1.0.0" --path $pathToThisFolder --resources-path $pathToThisFolder/snapser-resources/
 ```
 
 ### Step 4: Create your cluster
@@ -119,7 +119,7 @@ At the end, you will have a new Snapend running with an Auth Snap & your BYOSnap
 - Go to the Snapend API explorer, which you can find under **Quick Links** on the Snapend Home page.
 - Use the Authentication.AnonLogin to create a test user.
 - The API Explorer History button will show you details of the created users Id and session token.
-- Then you can go to the BYOSnap API, add the users session token, and access the BYOSnap endpoint `API Four` to see your updated message.
+- Then you can go to the BYOSnap API, add the users session token, and access the BYOSnap endpoint `Update User Profile` to see your updated message.
 
 ## Development Process
 ### Pre-requisites - Read the Gotchas
@@ -143,6 +143,8 @@ If you want to rapidly test your BYOSnap changes on an already deployed BYOSnap 
 3. Run `snapctl byosnap sync --snapend-id $snapendId --byosnap-id $byosnapId --version $version --path $rootCodePath --resources-path $rootCodePath/snapser-resources` to sync your new BYOSnap to Snapser. Sync essentially is taking your local code and making it live on your Snapend.
 
 IMPORTANT: The Sync command reuses the published `$version` tag but keeps building and updating the remote image. This is how your Snapend can quickly download and run your latest code.
+
+NOTE: Snapser will be releasing "Bring your workstation" the first week of May. Allowing you to attach your workstation to your Snapend. Thus, enabling you to develop locally without needing to sync.
 
 ### C. Committing your BYOSnap
 Once you are happy with the state of your BYOSnap and you want to "commit" it. Which essentially means you are ready to bump the version number.

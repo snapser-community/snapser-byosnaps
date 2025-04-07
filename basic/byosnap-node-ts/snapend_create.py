@@ -22,7 +22,7 @@ def load_env(parent_folder, env_file='.env'):
 
 # Check if enough arguments have been passed
 if len(sys.argv) < 5:
-    print("Usage: python create_snapend.py $companyId $gameId $byosnapId $byosnapVersion")
+    print("Usage: python snapend_create.py $companyId $gameId $byosnapId $byosnapVersion")
     print("Note: For $byosnapId please enter the BYOSnap prefix of `byosnap-` as well. eg: byosnap-py-basic")
     sys.exit(1)
 
@@ -46,7 +46,7 @@ if SNAPS_VERSION is not None and SNAPS_VERSION != 'production':
     SNAPS_VERSION_PREFIX = f'-{SNAPS_VERSION}'
 AUTH_SNAP_VERSION = os.getenv(
     'AUTH_SNAP_VERSION', 'v0.47.0') + SNAPS_VERSION_SUFFIX
-LANGUAGE = os.getenv('LANGUAGE', 'python')
+LANGUAGE = os.getenv('LANGUAGE', 'typescript')
 SNAPEND_ENV = os.getenv('SNAPEND_ENV', 'development')
 
 

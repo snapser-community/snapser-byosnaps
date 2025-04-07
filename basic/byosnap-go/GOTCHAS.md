@@ -6,7 +6,7 @@ What to Watch Out For When Working in This Repo
 ```go
 // swagger:operation GET /v1/byosnap-basic/users/{user_id}/game apiOne (👈 No Snapend Id in the URL)
 ```
-- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-python-basic and remaining_path = /users/<user_id>.
+- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-basic and remaining_path = /users/<user_id>.
 ```go
 // swagger:operation GET /v1/byosnap-basic/users/{user_id}/game apiOne (👈 Check the URL format)
 ```
