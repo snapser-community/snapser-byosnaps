@@ -102,7 +102,7 @@ import { ErrorResponse, SuccessResponse } from '../types/responses';
 @Middlewares([authMiddleware(["user", "api-key", "internal"])])
 public async getGame() {...}
 ```
-- tsoa converts the JDOC to summary or description not both. Snapser needs every API to have a description and hence we have created a helper. Where you can add `@Extension("x-description", ...)` and the generate_swagger.sh code path will convert that to a proper swagger description. Check the `scripts/fix-openapi-descriptions.ts` file.
+- tsoa converts the JDOC to summary or description not both. So that your APIs have a description we have created a helper. Where you can add `@Extension("x-description", ...)` and the generate_swagger.sh code path will convert that to a proper swagger description. Check the `scripts/fix-openapi-descriptions.ts` file.
 
 - This example provides you with a helper middleware. Depending on which Auth type you want your API to be validated against, update the `["user", "api-key", "internal"]` array you pass to the `@Middlewares([authMiddleware`.
 
