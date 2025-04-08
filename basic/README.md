@@ -633,7 +633,7 @@ We have pre-added Swagger annotations to the APIs, along with a helper script to
 ```
 
 ## Step 7: Understand Gotchas
-Each programming language has its own nuances, known as "gotchas". While we strive to make the BYOSnap experience as seamless as possible, it's important to be aware of these nuances, particularly how they affect route creation, API annotation, and Swagger specification generation. We've documented these issues thoroughly, but if you have any questions, please reach out to us.
+Each programming language has its own nuances. We have documented them in files called "Gotchas.md". While we strive to make the BYOSnap experience as seamless as possible, it's important to be aware of these nuances, particularly how they affect route creation, API annotation, and Swagger specification generation. We've documented these issues thoroughly, but if you have any questions, please reach out to us.
 
 - [C# Gotchas Readme](https://github.com/snapser-community/snapser-byosnaps/blob/main/basic/ByoSnapCSharp/GOTCHAS.md)
 - [Go Gotchas Readme](https://github.com/snapser-community/snapser-byosnaps/blob/main/basic/byosnap-go/GOTCHAS.md)
