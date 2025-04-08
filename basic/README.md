@@ -420,7 +420,7 @@ The OperationId of each API is converted into the method name in the SDK. The AP
 ```
 
 #### Rule 2: API Summary is used to group APIs
-Use the API Summary to group APIs in the API Explorer. Typically, APIs associated with the same resource should share the same summary, e.g., all APIs for the User resource should use the summary "User APIs."
+Every API should have a non-empty summary. Additionally, Snapser uses the API Summary to group APIs in the API Explorer. Typically, APIs associated with the same resource should share the same summary, e.g., all APIs for the User resource should use the summary "User APIs."
 
 ```json
 {
