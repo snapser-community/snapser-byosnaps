@@ -403,11 +403,214 @@ Ensure you are using the Swagger 3.x specification to generate the SDKs. Use the
 #### Rule 1: Every API must have an OperationId
 The OperationId of each API is converted into the method name in the SDK. The API Explorer also utilizes this to display the API name, so it's crucial to assign a unique OperationId to every API.
 
+```json
+{ ...
+  "/v1/byosnap-basic/users/{UserId}/profile": {
+    "put": {
+      "tags": [
+        "Users"
+      ],
+      "summary": "User APIs",
+      "description": "This API will work for all auth types.",
+      "operationId": "Update User Profile", (👈 Required field)
+    }
+  }
+  ...
+}
+```
+
 #### Rule 2: API Summary is used to group APIs
 Use the API Summary to group APIs in the API Explorer. Typically, APIs associated with the same resource should share the same summary, e.g., all APIs for the User resource should use the summary "User APIs."
 
-#### Rule 3: Every API must have a Description
-The Description of the API is used to provide detailed information about the API in the API Explorer and the generated documentation. This should be a free text field where you can elaborate on the API's functionality and provide examples.
+```json
+{
+  ...
+  "/v1/byosnap-basic/users/{UserId}": {
+    "delete": {
+      "tags": [
+        "Users"
+      ],
+      "summary": "User APIs", (👈 Summary causes APIs to be grouped in the API Explorer)
+      "description": "This API will work only when the call is coming from within the Snapend.",
+      "operationId": "Delete User",
+      "parameters": [
+        {
+          "name": "UserId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Token",
+          "in": "header",
+          "description": "User Session Token",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuccessResponseSchema"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponseSchema"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponseSchema"
+              }
+            }
+          }
+        }
+      },
+      "x-snapser-auth-types": [
+        "internal"
+      ]
+    }
+  },
+  "/v1/byosnap-basic/users/{UserId}/profile": {
+    "put": {
+      "tags": [
+        "Users"
+      ],
+      "summary": "User APIs", (👈 Summary causes APIs to be grouped in the API Explorer)
+      "description": "This API will work for all auth types.",
+      "operationId": "Update User Profile",
+      "parameters": [
+        {
+          "name": "UserId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Token",
+          "in": "header",
+          "description": "User Session Token",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuccessResponseSchema"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponseSchema"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponseSchema"
+              }
+            }
+          }
+        }
+      },
+      "x-snapser-auth-types": [
+        "user",
+        "api-key",
+        "internal"
+      ]
+    }
+  }
+  ...
+}
+```
+
+
+#### Rule 3: Every Response must have a Description
+The Response Description of the API is used by our API Explorer tech. This should be a **non-empty string** and should not be null. The API Explorer uses this description to display the response message.
+
+```json
+{
+  ...
+  "/v1/byosnap-basic/users/{UserId}": {
+    "delete": {
+      "tags": [
+        "Users"
+      ],
+      "summary": "User APIs",
+      "description": "This API will work only when the call is coming from within the Snapend.",
+      "operationId": "Delete User",
+      "parameters": [
+        {
+          "name": "UserId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Token",
+          "in": "header",
+          "description": "User Session Token",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "OK", (👈 This has to be a non-empty string)
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuccessResponseSchema"
+              }
+            }
+          }
+        },
+        ...
+      }
+    }
+  },
+  ...
+}
+```
 
 ### Automated Code Annotations to Swagger
 We have pre-added Swagger annotations to the APIs, along with a helper script to generate the Swagger spec for your BYOSnap. Use the following commands to generate the Swagger spec for your BYOSnap, depending on your development environment:
