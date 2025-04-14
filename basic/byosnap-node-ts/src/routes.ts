@@ -72,7 +72,6 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUserController_saveGame: Record<string, TsoaRoute.ParameterSchema> = {
-                token: {"in":"header","name":"Token","required":true,"dataType":"string"},
                 _unauthorized: {"in":"res","name":"401","required":true,"ref":"ErrorResponse"},
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
@@ -104,28 +103,27 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsUserController_apiThree: Record<string, TsoaRoute.ParameterSchema> = {
-                token: {"in":"header","name":"Token","required":true,"dataType":"string"},
+        const argsUserController_deleteUser: Record<string, TsoaRoute.ParameterSchema> = {
                 _unauthorized: {"in":"res","name":"401","required":true,"ref":"ErrorResponse"},
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.delete('/v1/byosnap-basic/users/:userId',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
-            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.apiThree)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.deleteUser)),
 
-            async function UserController_apiThree(request: ExRequest, response: ExResponse, next: any) {
+            async function UserController_deleteUser(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_apiThree, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_deleteUser, request, response });
 
                 const controller = new UserController();
 
               await templateService.apiHandler({
-                methodName: 'apiThree',
+                methodName: 'deleteUser',
                 controller,
                 response,
                 next,
@@ -138,7 +136,6 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUserController_updateUserProfile: Record<string, TsoaRoute.ParameterSchema> = {
-                token: {"in":"header","name":"Token","required":true,"dataType":"string"},
                 _unauthorized: {"in":"res","name":"401","required":true,"ref":"ErrorResponse"},
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},

@@ -10,7 +10,7 @@
     "lint": "eslint . --ext .ts",
     "test": "jest",
     "build:routes": "tsoa routes",
-    "build:swagger": "tsoa spec && ts-node scripts/fix-openapi-descriptions.ts"
+    "build:swagger": "tsoa spec && ts-node scripts/fix-swagger.ts"
   },
   "keywords": [],
   "author": "",

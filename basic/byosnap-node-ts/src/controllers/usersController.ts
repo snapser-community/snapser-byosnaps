@@ -21,7 +21,6 @@ export class UserController extends Controller {
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
         @Request() req: ExpressRequest,
-        @Header('Token') token?: string
     ): Promise<SuccessResponse> {
       const expressReq = req as ExpressRequest;
       const authType = expressReq.header("Auth-Type");
@@ -48,7 +47,6 @@ export class UserController extends Controller {
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
         @Request() req: ExpressRequest,
-        @Header('Token') token?: string
     ): Promise<SuccessResponse> {
       const expressReq = req as ExpressRequest;
       const authType = expressReq.header("Auth-Type");
@@ -71,11 +69,10 @@ export class UserController extends Controller {
     @Response<SuccessResponse>(200, "Successful Response")
     @Response<ErrorResponse>(401, "Unauthorized")
     @Middlewares([authMiddleware(["internal"])])
-    public async apiThree(
+    public async deleteUser(
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
         @Request() req: ExpressRequest,
-        @Header('Token') token?: string
     ): Promise<SuccessResponse> {
       const expressReq = req as ExpressRequest;
       const gatewayHeader = expressReq.header("Gateway");
@@ -102,7 +99,6 @@ export class UserController extends Controller {
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Path() userId: string,
         @Request() req: ExpressRequest,
-        @Header('Token') token?: string
     ): Promise<SuccessResponse> {
       const expressReq = req as ExpressRequest;
       const authType = expressReq.header("Auth-Type");
