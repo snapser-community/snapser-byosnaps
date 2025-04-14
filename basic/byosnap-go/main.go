@@ -35,8 +35,8 @@ func main() {
 
 	// Configure CORS
 	corsOpts := handlers.AllowedOrigins([]string{"*"}) // Allows all origins
-	corsHeaders := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
-	corsMethods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
+	corsHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Token", "Api-Key", "App-Key", "Gateway", "User-Id"})
+	corsMethods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"})
 
 
 	// Health Check Endpoint
