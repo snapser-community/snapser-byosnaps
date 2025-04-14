@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
 
-//TODO: Deprecate this once 0.48 goes out, as Snapser handles this for users for free.
+//Note: We do not use this filter anymore. As starting RC 48, Snapser adds the appropriate
+// headers to the swagger UI automatically.
 public class TokenOperationFilter : IOperationFilter
 {
   public void Apply(OpenApiOperation operation, OperationFilterContext context)

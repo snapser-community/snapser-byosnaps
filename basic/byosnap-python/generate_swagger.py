@@ -7,8 +7,7 @@ from flask import Flask
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
-from models.schemas import UserIdParameterSchema, ErrorResponseSchema, SuccessResponseSchema, \
-    TokenHeaderSchema
+from models.schemas import UserIdParameterSchema, ErrorResponseSchema, SuccessResponseSchema
 from app import get_game, save_game, delete_user, update_user_profile
 
 # Constants
@@ -35,7 +34,6 @@ spec = APISpec(
     openapi_version="3.0.2",
     plugins=[FlaskPlugin(), MarshmallowPlugin()],
 )
-spec.components.schema("TokenHeaderSchema", schema=TokenHeaderSchema)
 spec.components.schema("UserIdParameterSchema", schema=UserIdParameterSchema)
 spec.components.schema("ErrorResponseSchema", schema=ErrorResponseSchema)
 spec.components.schema("SuccessResponseSchema", schema=SuccessResponseSchema)

@@ -20,7 +20,7 @@ def get_game(user_id):
     get:
       summary: 'Game APIs'
       description: This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.
-      operationId: 'Get Game'
+      operationId: 'GetGame'
       x-snapser-auth-types:
         - user
         - api-key
@@ -42,7 +42,7 @@ def get_game(user_id):
     get:
       summary: 'Game APIs'
       description: This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.
-      operationId: 'Get Game'
+      operationId: 'GetGame'
       x-snapser-auth-types:
         - user
         - api-key
@@ -50,8 +50,6 @@ def get_game(user_id):
       parameters:
       - in: path
         schema: UserIdParameterSchema
-      - in: header (👈 [NOTE] No need to add this from RC0.48. Snapser handles this)
-        schema: TokenHeaderSchema
       responses:
         200:
           content:

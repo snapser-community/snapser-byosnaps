@@ -39,8 +39,6 @@ namespace ByoSnapCSharp
             Url = new Uri("https://twitter.com/example"),
           },
         });
-        // TODO: From RC 0.48 - Users are no longer required to add this header. Remove this once 0.48 goes out.
-        c.OperationFilter<TokenOperationFilter>();
         //Adds the Auth Types to the Swagger UI
         c.OperationFilter<SnapserAuthTypesOperationFilter>();
         //CSharp automatically adds text/plain, application/json and application/xml to the response content types. This filter removes all but application/json.

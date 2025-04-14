@@ -1,10 +1,5 @@
 package main
 
-// swagger:model TokenHeaderSchema
-type TokenHeaderSchema struct {
-	Token string `json:"Token" validate:"required"`
-}
-
 // swagger:model UserIdParameterSchema
 type UserIdParameterSchema struct {
 	UserID string `json:"user_id"`

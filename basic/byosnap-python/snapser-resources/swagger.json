@@ -4,7 +4,7 @@
             "get": {
                 "summary": "Game APIs",
                 "description": "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
-                "operationId": "Get Game",
+                "operationId": "GetGame",
                 "x-snapser-auth-types": [
                     "user",
                     "api-key",
@@ -14,14 +14,6 @@
                     {
                         "in": "path",
                         "name": "user_id",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    },
-                    {
-                        "in": "header",
-                        "name": "Token",
                         "schema": {
                             "type": "string"
                         },
@@ -64,7 +56,7 @@
             "post": {
                 "summary": "Game APIs",
                 "description": "This API will work only with Api-Key auth. You can access this API with a valid api-key.",
-                "operationId": "Save Game",
+                "operationId": "SaveGame",
                 "x-snapser-auth-types": [
                     "api-key",
                     "internal"
@@ -73,14 +65,6 @@
                     {
                         "in": "path",
                         "name": "user_id",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    },
-                    {
-                        "in": "header",
-                        "name": "Token",
                         "schema": {
                             "type": "string"
                         },
@@ -125,7 +109,7 @@
             "delete": {
                 "summary": "User APIs",
                 "description": "This API will work only when the call is coming from within the Snapend.",
-                "operationId": "Delete User",
+                "operationId": "DeleteUser",
                 "x-snapser-auth-types": [
                     "internal"
                 ],
@@ -133,14 +117,6 @@
                     {
                         "in": "path",
                         "name": "user_id",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    },
-                    {
-                        "in": "header",
-                        "name": "Token",
                         "schema": {
                             "type": "string"
                         },
@@ -185,7 +161,7 @@
             "put": {
                 "summary": "User APIs",
                 "description": "This API will work for all auth types.",
-                "operationId": "Update User Profile",
+                "operationId": "UpdateUserProfile",
                 "x-snapser-auth-types": [
                     "user",
                     "api-key",
@@ -195,14 +171,6 @@
                     {
                         "in": "path",
                         "name": "user_id",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    },
-                    {
-                        "in": "header",
-                        "name": "Token",
                         "schema": {
                             "type": "string"
                         },
@@ -251,17 +219,6 @@
     "openapi": "3.0.2",
     "components": {
         "schemas": {
-            "TokenHeaderSchema": {
-                "type": "object",
-                "properties": {
-                    "Token": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "Token"
-                ]
-            },
             "UserIdParameterSchema": {
                 "type": "object",
                 "properties": {
@@ -281,19 +238,19 @@
             "SuccessResponseSchema": {
                 "type": "object",
                 "properties": {
-                    "api": {
+                    "header_user_id": {
                         "type": "string"
                     },
-                    "header_user_id": {
+                    "path_user_id": {
                         "type": "string"
                     },
                     "auth_type": {
                         "type": "string"
                     },
-                    "message": {
+                    "api": {
                         "type": "string"
                     },
-                    "path_user_id": {
+                    "message": {
                         "type": "string"
                     }
                 }

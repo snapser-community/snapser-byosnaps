@@ -22,5 +22,20 @@ for (const pathKey in swagger.paths) {
   }
 }
 
+for (const pathKey in swagger.paths) {
+  const pathItem = swagger.paths[pathKey];
+  for (const methodKey of Object.keys(pathItem)) {
+    const operation = pathItem[methodKey] as {
+      responses?: Record<string, { description?: string }>
+    };
+
+    const responses = operation.responses;
+    if (responses && responses["401"] && responses["401"].description === "") {
+      responses["401"].description = "Unauthorized";
+    }
+  }
+}
+
 fs.writeFileSync(swaggerPath, JSON.stringify(swagger, null, 2));
 console.log('✅ Swagger description fields updated using x-description.');
+console.log('✅ Swagger 401 response descriptions updated.');

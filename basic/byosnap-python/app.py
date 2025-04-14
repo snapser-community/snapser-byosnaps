@@ -128,7 +128,7 @@ def get_game(user_id):
     get:
       summary: 'Game APIs'
       description: This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.
-      operationId: 'Get Game'
+      operationId: 'GetGame'
       x-snapser-auth-types:
         - user
         - api-key
@@ -136,8 +136,6 @@ def get_game(user_id):
       parameters:
       - in: path
         schema: UserIdParameterSchema
-      - in: header
-        schema: TokenHeaderSchema
       responses:
         200:
           content:
@@ -176,15 +174,13 @@ def save_game(user_id):
     post:
       summary: 'Game APIs'
       description: This API will work only with Api-Key auth. You can access this API with a valid api-key.
-      operationId: 'Save Game'
+      operationId: 'SaveGame'
       x-snapser-auth-types:
         - api-key
         - internal
       parameters:
       - in: path
         schema: UserIdParameterSchema
-      - in: header
-        schema: TokenHeaderSchema
       responses:
         200:
           content:
@@ -221,14 +217,12 @@ def delete_user(user_id):
     delete:
       summary: 'User APIs'
       description: This API will work only when the call is coming from within the Snapend.
-      operationId: 'Delete User'
+      operationId: 'DeleteUser'
       x-snapser-auth-types:
         - internal
       parameters:
       - in: path
         schema: UserIdParameterSchema
-      - in: header
-        schema: TokenHeaderSchema
       responses:
         200:
           content:
@@ -260,12 +254,12 @@ def delete_user(user_id):
 @app.route("/v1/byosnap-basic/users/<user_id>/profile", methods=["PUT"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def update_user_profile(user_id):
-    """TODO: API for you to update
+    """API that is accessible by User, Api-Key and Internal auth
     ---
     put:
       summary: 'User APIs'
       description: This API will work for all auth types.
-      operationId: 'Update User Profile'
+      operationId: 'UpdateUserProfile'
       x-snapser-auth-types:
         - user
         - api-key
@@ -273,8 +267,6 @@ def update_user_profile(user_id):
       parameters:
       - in: path
         schema: UserIdParameterSchema
-      - in: header
-        schema: TokenHeaderSchema
       responses:
         200:
           content:

@@ -112,7 +112,7 @@ At the end, you will have a new Snapend running with an Auth Snap & your BYOSnap
 - Go to the Snapend API explorer, which you can find under **Quick Links** on the Snapend Home page.
 - Use the Authentication.AnonLogin to create a test user.
 - The API Explorer History button will show you details of the created users Id and session token.
-- Then you can go to the BYOSnap API, add the users session token, and access the BYOSnap endpoint `API Four` to see your updated message.
+- Then you can go to the BYOSnap API, add the users session token, and access the BYOSnap endpoint `UpdateUserProfile` to see your updated message.
 
 ## Development Process
 ### Pre-requisites - Read the Gotchas
