@@ -254,7 +254,7 @@ def delete_user(user_id):
 @app.route("/v1/byosnap-basic/users/<user_id>/profile", methods=["PUT"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def update_user_profile(user_id):
-    """TODO: API for you to update
+    """API that is accessible by User, Api-Key and Internal auth
     ---
     put:
       summary: 'User APIs'

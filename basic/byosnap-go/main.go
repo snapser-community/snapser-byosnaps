@@ -71,18 +71,13 @@ func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 // ---
 // summary: Game APIs
 // description: This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.
-// operationId: Get Game
+// operationId: GetGame
 // x-snapser-auth-types: ["user", "api-key", "internal"]
 // parameters:
 //   - name: user_id
 //     in: path
 //     required: true
 //     description: Unique identifier of the user
-//     type: string
-//   - name: Token
-//     in: header
-//     required: true
-//     description: User Session Token
 //     type: string
 // responses:
 //   200:
@@ -124,18 +119,13 @@ func GetGame(w http.ResponseWriter, r *http.Request) {
 // ---
 // summary: Game APIs
 // description: This API will work only with Api-Key auth. You can access this API with a valid api-key.
-// operationId: Save Game
+// operationId: SaveGame
 // x-snapser-auth-types: ["api-key", "internal"]
 // parameters:
 //   - name: user_id
 //     in: path
 //     required: true
 //     description: Unique identifier of the user
-//     type: string
-//   - name: Token
-//     in: header
-//     required: true
-//     description: User Session Token
 //     type: string
 // responses:
 //   200:
@@ -180,18 +170,13 @@ func SaveGame(w http.ResponseWriter, r *http.Request) {
 // ---
 // summary: User APIs
 // description: This API will work only when the call is coming from within the Snapend.
-// operationId: Delete User
+// operationId: DeleteUser
 // x-snapser-auth-types: ["internal"]
 // parameters:
 //   - name: user_id
 //     in: path
 //     required: true
 //     description: Unique identifier of the user
-//     type: string
-//   - name: Token
-//     in: header
-//     required: true
-//     description: User Session Token
 //     type: string
 // responses:
 //   200:
@@ -236,18 +221,13 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 // ---
 // summary: User APIs
 // description: This API will work only when the call is coming from within the Snapend.
-// operationId: Update User Profile
+// operationId: UpdateUserProfile
 // x-snapser-auth-types: ["user", "api-key", "internal"]
 // parameters:
 //   - name: user_id
 //     in: path
 //     required: true
 //     description: Unique identifier of the user
-//     type: string
-//   - name: Token
-//     in: header
-//     required: true
-//     description: User Session Token
 //     type: string
 // responses:
 //   200:

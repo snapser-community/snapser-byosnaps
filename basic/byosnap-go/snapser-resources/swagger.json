@@ -16,19 +16,11 @@
     "/v1/byosnap-basic/users/{user_id}" : {
       "delete" : {
         "description" : "This API will work only when the call is coming from within the Snapend.",
-        "operationId" : "Delete User",
+        "operationId" : "DeleteUser",
         "parameters" : [ {
           "description" : "Unique identifier of the user",
           "in" : "path",
           "name" : "user_id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "User Session Token",
-          "in" : "header",
-          "name" : "Token",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -63,19 +55,11 @@
     "/v1/byosnap-basic/users/{user_id}/game" : {
       "get" : {
         "description" : "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
-        "operationId" : "Get Game",
+        "operationId" : "GetGame",
         "parameters" : [ {
           "description" : "Unique identifier of the user",
           "in" : "path",
           "name" : "user_id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "User Session Token",
-          "in" : "header",
-          "name" : "Token",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -108,19 +92,11 @@
       },
       "post" : {
         "description" : "This API will work only with Api-Key auth. You can access this API with a valid api-key.",
-        "operationId" : "Save Game",
+        "operationId" : "SaveGame",
         "parameters" : [ {
           "description" : "Unique identifier of the user",
           "in" : "path",
           "name" : "user_id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "User Session Token",
-          "in" : "header",
-          "name" : "Token",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -155,19 +131,11 @@
     "/v1/byosnap-basic/users/{user_id}/profile" : {
       "put" : {
         "description" : "This API will work only when the call is coming from within the Snapend.",
-        "operationId" : "Update User Profile",
+        "operationId" : "UpdateUserProfile",
         "parameters" : [ {
           "description" : "Unique identifier of the user",
           "in" : "path",
           "name" : "user_id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "User Session Token",
-          "in" : "header",
-          "name" : "Token",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -233,15 +201,6 @@
           "path_user_id" : {
             "type" : "string",
             "x-go-name" : "PathUserID"
-          }
-        },
-        "type" : "object",
-        "x-go-package" : "byosnap-go"
-      },
-      "TokenHeaderSchema" : {
-        "properties" : {
-          "Token" : {
-            "type" : "string"
           }
         },
         "type" : "object",
