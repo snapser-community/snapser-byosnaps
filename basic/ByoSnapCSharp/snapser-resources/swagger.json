@@ -19,20 +19,11 @@
         ],
         "summary": "Game APIs",
         "description": "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
-        "operationId": "Get Game",
+        "operationId": "GetGame",
         "parameters": [
           {
             "name": "UserId",
             "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "User Session Token",
             "required": true,
             "schema": {
               "type": "string"
@@ -83,20 +74,11 @@
         ],
         "summary": "Game APIs",
         "description": "This API will work only with Api-Key auth. You can access this API with a valid api-key.",
-        "operationId": "Save Game",
+        "operationId": "SaveGame",
         "parameters": [
           {
             "name": "UserId",
             "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "User Session Token",
             "required": true,
             "schema": {
               "type": "string"
@@ -148,20 +130,11 @@
         ],
         "summary": "User APIs",
         "description": "This API will work only when the call is coming from within the Snapend.",
-        "operationId": "Delete User",
+        "operationId": "DeleteUser",
         "parameters": [
           {
             "name": "UserId",
             "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "User Session Token",
             "required": true,
             "schema": {
               "type": "string"
@@ -212,20 +185,11 @@
         ],
         "summary": "User APIs",
         "description": "This API will work for all auth types.",
-        "operationId": "Update User Profile",
+        "operationId": "UpdateUserProfile",
         "parameters": [
           {
             "name": "UserId",
             "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Token",
-            "in": "header",
-            "description": "User Session Token",
             "required": true,
             "schema": {
               "type": "string"
