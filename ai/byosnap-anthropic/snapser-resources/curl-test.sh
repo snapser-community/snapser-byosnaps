@@ -1,4 +1,4 @@
-curl -X POST http://localhost:5003/v1/byosnap-anthropic/chat \
+curl -X POST -H 'Gateway: internal' http://localhost:5003/v1/byosnap-anthropic/chat \
   -H "Content-Type: application/json" \
   -d '{
     "tier": "sonnet",
@@ -11,7 +11,7 @@ curl -X POST http://localhost:5003/v1/byosnap-anthropic/chat \
   }'
 
 
-curl -N -X POST http://localhost:5003/v1/byosnap-anthropic/chat-stream \
+curl -N -X POST -H 'Gateway: internal' http://localhost:5003/v1/byosnap-anthropic/chat-stream \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
   -d '{

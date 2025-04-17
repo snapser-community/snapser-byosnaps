@@ -107,32 +107,7 @@ def chat():
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              properties:
-                model:
-                  type: string
-                  example: claude-3-sonnet-20240229
-                system:
-                  type: string
-                  example: You are a helpful assistant who writes like Shakespeare.
-                messages:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      role:
-                        type: string
-                        enum: [user, assistant]
-                      content:
-                        type: string
-                max_tokens:
-                  type: integer
-                  example: 1024
-                temperature:
-                  type: number
-                  format: float
-                  default: 0.7
+            schema: ClaudeChatRequestSchema
       responses:
         200:
           content:
@@ -177,32 +152,7 @@ def chat_stream():
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              properties:
-                model:
-                  type: string
-                  example: claude-3-sonnet-20240229
-                system:
-                  type: string
-                  example: You are a helpful assistant who writes like Shakespeare.
-                messages:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      role:
-                        type: string
-                        enum: [user, assistant]
-                      content:
-                        type: string
-                max_tokens:
-                  type: integer
-                  example: 1024
-                temperature:
-                  type: number
-                  format: float
-                  default: 0.7
+            schema: ClaudeChatRequestSchema
       responses:
         200:
           description: Streaming response (text/event-stream)

@@ -2,7 +2,7 @@
     "paths": {
         "/v1/byosnap-anthropic/chat": {
             "post": {
-                "summary": "Anthropic Chat",
+                "summary": "Chat APIs",
                 "description": "This API is a wrapper around Claude's non-streaming chat.",
                 "operationId": "ClaudeChat",
                 "x-snapser-auth-types": [
@@ -15,44 +15,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "model": {
-                                        "type": "string",
-                                        "example": "claude-3-sonnet-20240229"
-                                    },
-                                    "system": {
-                                        "type": "string",
-                                        "example": "You are a helpful assistant who writes like Shakespeare."
-                                    },
-                                    "messages": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "role": {
-                                                    "type": "string",
-                                                    "enum": [
-                                                        "user",
-                                                        "assistant"
-                                                    ]
-                                                },
-                                                "content": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "max_tokens": {
-                                        "type": "integer",
-                                        "example": 1024
-                                    },
-                                    "temperature": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "default": 0.7
-                                    }
-                                }
+                                "$ref": "#/components/schemas/ClaudeChatRequestSchema"
                             }
                         }
                     }
@@ -83,7 +46,7 @@
         },
         "/v1/byosnap-anthropic/chat-stream": {
             "post": {
-                "summary": "Anthropic Chat Stream",
+                "summary": "Chat APIs",
                 "description": "Claude streaming chat with SSE response.",
                 "operationId": "ClaudeChatStream",
                 "x-snapser-auth-types": [
@@ -96,44 +59,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "model": {
-                                        "type": "string",
-                                        "example": "claude-3-sonnet-20240229"
-                                    },
-                                    "system": {
-                                        "type": "string",
-                                        "example": "You are a helpful assistant who writes like Shakespeare."
-                                    },
-                                    "messages": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "role": {
-                                                    "type": "string",
-                                                    "enum": [
-                                                        "user",
-                                                        "assistant"
-                                                    ]
-                                                },
-                                                "content": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "max_tokens": {
-                                        "type": "integer",
-                                        "example": 1024
-                                    },
-                                    "temperature": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "default": 0.7
-                                    }
-                                }
+                                "$ref": "#/components/schemas/ClaudeChatRequestSchema"
                             }
                         }
                     }
@@ -171,13 +97,51 @@
     "openapi": "3.0.2",
     "components": {
         "schemas": {
-            "UserIdParameterSchema": {
+            "ClaudeChatMessageSchema": {
                 "type": "object",
                 "properties": {
-                    "user_id": {
+                    "content": {
+                        "type": "string"
+                    },
+                    "role": {
                         "type": "string"
                     }
-                }
+                },
+                "required": [
+                    "content",
+                    "role"
+                ]
+            },
+            "ClaudeChatRequestSchema": {
+                "type": "object",
+                "properties": {
+                    "temperature": {
+                        "type": "number",
+                        "default": 0.7
+                    },
+                    "messages": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ClaudeChatMessageSchema"
+                        }
+                    },
+                    "system": {
+                        "type": "string",
+                        "example": "You are a helpful assistant who writes like Shakespeare."
+                    },
+                    "max_tokens": {
+                        "type": "integer",
+                        "default": 1024
+                    },
+                    "model": {
+                        "type": "string",
+                        "example": "claude-3-sonnet-20240229"
+                    }
+                },
+                "required": [
+                    "messages",
+                    "model"
+                ]
             },
             "ErrorResponseSchema": {
                 "type": "object",
@@ -191,17 +155,6 @@
                 "type": "object",
                 "properties": {
                     "response": {}
-                }
-            },
-            "SuccessEmbeddingResponseSchema": {
-                "type": "object",
-                "properties": {
-                    "embedding": {
-                        "type": "array",
-                        "items": {
-                            "type": "number"
-                        }
-                    }
                 }
             }
         }

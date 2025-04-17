@@ -7,7 +7,8 @@ from flask import Flask
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
-from models.schemas import UserIdParameterSchema, ErrorResponseSchema, SuccessResponseSchema
+from models.schemas import ClaudeChatMessageSchema, ErrorResponseSchema, \
+    ClaudeChatRequestSchema, SuccessResponseSchema
 from app import chat, chat_stream
 
 # Constants
@@ -30,7 +31,10 @@ spec = APISpec(
     openapi_version="3.0.2",
     plugins=[FlaskPlugin(), MarshmallowPlugin()],
 )
-spec.components.schema("UserIdParameterSchema", schema=UserIdParameterSchema)
+spec.components.schema("ClaudeChatMessageSchema",
+                       schema=ClaudeChatMessageSchema)
+spec.components.schema("ClaudeChatRequestSchema",
+                       schema=ClaudeChatRequestSchema)
 spec.components.schema("ErrorResponseSchema", schema=ErrorResponseSchema)
 spec.components.schema("SuccessResponseSchema", schema=SuccessResponseSchema)
 

@@ -1,20 +1,20 @@
 from marshmallow import Schema, fields
 
 
-class TokenHeaderSchema(Schema):
-    '''
-    Schema for the token header.
-    '''
-    # NOTE: TokenHeaderSchema is not used any more. Snapser automatically adds
-    # the right header in the SDK and API explorer.
-    Token = fields.Str(required=True)
+class ClaudeChatMessageSchema(Schema):
+    role = fields.Str(required=True, validate=lambda r: r in [
+                      "user", "assistant"])
+    content = fields.Str(required=True)
 
 
-class UserIdParameterSchema(Schema):
-    '''
-    Schema for the user ID parameter.
-    '''
-    user_id = fields.Str()
+class ClaudeChatRequestSchema(Schema):
+    model = fields.Str(required=True, example="claude-3-sonnet-20240229")
+    system = fields.Str(
+        required=False, example="You are a helpful assistant who writes like Shakespeare.")
+    messages = fields.List(fields.Nested(
+        ClaudeChatMessageSchema), required=True)
+    max_tokens = fields.Int(missing=1024)
+    temperature = fields.Float(missing=0.7)
 
 
 class SuccessResponseSchema(Schema):
