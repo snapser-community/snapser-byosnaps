@@ -17,7 +17,12 @@ func validateAuthorization(allowedAuthTypes []string, userIDResourceKey string) 
 			authTypeHeaderValue := r.Header.Get(AuthTypeHeaderKey)
 			isApiKeyAuth := strings.ToLower(authTypeHeaderValue) == AuthTypeHeaderValueApiKeyAuth
 			userIDHeaderValue := r.Header.Get(UserIDHeaderKey)
+			// If the API has a URL parameter for user_id, then use that
+      // Otherwise, use the User-Id header value as the default
 			targetUser := mux.Vars(r)[userIDResourceKey]
+			if targetUser == "" {
+				targetUser = userIDHeaderValue
+			}
 			isTargetUser := userIDHeaderValue == targetUser && userIDHeaderValue != ""
 
 			validationPassed := false

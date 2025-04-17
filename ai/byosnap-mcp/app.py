@@ -31,26 +31,47 @@ def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
+            # Get Gateway Header
             gateway_header_value = request.headers.get(GATEWAY_HEADER_KEY, "")
-            is_internal_call = gateway_header_value.lower(
-            ) == GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE
+            is_internal_call = \
+                gateway_header_value.lower() == GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE
+            # Get Auth Type Header
             auth_type_header_value = request.headers.get(
                 AUTH_TYPE_HEADER_KEY, "")
-            is_api_key_auth = auth_type_header_value.lower(
-            ) == AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH
+            is_api_key_auth = \
+                auth_type_header_value.lower() == AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH
+            # Get User Id Header
             user_id_header_value = request.headers.get(USER_ID_HEADER_KEY, "")
-            target_user = kwargs.get(user_id_resource_key, "")
-            is_target_user = user_id_header_value == target_user and user_id_header_value != ""
+            # If the API has a URL parameter for user_id, then use that
+            # Otherwise, use the User-Id header value as the default
+            target_user = kwargs.get(
+                user_id_resource_key, user_id_header_value)
+            is_target_user = \
+                user_id_header_value == target_user and user_id_header_value != ""
 
+            # Validate
             validation_passed = False
             for auth_type in allowed_auth_types:
-                if auth_type == GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE and is_internal_call:
+                if auth_type == GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE:
+                    # If `Auth-Type: Internal`, then the call must be internal
+                    if not is_internal_call:
+                        # Failed validation
+                        continue
                     validation_passed = True
-                elif auth_type == AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH and (is_internal_call or is_api_key_auth):
+                elif auth_type == AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH:
+                    # If `Auth-Type: Api-Key`, and the call is not internal, then the call must be pass the Api-Key validation
+                    if not is_internal_call and not is_api_key_auth:
+                        # Failed validation
+                        continue
                     validation_passed = True
-                elif auth_type == AUTH_TYPE_HEADER_VALUE_USER_AUTH and not (is_internal_call or is_api_key_auth) and is_target_user:
+                elif auth_type == AUTH_TYPE_HEADER_VALUE_USER_AUTH:
+                    # If `Auth-Type: User`, and the call is not internal or of type api-key auth, then the call must be pass the User validation
+                    if not is_internal_call and not is_api_key_auth and not is_target_user:
+                        # Failed validation
+                        continue
                     validation_passed = True
 
+            # Check if the provided auth_type is within the allowed types for this endpoint
             if not validation_passed:
                 return make_response(jsonify({'error_message': 'Unauthorized'}), 400)
             return f(*args, **kwargs)
@@ -87,7 +108,6 @@ def get_player_profile():
       operationId: GetPlayerProfile
       description: 'Fetch a player profile and current game state'
       x-snapser-auth-types:
-        - user
         - api-key
         - internal
       responses:
@@ -128,7 +148,6 @@ def give_xp():
       operationId: GiveXP
       description: Award XP to a user
       x-snapser-auth-types:
-        - user
         - api-key
         - internal
       requestBody:
@@ -171,7 +190,6 @@ def quest_helper_prompt():
       operationId: QuestHelperPrompt
       description: A reusable prompt template for quest guidance
       x-snapser-auth-types:
-        - user
         - api-key
         - internal
       responses:
@@ -209,7 +227,6 @@ def schema_player_profile():
       operationId: PlayerProfileSchema
       description: JSON schema for player profile
       x-snapser-auth-types:
-        - user
         - api-key
         - internal
       responses:
@@ -257,7 +274,6 @@ def manifest():
       operationId: GetMCPManifest
       description: MCP manifest for agent compatibility
       x-snapser-auth-types:
-        - user
         - api-key
         - internal
       responses:

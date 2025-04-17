@@ -1,6 +1,6 @@
 {
-    "name": "Byosnap Gemini",
-    "description": "Gemini microservice",
+    "name": "Byosnap MCP",
+    "description": "MCP Service",
     "platform": "linux/arm64",
     "language": "python",
     "prefix": "/v1",
