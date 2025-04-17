@@ -1,4 +1,4 @@
-curl -X POST http://localhost:5003/v1/byosnap-gemini/chat \
+curl -X POST -H 'Gateway: internal' http://localhost:5003/v1/byosnap-gemini/chat \
   -H "Content-Type: application/json" \
   -d '{
     "model": "models/gemini-2.0-flash",
@@ -34,7 +34,7 @@ curl -X POST http://localhost:5003/v1/byosnap-gemini/chat \
 
 
 
-curl -N -X POST http://localhost:5003/v1/byosnap-gemini/chat-stream \
+curl -N -X POST -H 'Gateway: internal' http://localhost:5003/v1/byosnap-gemini/chat-stream \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
   -d '{
