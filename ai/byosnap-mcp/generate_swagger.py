@@ -9,7 +9,7 @@ from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
 from models.schemas import PlayerProfileSchema, GiveXPInputSchema, GiveXPResponseSchema, \
     PromptTemplateSchema, PlayerProfileJSONSchema, MCPResourceSchema, MCPToolSchema, \
-    MCPPromptSchema, MCPManifestSchema
+    MCPPromptSchema, MCPManifestAuthSchema, MCPManifestSchema
 from app import get_player_profile, give_xp, quest_helper_prompt, schema_player_profile, manifest
 
 # Constants
@@ -46,6 +46,7 @@ spec.components.schema("PlayerProfileJSONSchema",
 spec.components.schema("MCPResourceSchema", schema=MCPResourceSchema)
 spec.components.schema("MCPToolSchema", schema=MCPToolSchema)
 spec.components.schema("MCPPromptSchema", schema=MCPPromptSchema)
+spec.components.schema("MCPManifestAuthSchema", schema=MCPManifestAuthSchema)
 spec.components.schema("MCPManifestSchema", schema=MCPManifestSchema)
 
 

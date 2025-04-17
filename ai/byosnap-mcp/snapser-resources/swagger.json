@@ -1,122 +1,45 @@
 {
     "paths": {
-        "/v1/byosnap-gemini/chat": {
-            "post": {
-                "summary": "Chat APIs",
-                "description": "This API is a wrapper around Gemini's non-streaming text and multimodal chat.",
-                "operationId": "GeminiChat",
+        "/v1/byosnap-mcp/mcp/resources/player-profile": {
+            "get": {
+                "summary": "Resources",
+                "operationId": "GetPlayerProfile",
+                "description": "Fetch a player profile and current game state",
                 "x-snapser-auth-types": [
                     "user",
                     "api-key",
                     "internal"
                 ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "model": {
-                                        "type": "string",
-                                        "example": "gemini-pro"
-                                    },
-                                    "messages": {
-                                        "type": "array",
-                                        "description": "Text-only chat messages",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "role": {
-                                                    "type": "string",
-                                                    "enum": [
-                                                        "user",
-                                                        "model"
-                                                    ]
-                                                },
-                                                "content": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "parts": {
-                                        "type": "array",
-                                        "description": "Optional multimodal input (e.g., base64 image + text)",
-                                        "items": {
-                                            "oneOf": [
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "text": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "inline_data": {
-                                                            "type": "object",
-                                                            "properties": {
-                                                                "mime_type": {
-                                                                    "type": "string",
-                                                                    "example": "image/png"
-                                                                },
-                                                                "data": {
-                                                                    "type": "string",
-                                                                    "format": "byte"
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    "temperature": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "default": 0.7
-                                    },
-                                    "max_tokens": {
-                                        "type": "integer",
-                                        "example": 1024
-                                    }
+                "responses": {
+                    "200": {
+                        "description": "Player profile returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlayerProfileSchema"
+                                },
+                                "example": {
+                                    "user_id": "user_12345",
+                                    "username": "DragonSlayer_77",
+                                    "level": 19,
+                                    "inventory": [
+                                        "sword",
+                                        "potion",
+                                        "map"
+                                    ],
+                                    "xp": 1320
                                 }
                             }
                         }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/SuccessResponseSchema"
-                                }
-                            }
-                        },
-                        "description": "A successful response"
-                    },
-                    "500": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponseSchema"
-                                }
-                            }
-                        },
-                        "description": "Server Error"
                     }
                 }
             }
         },
-        "/v1/byosnap-gemini/chat-stream": {
+        "/v1/byosnap-mcp/mcp/tools/give-xp": {
             "post": {
-                "summary": "Chat APIs",
-                "description": "Gemini streaming chat with SSE response.",
-                "operationId": "GeminiChatStream",
+                "summary": "Tools",
+                "operationId": "GiveXP",
+                "description": "Award XP to a user",
                 "x-snapser-auth-types": [
                     "user",
                     "api-key",
@@ -127,97 +50,129 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "model": {
-                                        "type": "string",
-                                        "example": "gemini-pro"
-                                    },
-                                    "messages": {
-                                        "type": "array",
-                                        "description": "Text-only chat messages",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "role": {
-                                                    "type": "string",
-                                                    "enum": [
-                                                        "user",
-                                                        "model"
-                                                    ]
-                                                },
-                                                "content": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "parts": {
-                                        "type": "array",
-                                        "description": "Optional multimodal input (e.g., base64 image + text)",
-                                        "items": {
-                                            "oneOf": [
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "text": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "inline_data": {
-                                                            "type": "object",
-                                                            "properties": {
-                                                                "mime_type": {
-                                                                    "type": "string",
-                                                                    "example": "image/jpeg"
-                                                                },
-                                                                "data": {
-                                                                    "type": "string",
-                                                                    "format": "byte"
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    "temperature": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "default": 0.7
-                                    },
-                                    "max_tokens": {
-                                        "type": "integer",
-                                        "example": 1024
-                                    }
-                                }
+                                "$ref": "#/components/schemas/ErrorResponseSchema"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "description": "Streaming response (text/event-stream)",
-                        "content": {
-                            "text/event-stream": {
-                                "schema": {
-                                    "type": "string",
-                                    "example": "data: Hello\n\ndata: world\n\ndata: [DONE]\n"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Server Error",
+                        "description": "XP awarded",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                    "$ref": "#/components/schemas/SuccessResponseSchema"
+                                },
+                                "example": {
+                                    "message": "Given 100 XP to user user_12345",
+                                    "status": "success"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-mcp/mcp/prompts/quest-helper": {
+            "get": {
+                "summary": "Prompts",
+                "operationId": "QuestHelperPrompt",
+                "description": "A reusable prompt template for quest guidance",
+                "x-snapser-auth-types": [
+                    "user",
+                    "api-key",
+                    "internal"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Prompt template",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PromptTemplateSchema"
+                                },
+                                "example": {
+                                    "template": "You are a helpful NPC...",
+                                    "input_variables": [
+                                        "quest_name",
+                                        "current_step"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-mcp/mcp/schema/player-profile": {
+            "get": {
+                "summary": "Schema of player profile object",
+                "operationId": "PlayerProfileSchema",
+                "description": "JSON schema for player profile",
+                "x-snapser-auth-types": [
+                    "user",
+                    "api-key",
+                    "internal"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "JSON schema",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlayerProfileJSONSchema"
+                                },
+                                "example": {
+                                    "type": "object",
+                                    "properties": {
+                                        "user_id": {
+                                            "type": "string"
+                                        },
+                                        "username": {
+                                            "type": "string"
+                                        },
+                                        "level": {
+                                            "type": "integer"
+                                        },
+                                        "inventory": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "xp": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "required": [
+                                        "user_id",
+                                        "username",
+                                        "level"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-mcp/mcp/manifest.json": {
+            "get": {
+                "summary": "MCP manifest",
+                "operationId": "GetMCPManifest",
+                "description": "MCP manifest for agent compatibility",
+                "x-snapser-auth-types": [
+                    "user",
+                    "api-key",
+                    "internal"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "MCP manifest for agent compatibility",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MCPManifestSchema"
                                 }
                             }
                         }
@@ -233,27 +188,232 @@
     "openapi": "3.0.2",
     "components": {
         "schemas": {
-            "UserIdParameterSchema": {
+            "PlayerProfileSchema": {
                 "type": "object",
                 "properties": {
+                    "level": {
+                        "type": "integer"
+                    },
                     "user_id": {
                         "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "inventory": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "xp": {
+                        "type": "integer"
                     }
-                }
+                },
+                "required": [
+                    "inventory",
+                    "level",
+                    "user_id",
+                    "username",
+                    "xp"
+                ]
             },
             "ErrorResponseSchema": {
                 "type": "object",
                 "properties": {
-                    "error_message": {
+                    "user_id": {
                         "type": "string"
+                    },
+                    "amount": {
+                        "type": "integer"
                     }
-                }
+                },
+                "required": [
+                    "amount",
+                    "user_id"
+                ]
             },
             "SuccessResponseSchema": {
                 "type": "object",
                 "properties": {
-                    "response": {}
+                    "status": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "message",
+                    "status"
+                ]
+            },
+            "PromptTemplateSchema": {
+                "type": "object",
+                "properties": {
+                    "input_variables": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "template": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "input_variables",
+                    "template"
+                ]
+            },
+            "PlayerProfileJSONSchema": {
+                "type": "object",
+                "properties": {
+                    "required": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "properties": {
+                        "type": "object"
+                    },
+                    "type": {
+                        "default": "object"
+                    }
                 }
+            },
+            "MCPResourceSchema": {
+                "type": "object",
+                "properties": {
+                    "method": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "schema": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "description",
+                    "method",
+                    "name",
+                    "path",
+                    "schema"
+                ]
+            },
+            "MCPToolSchema": {
+                "type": "object",
+                "properties": {
+                    "method": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "input_schema": {
+                        "type": "object"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "description",
+                    "input_schema",
+                    "method",
+                    "name",
+                    "path"
+                ]
+            },
+            "MCPPromptSchema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "description",
+                    "name",
+                    "path"
+                ]
+            },
+            "MCPManifestAuthSchema": {
+                "type": "object",
+                "properties": {
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "description",
+                    "name",
+                    "required",
+                    "type"
+                ]
+            },
+            "MCPManifestSchema": {
+                "type": "object",
+                "properties": {
+                    "prompts": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/MCPPromptSchema"
+                        }
+                    },
+                    "schema_version": {
+                        "type": "string"
+                    },
+                    "resources": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/MCPResourceSchema"
+                        }
+                    },
+                    "tools": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/MCPToolSchema"
+                        }
+                    },
+                    "auth": {
+                        "$ref": "#/components/schemas/MCPManifestAuthSchema"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "description",
+                    "schema_version"
+                ]
             }
         }
     }

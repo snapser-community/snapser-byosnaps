@@ -72,14 +72,14 @@ def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
     return decorator
 
 
-@app.route('/v1/byosnap-anthropic/chat', methods=['OPTIONS'])
-@app.route('/v1/byosnap-anthropic/chat-stream', methods=['OPTIONS'])
-@cross_origin()
-def cors_overrides(path=None):
-    '''
-    CORS preflight request handler
-    '''
-    return f'{path} Ok'
+# @app.route('/v1/byosnap-anthropic/chat', methods=['OPTIONS'])
+# @app.route('/v1/byosnap-anthropic/chat-stream', methods=['OPTIONS'])
+# @cross_origin()
+# def cors_overrides(path=None):
+#     '''
+#     CORS preflight request handler
+#     '''
+#     return f'{path} Ok'
 
 
 @app.route('/healthz', methods=["GET"])
@@ -91,6 +91,7 @@ def health():
 
 
 @app.route('/v1/byosnap-anthropic/chat', methods=['POST'])
+@cross_origin()
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def chat():
     """Claude chat completion
@@ -136,6 +137,7 @@ def chat():
 
 
 @app.route('/v1/byosnap-anthropic/chat-stream', methods=['POST'])
+@cross_origin()
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def chat_stream():
     """Claude chat stream completion

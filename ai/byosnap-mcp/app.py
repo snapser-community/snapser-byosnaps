@@ -1,8 +1,62 @@
-from flask import Flask, jsonify, request
+import logging
+from flask import Flask, jsonify, request, make_response
 from flask_cors import CORS, cross_origin
+from functools import wraps
 
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
+
+# Constants
+AUTH_TYPE_HEADER_KEY = 'Auth-Type'
+GATEWAY_HEADER_KEY = 'Gateway'
+USER_ID_HEADER_KEY = 'User-Id'
+AUTH_TYPE_HEADER_VALUE_USER_AUTH = 'user'
+AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH = 'api-key'
+GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE = 'internal'
+ALL_AUTH_TYPES = [AUTH_TYPE_HEADER_VALUE_USER_AUTH,
+                  AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE]
+
+
+# Logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Decorators
+
+
+def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
+    '''
+    Decorator to validate authorization headers
+    '''
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            gateway_header_value = request.headers.get(GATEWAY_HEADER_KEY, "")
+            is_internal_call = gateway_header_value.lower(
+            ) == GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE
+            auth_type_header_value = request.headers.get(
+                AUTH_TYPE_HEADER_KEY, "")
+            is_api_key_auth = auth_type_header_value.lower(
+            ) == AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH
+            user_id_header_value = request.headers.get(USER_ID_HEADER_KEY, "")
+            target_user = kwargs.get(user_id_resource_key, "")
+            is_target_user = user_id_header_value == target_user and user_id_header_value != ""
+
+            validation_passed = False
+            for auth_type in allowed_auth_types:
+                if auth_type == GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE and is_internal_call:
+                    validation_passed = True
+                elif auth_type == AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH and (is_internal_call or is_api_key_auth):
+                    validation_passed = True
+                elif auth_type == AUTH_TYPE_HEADER_VALUE_USER_AUTH and not (is_internal_call or is_api_key_auth) and is_target_user:
+                    validation_passed = True
+
+            if not validation_passed:
+                return make_response(jsonify({'error_message': 'Unauthorized'}), 400)
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
 
 # --------------------
 # Health
@@ -23,6 +77,7 @@ def health():
 
 @app.route("/v1/byosnap-mcp/mcp/resources/player-profile", methods=["GET"])
 @cross_origin()
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def get_player_profile():
     """
     Get Player Profile
@@ -63,6 +118,7 @@ def get_player_profile():
 
 @app.route("/v1/byosnap-mcp/mcp/tools/give-xp", methods=["POST"])
 @cross_origin()
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def give_xp():
     """
     Give XP Tool
@@ -105,6 +161,7 @@ def give_xp():
 
 @app.route("/v1/byosnap-mcp/mcp/prompts/quest-helper", methods=["GET"])
 @cross_origin()
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def quest_helper_prompt():
     """
     Quest Helper Prompt Template
@@ -142,6 +199,7 @@ def quest_helper_prompt():
 
 @app.route("/v1/byosnap-mcp/mcp/schema/player-profile", methods=["GET"])
 @cross_origin()
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def schema_player_profile():
     """
     Player Profile Schema
@@ -189,6 +247,7 @@ def schema_player_profile():
 
 @app.route("/v1/byosnap-mcp/mcp/manifest.json", methods=["GET"])
 @cross_origin()
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def manifest():
     """
     MCP Manifest

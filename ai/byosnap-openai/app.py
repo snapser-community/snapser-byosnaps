@@ -98,17 +98,17 @@ def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
 #
 
 
-@app.route('/v1/byosnap-openai/chat', methods=['OPTIONS'])
-@app.route('/v1/byosnap-openai/chat-stream', methods=['OPTIONS'])
-@app.route('/v1/byosnap-openai/completion', methods=['OPTIONS'])
-@app.route('/v1/byosnap-openai/completion-stream', methods=['OPTIONS'])
-@app.route('/v1/byosnap-openai/embedding', methods=['OPTIONS'])
-@cross_origin()
-def cors_overrides(path):
-    '''
-    CORS overrides for the API Explorer.
-    '''
-    return f'{path} Ok'
+# @app.route('/v1/byosnap-openai/chat', methods=['OPTIONS'])
+# @app.route('/v1/byosnap-openai/chat-stream', methods=['OPTIONS'])
+# @app.route('/v1/byosnap-openai/completion', methods=['OPTIONS'])
+# @app.route('/v1/byosnap-openai/completion-stream', methods=['OPTIONS'])
+# @app.route('/v1/byosnap-openai/embedding', methods=['OPTIONS'])
+# @cross_origin()
+# def cors_overrides(path):
+#     '''
+#     CORS overrides for the API Explorer.
+#     '''
+#     return f'{path} Ok'
 
 # APIs
 
@@ -119,6 +119,8 @@ def cors_overrides(path):
 
 @app.route('/healthz', methods=["GET"])
 def health():
+    '''
+    Health check endpoint'''
     return "Ok"
 
 # @GOTCHAS 👋 - Externally available APIs
@@ -137,6 +139,7 @@ def health():
 # --------- CHAT --------- #
 
 @app.route("/v1/byosnap-openai/chat", methods=["POST"])
+@cross_origin()
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def chat():
     """API to access OpenAI's chat completion
@@ -181,6 +184,7 @@ def chat():
 
 
 @app.route("/v1/byosnap-openai/chat-stream", methods=["POST"])
+@cross_origin()
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def chat_stream():
     """API to access streaming with OpenAI
@@ -244,6 +248,7 @@ def chat_stream():
 # --------- COMPLETION --------- #
 
 @app.route("/v1/byosnap-openai/completion", methods=["POST"])
+@cross_origin()
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def completion():
     """API to access OpenAI's completion APIs
@@ -289,6 +294,7 @@ def completion():
 
 
 @app.route("/v1/byosnap-openai/completion-stream", methods=["POST"])
+@cross_origin()
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def completion_stream():
     """API to access completion streaming with OpenAI
@@ -353,6 +359,7 @@ def completion_stream():
 # --------- EMBEDDING --------- #
 
 @app.route("/v1/byosnap-openai/embedding", methods=["POST"])
+@cross_origin()
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def embedding():
     """API to access OpenAI's embedding APIs
