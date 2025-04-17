@@ -18,14 +18,14 @@ API_SPEC_FILENAME = 'swagger.json'
 app = Flask(__name__)
 
 # Register your endpoints
-app.add_url_rule('/v1/byosnap-anthropic/chat',
+app.add_url_rule('/v1/byosnap-gemini/chat',
                  view_func=chat, methods=['POST'])
-app.add_url_rule('/v1/byosnap-anthropic/chat-stream',
+app.add_url_rule('/v1/byosnap-gemini/chat-stream',
                  view_func=chat_stream, methods=['POST'])
 
 # Initialize APISpec
 spec = APISpec(
-    title="BYOSnap Anthropic API",
+    title="BYOSnap Gemini API",
     version="1.0.0",
     openapi_version="3.0.2",
     plugins=[FlaskPlugin(), MarshmallowPlugin()],
