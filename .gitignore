@@ -1,6 +1,10 @@
 # Custom
 curl_test.sh
 
+# All env to be committed under snapser-resources but not the .env file
+!**/snapser-resources/.env
+.env
+
 # .NET Core
 bin/
 obj/
