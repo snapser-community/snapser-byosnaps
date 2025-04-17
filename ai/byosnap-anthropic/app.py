@@ -95,7 +95,7 @@ def chat():
     """Claude chat completion
     ---
     post:
-      summary: 'Anthropic Chat'
+      summary: 'Chat APIs'
       description: This API is a wrapper around Claude's non-streaming chat.
       operationId: 'ClaudeChat'
       x-snapser-auth-types:
@@ -164,7 +164,7 @@ def chat_stream():
     """Claude chat stream completion
     ---
     post:
-      summary: 'Anthropic Chat Stream'
+      summary: 'Chat APIs'
       description: Claude streaming chat with SSE response.
       operationId: 'ClaudeChatStream'
       x-snapser-auth-types:

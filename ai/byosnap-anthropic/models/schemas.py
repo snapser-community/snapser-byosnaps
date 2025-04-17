@@ -24,13 +24,6 @@ class SuccessResponseSchema(Schema):
     response = fields.Raw()
 
 
-class SuccessEmbeddingResponseSchema(Schema):
-    '''
-    Schema for the success embedding response.
-    '''
-    embedding = fields.List(fields.Float())
-
-
 class ErrorResponseSchema(Schema):
     '''
     Schema for the error response.
