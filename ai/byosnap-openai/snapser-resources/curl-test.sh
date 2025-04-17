@@ -1,4 +1,4 @@
-curl -iv -X POST http://localhost:5003/v1/byosnap-openai/chat \
+curl -iv -X POST -H 'Gateway: internal' http://localhost:5003/v1/byosnap-openai/chat \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gpt-4",
@@ -9,7 +9,7 @@ curl -iv -X POST http://localhost:5003/v1/byosnap-openai/chat \
     "temperature": 0.7
   }'
 
-curl -N -X POST http://localhost:5003/v1/byosnap-openai/chat-stream \
+curl -N -X POST -H 'Gateway: internal' http://localhost:5003/v1/byosnap-openai/chat-stream \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
   -d '{
@@ -22,7 +22,7 @@ curl -N -X POST http://localhost:5003/v1/byosnap-openai/chat-stream \
   }'
 
 
-curl -iv -X POST http://localhost:5003/v1/byosnap-openai/completion \
+curl -iv -X POST -H 'Gateway: internal' http://localhost:5003/v1/byosnap-openai/completion \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gpt-3.5-turbo-instruct",
@@ -32,7 +32,7 @@ curl -iv -X POST http://localhost:5003/v1/byosnap-openai/completion \
   }'
 
 
-curl -N -X POST http://localhost:5003/v1/byosnap-openai/completion-stream \
+curl -N -X POST  -H 'Gateway: internal' http://localhost:5003/v1/byosnap-openai/completion-stream \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
   -d '{
@@ -42,7 +42,7 @@ curl -N -X POST http://localhost:5003/v1/byosnap-openai/completion-stream \
     "temperature": 0.7
   }'
 
-curl -X POST http://localhost:5003/v1/byosnap-openai/embedding \
+curl -X POST  -H 'Gateway: internal' http://localhost:5003/v1/byosnap-openai/embedding \
   -H "Content-Type: application/json" \
   -d '{
     "model": "text-embedding-ada-002",

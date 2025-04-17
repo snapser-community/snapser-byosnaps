@@ -91,6 +91,7 @@ def health():
 
 
 @app.route('/v1/byosnap-anthropic/chat', methods=['POST'])
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def chat():
     """Claude chat completion
     ---
@@ -160,6 +161,7 @@ def chat():
 
 
 @app.route('/v1/byosnap-anthropic/chat-stream', methods=['POST'])
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def chat_stream():
     """Claude chat stream completion
     ---

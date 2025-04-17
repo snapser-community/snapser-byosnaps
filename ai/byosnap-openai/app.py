@@ -137,6 +137,7 @@ def health():
 # --------- CHAT --------- #
 
 @app.route("/v1/byosnap-openai/chat", methods=["POST"])
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def chat():
     """API to access OpenAI's chat completion
     ---
@@ -152,26 +153,7 @@ def chat():
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              properties:
-                model:
-                  type: string
-                  example: gpt-4
-                messages:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      role:
-                        type: string
-                        enum: [system, user, assistant]
-                      content:
-                        type: string
-                temperature:
-                  type: number
-                  format: float
-                  default: 0.7
+            schema: OpenAIChatRequestSchema
       responses:
         200:
           content:
@@ -199,6 +181,7 @@ def chat():
 
 
 @app.route("/v1/byosnap-openai/chat-stream", methods=["POST"])
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def chat_stream():
     """API to access streaming with OpenAI
     ---
@@ -216,26 +199,7 @@ def chat_stream():
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              properties:
-                model:
-                  type: string
-                  example: gpt-4
-                messages:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      role:
-                        type: string
-                        enum: [system, user, assistant]
-                      content:
-                        type: string
-                temperature:
-                  type: number
-                  format: float
-                  default: 0.7
+            schema: OpenAIChatRequestSchema
       responses:
         200:
           description: Streaming response (text/event-stream)
@@ -280,6 +244,7 @@ def chat_stream():
 # --------- COMPLETION --------- #
 
 @app.route("/v1/byosnap-openai/completion", methods=["POST"])
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def completion():
     """API to access OpenAI's completion APIs
     ---
@@ -295,22 +260,7 @@ def completion():
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              properties:
-                model:
-                  type: string
-                  example: gpt-3.5-turbo-instruct
-                prompt:
-                  type: string
-                  example: "Write a short story about dragons."
-                max_tokens:
-                  type: integer
-                  example: 100
-                temperature:
-                  type: number
-                  format: float
-                  default: 0.7
+            schema: OpenAICompletionRequestSchema
       responses:
         200:
           content:
@@ -339,6 +289,7 @@ def completion():
 
 
 @app.route("/v1/byosnap-openai/completion-stream", methods=["POST"])
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def completion_stream():
     """API to access completion streaming with OpenAI
     ---
@@ -356,22 +307,7 @@ def completion_stream():
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              properties:
-                model:
-                  type: string
-                  example: gpt-4
-                prompt:
-                  type: string
-                  example: "Once upon a time"
-                max_tokens:
-                  type: integer
-                  example: 100
-                temperature:
-                  type: number
-                  format: float
-                  default: 0.7
+            schema: OpenAICompletionRequestSchema
       responses:
         200:
           description: Streaming response (text/event-stream)
@@ -417,6 +353,7 @@ def completion_stream():
 # --------- EMBEDDING --------- #
 
 @app.route("/v1/byosnap-openai/embedding", methods=["POST"])
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def embedding():
     """API to access OpenAI's embedding APIs
     ---
@@ -432,15 +369,7 @@ def embedding():
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              properties:
-                model:
-                  type: string
-                  example: text-embedding-ada-002
-                input:
-                  type: string
-                  example: "Turn this sentence into an embedding."
+            schema: OpenAIEmbeddingRequestSchema
       responses:
         200:
           content:

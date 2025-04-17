@@ -15,37 +15,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "model": {
-                                        "type": "string",
-                                        "example": "gpt-4"
-                                    },
-                                    "messages": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "role": {
-                                                    "type": "string",
-                                                    "enum": [
-                                                        "system",
-                                                        "user",
-                                                        "assistant"
-                                                    ]
-                                                },
-                                                "content": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "temperature": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "default": 0.7
-                                    }
-                                }
+                                "$ref": "#/components/schemas/OpenAIChatRequestSchema"
                             }
                         }
                     }
@@ -89,37 +59,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "model": {
-                                        "type": "string",
-                                        "example": "gpt-4"
-                                    },
-                                    "messages": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "role": {
-                                                    "type": "string",
-                                                    "enum": [
-                                                        "system",
-                                                        "user",
-                                                        "assistant"
-                                                    ]
-                                                },
-                                                "content": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "temperature": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "default": 0.7
-                                    }
-                                }
+                                "$ref": "#/components/schemas/OpenAIChatRequestSchema"
                             }
                         }
                     }
@@ -164,26 +104,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "model": {
-                                        "type": "string",
-                                        "example": "gpt-3.5-turbo-instruct"
-                                    },
-                                    "prompt": {
-                                        "type": "string",
-                                        "example": "Write a short story about dragons."
-                                    },
-                                    "max_tokens": {
-                                        "type": "integer",
-                                        "example": 100
-                                    },
-                                    "temperature": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "default": 0.7
-                                    }
-                                }
+                                "$ref": "#/components/schemas/OpenAICompletionRequestSchema"
                             }
                         }
                     }
@@ -227,26 +148,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "model": {
-                                        "type": "string",
-                                        "example": "gpt-4"
-                                    },
-                                    "prompt": {
-                                        "type": "string",
-                                        "example": "Once upon a time"
-                                    },
-                                    "max_tokens": {
-                                        "type": "integer",
-                                        "example": 100
-                                    },
-                                    "temperature": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "default": 0.7
-                                    }
-                                }
+                                "$ref": "#/components/schemas/OpenAICompletionRequestSchema"
                             }
                         }
                     }
@@ -291,17 +193,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "model": {
-                                        "type": "string",
-                                        "example": "text-embedding-ada-002"
-                                    },
-                                    "input": {
-                                        "type": "string",
-                                        "example": "Turn this sentence into an embedding."
-                                    }
-                                }
+                                "$ref": "#/components/schemas/OpenAIEmbeddingRequestSchema"
                             }
                         }
                     }
@@ -338,13 +230,85 @@
     "openapi": "3.0.2",
     "components": {
         "schemas": {
-            "UserIdParameterSchema": {
+            "ChatMessageSchema": {
                 "type": "object",
                 "properties": {
-                    "user_id": {
+                    "content": {
+                        "type": "string"
+                    },
+                    "role": {
                         "type": "string"
                     }
-                }
+                },
+                "required": [
+                    "content",
+                    "role"
+                ]
+            },
+            "OpenAIChatRequestSchema": {
+                "type": "object",
+                "properties": {
+                    "messages": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChatMessageSchema"
+                        }
+                    },
+                    "model": {
+                        "type": "string",
+                        "example": "gpt-4"
+                    },
+                    "temperature": {
+                        "type": "number",
+                        "default": 0.7
+                    }
+                },
+                "required": [
+                    "messages",
+                    "model"
+                ]
+            },
+            "OpenAICompletionRequestSchema": {
+                "type": "object",
+                "properties": {
+                    "temperature": {
+                        "type": "number",
+                        "default": 0.7
+                    },
+                    "model": {
+                        "type": "string",
+                        "example": "gpt-3.5-turbo-instruct"
+                    },
+                    "prompt": {
+                        "type": "string",
+                        "example": "Write a short story about dragons."
+                    },
+                    "max_tokens": {
+                        "type": "integer",
+                        "default": 100
+                    }
+                },
+                "required": [
+                    "model",
+                    "prompt"
+                ]
+            },
+            "OpenAIEmbeddingRequestSchema": {
+                "type": "object",
+                "properties": {
+                    "input": {
+                        "type": "string",
+                        "example": "Turn this sentence into an embedding."
+                    },
+                    "model": {
+                        "type": "string",
+                        "example": "text-embedding-ada-002"
+                    }
+                },
+                "required": [
+                    "input",
+                    "model"
+                ]
             },
             "ErrorResponseSchema": {
                 "type": "object",
@@ -352,7 +316,10 @@
                     "error_message": {
                         "type": "string"
                     }
-                }
+                },
+                "required": [
+                    "error_message"
+                ]
             },
             "SuccessResponseSchema": {
                 "type": "object",
@@ -369,7 +336,10 @@
                             "type": "number"
                         }
                     }
-                }
+                },
+                "required": [
+                    "embedding"
+                ]
             }
         }
     }

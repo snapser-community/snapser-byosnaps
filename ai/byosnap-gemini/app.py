@@ -10,6 +10,17 @@ from flask_cors import CORS, cross_origin
 from functools import wraps
 import google.generativeai as genai
 
+# Constants
+AUTH_TYPE_HEADER_KEY = 'Auth-Type'
+GATEWAY_HEADER_KEY = 'Gateway'
+USER_ID_HEADER_KEY = 'User-Id'
+AUTH_TYPE_HEADER_VALUE_USER_AUTH = 'user'
+AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH = 'api-key'
+GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE = 'internal'
+ALL_AUTH_TYPES = [AUTH_TYPE_HEADER_VALUE_USER_AUTH,
+                  AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE]
+
+
 # Logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -23,22 +34,10 @@ genai.configure(api_key=GOOGLE_API_KEY)
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
-# Constants
-AUTH_TYPE_HEADER_KEY = 'Auth-Type'
-GATEWAY_HEADER_KEY = 'Gateway'
-USER_ID_HEADER_KEY = 'User-Id'
-AUTH_TYPE_HEADER_VALUE_USER_AUTH = 'user'
-AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH = 'api-key'
-GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE = 'internal'
-ALL_AUTH_TYPES = [AUTH_TYPE_HEADER_VALUE_USER_AUTH,
-                  AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE]
-
-# Auth Decorator
-
 
 def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
     '''
-
+    Decorator to validate authorization headers
     '''
     def decorator(f):
         @wraps(f)
@@ -99,6 +98,7 @@ def build_text_prompt(messages):
 
 
 @app.route("/v1/byosnap-gemini/chat", methods=["POST"])
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def chat():
     """Gemini chat completion
     ---
@@ -201,6 +201,7 @@ def chat():
 
 
 @app.route("/v1/byosnap-gemini/chat-stream", methods=["POST"])
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def chat_stream():
     """Gemini chat stream completion
     ---

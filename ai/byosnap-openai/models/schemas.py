@@ -1,38 +1,61 @@
 from marshmallow import Schema, fields
 
 
-class TokenHeaderSchema(Schema):
+# Shared for chat & stream
+class ChatMessageSchema(Schema):
     '''
-    Schema for the token header.
+    Chat message schema for OpenAI API.
     '''
-    # NOTE: TokenHeaderSchema is not used any more. Snapser automatically adds
-    # the right header in the SDK and API explorer.
-    Token = fields.Str(required=True)
+    role = fields.Str(required=True, validate=lambda x: x in [
+                      "system", "user", "assistant"])
+    content = fields.Str(required=True)
 
 
-class UserIdParameterSchema(Schema):
+class OpenAIChatRequestSchema(Schema):
     '''
-    Schema for the user ID parameter.
+    OpenAI chat request schema.
     '''
-    user_id = fields.Str()
+    model = fields.Str(required=True, example="gpt-4")
+    messages = fields.List(fields.Nested(ChatMessageSchema), required=True)
+    temperature = fields.Float(missing=0.7)
+
+
+class OpenAICompletionRequestSchema(Schema):
+    '''
+    OpenAI completion request schema.
+    '''
+    model = fields.Str(required=True, example="gpt-3.5-turbo-instruct")
+    prompt = fields.Str(
+        required=True, example="Write a short story about dragons.")
+    max_tokens = fields.Int(missing=100)
+    temperature = fields.Float(missing=0.7)
+
+
+class OpenAIEmbeddingRequestSchema(Schema):
+    '''
+    OpenAI embedding request schema.
+    '''
+    model = fields.Str(required=True, example="text-embedding-ada-002")
+    input = fields.Str(
+        required=True, example="Turn this sentence into an embedding.")
 
 
 class SuccessResponseSchema(Schema):
     '''
-    Schema for the success response.
+    Success response schema for OpenAI API.
     '''
     response = fields.Raw()
 
 
 class SuccessEmbeddingResponseSchema(Schema):
     '''
-    Schema for the success embedding response.
+    Success response schema for OpenAI embedding API.
     '''
-    embedding = fields.List(fields.Float())
+    embedding = fields.List(fields.Float(), required=True)
 
 
 class ErrorResponseSchema(Schema):
     '''
-    Schema for the error response.
+    Error response schema for OpenAI API.
     '''
-    error_message = fields.Str()
+    error_message = fields.Str(required=True)

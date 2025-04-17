@@ -7,8 +7,9 @@ from flask import Flask
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
-from models.schemas import UserIdParameterSchema, ErrorResponseSchema, SuccessResponseSchema, \
-    SuccessEmbeddingResponseSchema
+from models.schemas import ChatMessageSchema, ErrorResponseSchema, SuccessResponseSchema, \
+    SuccessEmbeddingResponseSchema, OpenAIChatRequestSchema, OpenAICompletionRequestSchema, \
+    OpenAIEmbeddingRequestSchema
 from app import chat, chat_stream, completion, completion_stream, embedding
 
 # Constants
@@ -37,7 +38,13 @@ spec = APISpec(
     openapi_version="3.0.2",
     plugins=[FlaskPlugin(), MarshmallowPlugin()],
 )
-spec.components.schema("UserIdParameterSchema", schema=UserIdParameterSchema)
+spec.components.schema("ChatMessageSchema", schema=ChatMessageSchema)
+spec.components.schema("OpenAIChatRequestSchema",
+                       schema=OpenAIChatRequestSchema)
+spec.components.schema("OpenAICompletionRequestSchema",
+                       schema=OpenAICompletionRequestSchema)
+spec.components.schema("OpenAIEmbeddingRequestSchema",
+                       schema=OpenAIEmbeddingRequestSchema)
 spec.components.schema("ErrorResponseSchema", schema=ErrorResponseSchema)
 spec.components.schema("SuccessResponseSchema", schema=SuccessResponseSchema)
 spec.components.schema("SuccessEmbeddingResponseSchema",
