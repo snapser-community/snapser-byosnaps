@@ -26,7 +26,9 @@ export const authMiddleware = (allowedAuthTypes: string[]) => {
     if(userIdHeaders) {
         userIdHeaderValue = Array.isArray(userIdHeaders) ? userIdHeaders[0].toLowerCase() : userIdHeaders.toLowerCase();
     }
-    const targetUser = req.params['userId'] ?? '';
+    // If the API has a URL parameter for user_id, then use that
+    // Otherwise, use the User-Id header value as the default
+    const targetUser = req.params['userId'] ?? userIdHeaderValue;
     const isInternalCall = gatewayHeaderValue.toLowerCase() === GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE;
     const isApiKeyAuth = authTypeHeaderValue.toLowerCase() === AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH;
     const isTargetUser = userIdHeaderValue === targetUser && userIdHeaderValue !== '';

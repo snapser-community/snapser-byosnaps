@@ -34,6 +34,9 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 
 
 def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
+    '''
+    Decorator to validate authorization headers
+    '''
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -48,7 +51,10 @@ def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
                 auth_type_header_value.lower() == AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH
             # Get User Id Header
             user_id_header_value = request.headers.get(USER_ID_HEADER_KEY, "")
-            target_user = kwargs.get(user_id_resource_key, "")
+            # If the API has a URL parameter for user_id, then use that
+            # Otherwise, use the User-Id header value as the default
+            target_user = kwargs.get(
+                user_id_resource_key, user_id_header_value)
             is_target_user = \
                 user_id_header_value == target_user and user_id_header_value != ""
 

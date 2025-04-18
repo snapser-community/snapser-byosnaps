@@ -19,7 +19,7 @@ namespace ByoSnapCSharp.Filters
       _userIdResourceKey = "userParams"; // Default key, can be set differently if needed
     }
 
-    private string ExtractUserId(ActionExecutingContext context)
+    private string ExtractUserId(ActionExecutingContext context, string defaultValue = "")
     {
       if (context.ActionArguments.TryGetValue(_userIdResourceKey, out var userParams))
       {
@@ -27,10 +27,10 @@ namespace ByoSnapCSharp.Filters
         if (userParams is UserIdParameterSchema userIdParams)
         {
           // Now you can access the UserId property
-          return userIdParams.UserId;
+          return userIdParams.UserId ?? defaultValue;
         }
       }
-      return "";
+      return defaultValue;
     }
 
     public override void OnActionExecuting(ActionExecutingContext context)
@@ -52,7 +52,7 @@ namespace ByoSnapCSharp.Filters
 
       // Get User Id Header
       var userIdHeaderValue = request.Headers[AppConstants.userIdHeaderKey].FirstOrDefault() ?? "";
-      var targetUser = ExtractUserId(context);
+      var targetUser = ExtractUserId(context, userIdHeaderValue);
       var isTargetUser = userIdHeaderValue == targetUser && !string.IsNullOrEmpty(userIdHeaderValue);
       // logger.LogInformation("User ID auth detected." + userIdHeaderValue + " == " + targetUser);
 

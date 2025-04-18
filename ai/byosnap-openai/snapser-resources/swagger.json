@@ -1,0 +1,346 @@
+{
+    "paths": {
+        "/v1/byosnap-openai/chat": {
+            "post": {
+                "summary": "Chat APIs",
+                "description": "This API is a wrapper around OpenAI's chat completion API.",
+                "operationId": "Chat",
+                "x-snapser-auth-types": [
+                    "user",
+                    "api-key",
+                    "internal"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenAIChatRequestSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "A successful response"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-openai/chat-stream": {
+            "post": {
+                "summary": "Chat APIs",
+                "description": "This API is a wrapper around OpenAI's chat streaming API. The response is streamed using Server-Sent Events (`text/event-stream`).\n",
+                "operationId": "ChatStream",
+                "x-snapser-auth-types": [
+                    "user",
+                    "api-key",
+                    "internal"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenAIChatRequestSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Streaming response (text/event-stream)",
+                        "content": {
+                            "text/event-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "data: Hello\n\n\ndata: world\n\n\ndata: [DONE]\n"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-openai/completion": {
+            "post": {
+                "summary": "Completion APIs",
+                "description": "This API is a wrapper around OpenAI's completion API.",
+                "operationId": "Completion",
+                "x-snapser-auth-types": [
+                    "user",
+                    "api-key",
+                    "internal"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenAICompletionRequestSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "A successful response"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-openai/completion-stream": {
+            "post": {
+                "summary": "Completion APIs",
+                "description": "This API is a wrapper around OpenAI's completion streaming API. The response is streamed using Server-Sent Events (`text/event-stream`).\n",
+                "operationId": "CompletionStream",
+                "x-snapser-auth-types": [
+                    "user",
+                    "api-key",
+                    "internal"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenAICompletionRequestSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Streaming response (text/event-stream)",
+                        "content": {
+                            "text/event-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "data: Hello\n\n\ndata: world\n\n\ndata: [DONE]\n"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-openai/embedding": {
+            "post": {
+                "summary": "Embedding APIs",
+                "description": "This API is a wrapper around OpenAI's embedding API.",
+                "operationId": "Embedding",
+                "x-snapser-auth-types": [
+                    "user",
+                    "api-key",
+                    "internal"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenAIEmbeddingRequestSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessEmbeddingResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "A successful response"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "info": {
+        "title": "BYOSnap OpenAi",
+        "version": "1.0.0"
+    },
+    "openapi": "3.0.2",
+    "components": {
+        "schemas": {
+            "ChatMessageSchema": {
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "content",
+                    "role"
+                ]
+            },
+            "OpenAIChatRequestSchema": {
+                "type": "object",
+                "properties": {
+                    "messages": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChatMessageSchema"
+                        }
+                    },
+                    "model": {
+                        "type": "string",
+                        "example": "gpt-4"
+                    },
+                    "temperature": {
+                        "type": "number",
+                        "default": 0.7
+                    }
+                },
+                "required": [
+                    "messages",
+                    "model"
+                ]
+            },
+            "OpenAICompletionRequestSchema": {
+                "type": "object",
+                "properties": {
+                    "temperature": {
+                        "type": "number",
+                        "default": 0.7
+                    },
+                    "model": {
+                        "type": "string",
+                        "example": "gpt-3.5-turbo-instruct"
+                    },
+                    "prompt": {
+                        "type": "string",
+                        "example": "Write a short story about dragons."
+                    },
+                    "max_tokens": {
+                        "type": "integer",
+                        "default": 100
+                    }
+                },
+                "required": [
+                    "model",
+                    "prompt"
+                ]
+            },
+            "OpenAIEmbeddingRequestSchema": {
+                "type": "object",
+                "properties": {
+                    "input": {
+                        "type": "string",
+                        "example": "Turn this sentence into an embedding."
+                    },
+                    "model": {
+                        "type": "string",
+                        "example": "text-embedding-ada-002"
+                    }
+                },
+                "required": [
+                    "input",
+                    "model"
+                ]
+            },
+            "ErrorResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "error_message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "error_message"
+                ]
+            },
+            "SuccessResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "response": {}
+                }
+            },
+            "SuccessEmbeddingResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "embedding": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "required": [
+                    "embedding"
+                ]
+            }
+        }
+    }
+}
