@@ -1,0 +1,207 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "BYOSnap Basic Go Example\nwith restful endpoints",
+    "title": "BYOSnap Basic Go Example",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "host": "localhost:5003",
+  "paths": {
+    "/v1/byosnap-basic/users/{user_id}": {
+      "delete": {
+        "description": "This API will work only when the call is coming from within the Snapend.",
+        "summary": "User APIs",
+        "operationId": "DeleteUser",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Unique identifier of the user",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved data",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponseSchema"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseSchema"
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "internal"
+        ]
+      }
+    },
+    "/v1/byosnap-basic/users/{user_id}/game": {
+      "get": {
+        "description": "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
+        "summary": "Game APIs",
+        "operationId": "GetGame",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Unique identifier of the user",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved data",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponseSchema"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseSchema"
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "user",
+          "api-key",
+          "internal"
+        ]
+      },
+      "post": {
+        "description": "This API will work only with Api-Key auth. You can access this API with a valid api-key.",
+        "summary": "Game APIs",
+        "operationId": "SaveGame",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Unique identifier of the user",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved data",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponseSchema"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseSchema"
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "api-key",
+          "internal"
+        ]
+      }
+    },
+    "/v1/byosnap-basic/users/{user_id}/profile": {
+      "put": {
+        "description": "This API will work only when the call is coming from within the Snapend.",
+        "summary": "User APIs",
+        "operationId": "UpdateUserProfile",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Unique identifier of the user",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved data",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponseSchema"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseSchema"
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "user",
+          "api-key",
+          "internal"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ErrorResponseSchema": {
+      "type": "object",
+      "properties": {
+        "error_message": {
+          "type": "string",
+          "x-go-name": "ErrorMessage"
+        }
+      },
+      "x-go-package": "byosnap-go"
+    },
+    "SuccessResponseSchema": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string",
+          "x-go-name": "API"
+        },
+        "auth_type": {
+          "type": "string",
+          "x-go-name": "AuthType"
+        },
+        "header_user_id": {
+          "type": "string",
+          "x-go-name": "HeaderUserID"
+        },
+        "message": {
+          "type": "string",
+          "x-go-name": "Message"
+        },
+        "path_user_id": {
+          "type": "string",
+          "x-go-name": "PathUserID"
+        }
+      },
+      "x-go-package": "byosnap-go"
+    },
+    "UserIdParameterSchema": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "x-go-name": "UserID"
+        }
+      },
+      "x-go-package": "byosnap-go"
+    }
+  }
+}

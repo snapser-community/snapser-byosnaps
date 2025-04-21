@@ -1,0 +1,279 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "BYOSnap Basic C# Example",
+    "description": "A simple example BYOSnap example",
+    "termsOfService": "https://snapser.com/resources/tos",
+    "contact": {
+      "name": "Snapser Admin",
+      "url": "https://twitter.com/example",
+      "email": "admin@snapser.com"
+    },
+    "version": "v1"
+  },
+  "paths": {
+    "/v1/byosnap-basic/users/{UserId}/game": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Game APIs",
+        "description": "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
+        "operationId": "GetGame",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "user",
+          "api-key",
+          "internal"
+        ]
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Game APIs",
+        "description": "This API will work only with Api-Key auth. You can access this API with a valid api-key.",
+        "operationId": "SaveGame",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "api-key",
+          "internal"
+        ]
+      }
+    },
+    "/v1/byosnap-basic/users/{UserId}": {
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "User APIs",
+        "description": "This API will work only when the call is coming from within the Snapend.",
+        "operationId": "DeleteUser",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "internal"
+        ]
+      }
+    },
+    "/v1/byosnap-basic/users/{UserId}/profile": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "User APIs",
+        "description": "This API will work for all auth types.",
+        "operationId": "UpdateUserProfile",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "user",
+          "api-key",
+          "internal"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuccessResponseSchema": {
+        "type": "object",
+        "properties": {
+          "api": {
+            "type": "string",
+            "nullable": true
+          },
+          "authType": {
+            "type": "string",
+            "nullable": true
+          },
+          "headerUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "pathUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-# BYOSnap MCP Host
+# BYOSnap Python Basic Tutorial
 
 ## Application
 - The main application logic is in **app.py**
@@ -81,8 +81,8 @@ python generate_swagger.py
 
 ### Step 3: Publish the BYOSnap
 Run the following command to publish your BYOSnap to your Snapser account.
-```bash
-snapctl byosnap publish --byosnap-id $byosnapId --version "v1.0.0" --path $pathToThisFolder --resources-path $pathToThisFolder/snapser-resources/
+```
+snapctl byosnap publish --byosnap-id byosnap-basic --version "v1.0.0" --path $pathToThisFolder --resources-path $pathToThisFolder/snapser-resources/
 ```
 
 ### Step 4: Create your cluster
@@ -107,7 +107,7 @@ At the end, you will have a new Snapend running with an Auth Snap & your BYOSnap
 - Go to the Snapend API explorer, which you can find under **Quick Links** on the Snapend Home page.
 - Use the Authentication.AnonLogin to create a test user.
 - The API Explorer History button will show you details of the created users Id and session token.
-- Then you can go to the BYOSnap API, add the users session token, and access any BYOSnap endpoint.
+- Then you can go to the BYOSnap API, add the users session token, and access the BYOSnap endpoint `UpdateUserProfile` to see your updated message.
 
 ## Development Process
 ### Pre-requisites - Read the Gotchas
