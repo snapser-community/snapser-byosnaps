@@ -1,11 +1,14 @@
 import { ErrorResponse, SuccessResponse } from '../types/responses';
+import { ProfilePayload } from '../models/profilePayloadModel';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { Request as ExpressRequest } from 'express';
-import { Controller, Route, Get, Path, Post, Put, Delete, Extension, Header, Middlewares, TsoaResponse, Response, Res, Request } from 'tsoa';
+import { Controller, Route, Get, Path, Post, Put, Delete, Extension, Body, Middlewares, TsoaResponse, Response, Res, Request } from 'tsoa';
+import { ProfilesServiceApi }  from '../snapser-internal/api/profilesServiceApi'
+import { UpsertProfileRequest } from '../snapser-internal/model/upsertProfileRequest';
 
 // # @GOTCHAS 👋 - Please read GOTCHAS.md
 
-@Route('/v1/byosnap-basic/users')
+@Route('/v1/byosnap-inter/users')
 export class UserController extends Controller {
 
     /**
@@ -94,21 +97,39 @@ export class UserController extends Controller {
     @Extension("x-snapser-auth-types", ["user", "api-key", "internal"])
     @Response<SuccessResponse>(200, "Successful Response")
     @Response<ErrorResponse>(401, "Unauthorized")
+    @Response<ErrorResponse>(400, "Bad Request")
     @Middlewares([authMiddleware(["user", "api-key", "internal"])])
     public async updateUserProfile(
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
+        @Res() _badRequest: TsoaResponse<400, ErrorResponse>,
         @Path() userId: string,
         @Request() req: ExpressRequest,
+        @Body() body: ProfilePayload
     ): Promise<SuccessResponse> {
       const expressReq = req as ExpressRequest;
       const authType = expressReq.header("Auth-Type");
       const headerUserId = expressReq.header("User-Id");
-      return {
-        api: 'updateUserProfile',
-        authType: authType ?? 'N/A',
-        headerUserId: headerUserId ?? 'N/A',
-        pathUserId: userId,
-        message: 'TODO: Add a message'
+      const baseUrl = process.env.SNAPEND_PROFILES_HTTP_URL ?? 'http://profiles-service:8090';
+      const profilesApi = new ProfilesServiceApi(baseUrl);
+      const payload: UpsertProfileRequest = {
+        profile: body.profile
       };
+      try {
+        const result = await profilesApi.profilesInternalUpsertProfile(userId, 'internal', payload);
+        const body = result.body;
+
+        return {
+          api: 'updateUserProfile',
+          authType: authType ?? 'N/A',
+          headerUserId: headerUserId ?? 'N/A',
+          pathUserId: userId,
+          message: JSON.stringify(body)
+        };
+      } catch (error) {
+          //Send ErrorResponse
+          return _badRequest(400, {
+            error_message: error?.message || "Upsert failed"
+          });
+      }
     }
 }

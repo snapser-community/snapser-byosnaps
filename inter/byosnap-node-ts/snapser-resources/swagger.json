@@ -43,6 +43,24 @@
           "error_message"
         ],
         "type": "object"
+      },
+      "Record_string.any_": {
+        "properties": {},
+        "additionalProperties": {},
+        "type": "object",
+        "description": "Construct a type with a set of properties K of type T"
+      },
+      "ProfilePayload": {
+        "properties": {
+          "profile": {
+            "$ref": "#/components/schemas/Record_string.any_"
+          }
+        },
+        "required": [
+          "profile"
+        ],
+        "type": "object",
+        "additionalProperties": false
       }
     },
     "securitySchemes": {}
@@ -57,7 +75,7 @@
     "contact": {}
   },
   "paths": {
-    "/v1/byosnap-basic/users/{userId}/game": {
+    "/v1/byosnap-inter/users/{userId}/game": {
       "get": {
         "operationId": "GetGame",
         "responses": {
@@ -144,7 +162,7 @@
         "description": "This API will work only with Api-Key auth. You can access this API with a valid api-key."
       }
     },
-    "/v1/byosnap-basic/users/{userId}": {
+    "/v1/byosnap-inter/users/{userId}": {
       "delete": {
         "operationId": "DeleteUser",
         "responses": {
@@ -187,7 +205,7 @@
         "description": "This API will work only when the call is coming from within the Snapend."
       }
     },
-    "/v1/byosnap-basic/users/{userId}/profile": {
+    "/v1/byosnap-inter/users/{userId}/profile": {
       "put": {
         "operationId": "UpdateUserProfile",
         "responses": {
@@ -197,6 +215,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -224,6 +252,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfilePayload"
+              }
+            }
+          }
+        },
         "x-snapser-auth-types": [
           "user",
           "api-key",

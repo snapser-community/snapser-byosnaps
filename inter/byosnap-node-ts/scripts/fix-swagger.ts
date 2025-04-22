@@ -33,9 +33,15 @@ for (const pathKey in swagger.paths) {
     if (responses && responses["401"] && responses["401"].description === "") {
       responses["401"].description = "Unauthorized";
     }
+    if (responses && responses["400"] && responses["400"].description === "") {
+      responses["400"].description = "Bad Request";
+    }
+    if (responses && responses["500"] && responses["500"].description === "") {
+      responses["500"].description = "Server Error";
+    }
   }
 }
 
 fs.writeFileSync(swaggerPath, JSON.stringify(swagger, null, 2));
 console.log('✅ Swagger description fields updated using x-description.');
-console.log('✅ Swagger 401 response descriptions updated.');
+console.log('✅ Swagger response descriptions updated.');

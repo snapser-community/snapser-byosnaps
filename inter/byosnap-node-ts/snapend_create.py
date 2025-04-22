@@ -23,7 +23,7 @@ def load_env(parent_folder, env_file='.env'):
 # Check if enough arguments have been passed
 if len(sys.argv) < 5:
     print("Usage: python snapend_create.py $companyId $gameId $byosnapId $byosnapVersion")
-    print("Note: For $byosnapId please enter the BYOSnap prefix of `byosnap-` as well. eg: byosnap-py-basic")
+    print("Note: For $byosnapId please enter the BYOSnap prefix of `byosnap-` as well. eg: byosnap-inter")
     sys.exit(1)
 
 # Accessing user arguments

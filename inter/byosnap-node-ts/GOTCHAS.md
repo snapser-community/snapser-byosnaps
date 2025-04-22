@@ -4,11 +4,11 @@ What to Watch Out For When Working in This Repo
 ## Endpoints
 - The Snapend Id is NOT part of the URL. This allows you to use the same BYOSnap in multiple Snapends.
 ```typescript
-@Route('/v1/byosnap-basic/users')
+@Route('/v1/byosnap-inter/users')
 ```
-- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-basic and remaining_path = /users/<user_id>.
+- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-inter and remaining_path = /users/<user_id>.
 ```typescript
-@Route('/v1/byosnap-basic/users')
+@Route('/v1/byosnap-inter/users')
 export class UserController extends Controller {
 
     /**
