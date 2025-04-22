@@ -1,246 +1,249 @@
 {
-    "version": "v1",
-    "id": "i0g3uebq",
-    "name": "byosnap-py-tutorial",
-    "environment": "DEVELOPMENT",
-    "service_definitions": [
+  "version": "v1",
+  "id": "s6rvl02d",
+  "name": "my-dev-cluster",
+  "environment": "DEVELOPMENT",
+  "service_definitions": [
+    {
+      "id": "auth",
+      "language": "go",
+      "version": "v0.48.0",
+      "author_id": "snapser",
+      "category": "SNAPSER",
+      "subcategory": "SERVICE",
+      "data_dependencies": [
         {
-            "id": "auth",
-            "language": "go",
-            "version": "v0.47.0",
-            "author_id": "snapser",
-            "category": "SNAPSER",
-            "subcategory": "SERVICE",
-            "data_dependencies": [
-                {
-                    "type": "POSTGRES",
-                    "postgres": {
-                        "database": "auth"
-                    }
-                },
-                {
-                    "type": "POSTGRES",
-                    "postgres": {
-                        "database": "auth_settings"
-                    }
-                },
-                {
-                    "type": "REDIS",
-                    "redis": {}
-                }
-            ]
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "auth"
+          }
         },
         {
-            "id": "byosnap-basic",
-            "language": "typescript",
-            "version": "v1.0.0",
-            "author_id": "fc461565-aad4-47ce-bd7b-aada8fd0b2a3",
-            "category": "BYOSNAP",
-            "subcategory": "SERVICE"
-        }
-    ],
-    "settings": [
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "auth_settings"
+          }
+        },
         {
-            "id": "auth",
-            "data": {
-                "dev": {
-                    "anon": {
-                        "enabled": true
-                    },
-                    "api_keys": [],
-                    "app_auth": {
-                        "enabled": false
-                    },
-                    "app_verify": {
-                        "client_secret": "",
-                        "enabled": false
-                    },
-                    "apple": {
-                        "enabled": false,
-                        "key_id": "",
-                        "private_key": "",
-                        "service_id": "",
-                        "team_id": ""
-                    },
-                    "email": {
-                        "enabled": false,
-                        "otp_length": 0,
-                        "otp_rate_limit_settings": {
-                            "allow_list": [],
-                            "deny_list": [],
-                            "duration_in_seconds": 60,
-                            "limit": 5,
-                            "lockout_duration_in_seconds": 60
-                        },
-                        "otp_validity": 0
-                    },
-                    "epic": {
-                        "client_id": "",
-                        "client_secret": "",
-                        "enabled": false
-                    },
-                    "facebook": {
-                        "client_id": "",
-                        "client_secret": "",
-                        "enabled": false
-                    },
-                    "google": {
-                        "client_id": "",
-                        "client_secret": "",
-                        "enabled": false
-                    },
-                    "password": {
-                        "enabled": false
-                    },
-                    "session_inactivity_timeout": 604800,
-                    "session_token_validity": 2592000,
-                    "steam": {
-                        "api_key": "",
-                        "app_id": 0,
-                        "enabled": false,
-                        "publisher_api_key": "",
-                        "web_api_key": ""
-                    },
-                    "user_auth_restrictions": [],
-                    "xbox": {
-                        "client_id": "",
-                        "client_secret": "",
-                        "enabled": false
-                    }
-                },
-                "prod": {
-                    "anon": {
-                        "enabled": false
-                    },
-                    "api_keys": [],
-                    "app_auth": {
-                        "enabled": false
-                    },
-                    "app_verify": {
-                        "client_secret": "",
-                        "enabled": false
-                    },
-                    "apple": {
-                        "enabled": false,
-                        "key_id": "",
-                        "private_key": "",
-                        "service_id": "",
-                        "team_id": ""
-                    },
-                    "email": {
-                        "enabled": false,
-                        "otp_length": 0,
-                        "otp_rate_limit_settings": {
-                            "allow_list": [],
-                            "deny_list": [],
-                            "duration_in_seconds": 60,
-                            "limit": 5,
-                            "lockout_duration_in_seconds": 60
-                        },
-                        "otp_validity": 0
-                    },
-                    "epic": {
-                        "client_id": "",
-                        "client_secret": "",
-                        "enabled": false
-                    },
-                    "facebook": {
-                        "client_id": "",
-                        "client_secret": "",
-                        "enabled": false
-                    },
-                    "google": {
-                        "client_id": "",
-                        "client_secret": "",
-                        "enabled": false
-                    },
-                    "password": {
-                        "enabled": false
-                    },
-                    "session_inactivity_timeout": 604800,
-                    "session_token_validity": 2592000,
-                    "steam": {
-                        "api_key": "",
-                        "app_id": 0,
-                        "enabled": false,
-                        "publisher_api_key": "",
-                        "web_api_key": ""
-                    },
-                    "user_auth_restrictions": [],
-                    "xbox": {
-                        "client_id": "",
-                        "client_secret": "",
-                        "enabled": false
-                    }
-                },
-                "stage": {
-                    "anon": {
-                        "enabled": true
-                    },
-                    "api_keys": [],
-                    "app_auth": {
-                        "enabled": false
-                    },
-                    "app_verify": {
-                        "client_secret": "",
-                        "enabled": false
-                    },
-                    "apple": {
-                        "enabled": false,
-                        "key_id": "",
-                        "private_key": "",
-                        "service_id": "",
-                        "team_id": ""
-                    },
-                    "email": {
-                        "enabled": false,
-                        "otp_length": 0,
-                        "otp_rate_limit_settings": {
-                            "allow_list": [],
-                            "deny_list": [],
-                            "duration_in_seconds": 60,
-                            "limit": 5,
-                            "lockout_duration_in_seconds": 60
-                        },
-                        "otp_validity": 0
-                    },
-                    "epic": {
-                        "client_id": "",
-                        "client_secret": "",
-                        "enabled": false
-                    },
-                    "facebook": {
-                        "client_id": "",
-                        "client_secret": "",
-                        "enabled": false
-                    },
-                    "google": {
-                        "client_id": "",
-                        "client_secret": "",
-                        "enabled": false
-                    },
-                    "password": {
-                        "enabled": false
-                    },
-                    "session_inactivity_timeout": 604800,
-                    "session_token_validity": 2592000,
-                    "steam": {
-                        "api_key": "",
-                        "app_id": 0,
-                        "enabled": false,
-                        "publisher_api_key": "",
-                        "web_api_key": ""
-                    },
-                    "user_auth_restrictions": [],
-                    "xbox": {
-                        "client_id": "",
-                        "client_secret": "",
-                        "enabled": false
-                    }
-                }
-            },
-            "version": "v0.47.0",
-            "exported_at": "1743168336"
+          "type": "REDIS",
+          "redis": {}
         }
-    ]
+      ]
+    },
+    {
+      "id": "byosnap-inter",
+      "language": "typescript",
+      "version": "v1.0.0",
+      "author_id": "fc461565-aad4-47ce-bd7b-aada8fd0b2a3",
+      "category": "BYOSNAP",
+      "subcategory": "SERVICE"
+    },
+    {
+      "id": "profiles",
+      "language": "go",
+      "version": "v0.48.0",
+      "author_id": "snapser",
+      "category": "SNAPSER",
+      "subcategory": "SERVICE",
+      "data_dependencies": [
+        {
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "profiles"
+          }
+        },
+        {
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "profiles_settings"
+          }
+        },
+        {
+          "type": "REDIS",
+          "redis": {}
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "id": "auth",
+      "data": {
+        "dev": {
+          "anon": {
+            "enabled": true
+          },
+          "api_keys": [],
+          "app_auth": null,
+          "app_verify": null,
+          "apple": null,
+          "disable_user_creation": false,
+          "discord": null,
+          "email": null,
+          "email_password": null,
+          "epic": null,
+          "facebook": null,
+          "fixed_rate_limiter_settings": [
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "email_login"
+            },
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "email_verification"
+            },
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "account_recovery"
+            }
+          ],
+          "google": null,
+          "password": null,
+          "session_inactivity_timeout": 604800,
+          "session_token_validity": 2592000,
+          "steam": null,
+          "user_auth_restrictions": [],
+          "username_password": null,
+          "xbox": null
+        },
+        "email_templates": [],
+        "prod": {
+          "anon": null,
+          "api_keys": [],
+          "app_auth": null,
+          "app_verify": null,
+          "apple": null,
+          "disable_user_creation": false,
+          "discord": null,
+          "email": null,
+          "email_password": null,
+          "epic": null,
+          "facebook": null,
+          "fixed_rate_limiter_settings": [
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "email_login"
+            },
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "email_verification"
+            },
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "account_recovery"
+            }
+          ],
+          "google": null,
+          "password": null,
+          "session_inactivity_timeout": 604800,
+          "session_token_validity": 2592000,
+          "steam": null,
+          "user_auth_restrictions": [],
+          "username_password": null,
+          "xbox": null
+        },
+        "stage": {
+          "anon": null,
+          "api_keys": [],
+          "app_auth": null,
+          "app_verify": null,
+          "apple": null,
+          "disable_user_creation": false,
+          "discord": null,
+          "email": null,
+          "email_password": null,
+          "epic": null,
+          "facebook": null,
+          "fixed_rate_limiter_settings": [
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "email_login"
+            },
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "email_verification"
+            },
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "account_recovery"
+            }
+          ],
+          "google": null,
+          "password": null,
+          "session_inactivity_timeout": 604800,
+          "session_token_validity": 2592000,
+          "steam": null,
+          "user_auth_restrictions": [],
+          "username_password": null,
+          "xbox": null
+        }
+      },
+      "version": "v0.48.0",
+      "exported_at": "1745329987"
+    },
+    {
+      "id": "profiles",
+      "data": {
+        "keys": [
+          {
+            "meta": [],
+            "name": "gamer_tag",
+            "required": true,
+            "searchable_column": "primary_2",
+            "searchable_type": "PRIMARY",
+            "type": "text",
+            "validations": {
+              "max": 0,
+              "max_length": 0,
+              "min": 0,
+              "min_length": 0,
+              "pattern": "",
+              "values": []
+            },
+            "visibility": "public",
+            "visibility_group": ""
+          }
+        ]
+      },
+      "version": "v0.48.0",
+      "exported_at": "1745329987"
+    }
+  ],
+  "applied_configuration": "{\"version\":\"v1\", \"id\":\"s6rvl02d\", \"name\":\"my-dev-cluster\", \"environment\":\"DEVELOPMENT\", \"service_definitions\":[{\"id\":\"auth\", \"language\":\"go\", \"version\":\"v0.48.0\", \"author_id\":\"snapser\", \"category\":\"SNAPSER\", \"subcategory\":\"SERVICE\", \"data_dependencies\":[{\"type\":\"POSTGRES\", \"postgres\":{\"database\":\"auth\"}}, {\"type\":\"POSTGRES\", \"postgres\":{\"database\":\"auth_settings\"}}, {\"type\":\"REDIS\", \"redis\":{}}]}, {\"id\":\"byosnap-inter\", \"language\":\"csharp\", \"version\":\"v1.0.8\", \"author_id\":\"fc461565-aad4-47ce-bd7b-aada8fd0b2a3\", \"category\":\"BYOSNAP\", \"subcategory\":\"SERVICE\"}, {\"id\":\"profiles\", \"language\":\"go\", \"version\":\"v0.48.0\", \"author_id\":\"snapser\", \"category\":\"SNAPSER\", \"subcategory\":\"SERVICE\", \"data_dependencies\":[{\"type\":\"POSTGRES\", \"postgres\":{\"database\":\"profiles\"}}, {\"type\":\"POSTGRES\", \"postgres\":{\"database\":\"profiles_settings\"}}, {\"type\":\"REDIS\", \"redis\":{}}]}], \"settings\":[{\"id\":\"auth\", \"data\":{\"dev\":{\"anon\":{\"enabled\":true}, \"api_keys\":[], \"app_auth\":null, \"app_verify\":null, \"apple\":null, \"disable_user_creation\":false, \"discord\":null, \"email\":null, \"email_password\":null, \"epic\":null, \"facebook\":null, \"fixed_rate_limiter_settings\":[{\"allow_list\":[], \"deny_list\":[], \"duration_in_seconds\":60, \"limit\":5, \"lockout_duration_in_seconds\":60, \"type\":\"email_login\"}, {\"allow_list\":[], \"deny_list\":[], \"duration_in_seconds\":60, \"limit\":5, \"lockout_duration_in_seconds\":60, \"type\":\"email_verification\"}, {\"allow_list\":[], \"deny_list\":[], \"duration_in_seconds\":60, \"limit\":5, \"lockout_duration_in_seconds\":60, \"type\":\"account_recovery\"}], \"google\":null, \"password\":null, \"session_inactivity_timeout\":604800, \"session_token_validity\":2592000, \"steam\":null, \"user_auth_restrictions\":[], \"username_password\":null, \"xbox\":null}, \"email_templates\":[], \"prod\":{\"anon\":null, \"api_keys\":[], \"app_auth\":null, \"app_verify\":null, \"apple\":null, \"disable_user_creation\":false, \"discord\":null, \"email\":null, \"email_password\":null, \"epic\":null, \"facebook\":null, \"fixed_rate_limiter_settings\":[{\"allow_list\":[], \"deny_list\":[], \"duration_in_seconds\":60, \"limit\":5, \"lockout_duration_in_seconds\":60, \"type\":\"email_login\"}, {\"allow_list\":[], \"deny_list\":[], \"duration_in_seconds\":60, \"limit\":5, \"lockout_duration_in_seconds\":60, \"type\":\"email_verification\"}, {\"allow_list\":[], \"deny_list\":[], \"duration_in_seconds\":60, \"limit\":5, \"lockout_duration_in_seconds\":60, \"type\":\"account_recovery\"}], \"google\":null, \"password\":null, \"session_inactivity_timeout\":604800, \"session_token_validity\":2592000, \"steam\":null, \"user_auth_restrictions\":[], \"username_password\":null, \"xbox\":null}, \"stage\":{\"anon\":null, \"api_keys\":[], \"app_auth\":null, \"app_verify\":null, \"apple\":null, \"disable_user_creation\":false, \"discord\":null, \"email\":null, \"email_password\":null, \"epic\":null, \"facebook\":null, \"fixed_rate_limiter_settings\":[{\"allow_list\":[], \"deny_list\":[], \"duration_in_seconds\":60, \"limit\":5, \"lockout_duration_in_seconds\":60, \"type\":\"email_login\"}, {\"allow_list\":[], \"deny_list\":[], \"duration_in_seconds\":60, \"limit\":5, \"lockout_duration_in_seconds\":60, \"type\":\"email_verification\"}, {\"allow_list\":[], \"deny_list\":[], \"duration_in_seconds\":60, \"limit\":5, \"lockout_duration_in_seconds\":60, \"type\":\"account_recovery\"}], \"google\":null, \"password\":null, \"session_inactivity_timeout\":604800, \"session_token_validity\":2592000, \"steam\":null, \"user_auth_restrictions\":[], \"username_password\":null, \"xbox\":null}}, \"version\":\"v0.48.0\", \"exported_at\":\"1745329987\"}, {\"id\":\"profiles\", \"data\":{\"keys\":[{\"meta\":[], \"name\":\"gamer_tag\", \"required\":true, \"searchable_column\":\"primary_2\", \"searchable_type\":\"PRIMARY\", \"type\":\"text\", \"validations\":{\"max\":0, \"max_length\":0, \"min\":0, \"min_length\":0, \"pattern\":\"\", \"values\":[]}, \"visibility\":\"public\", \"visibility_group\":\"\"}]}, \"version\":\"v0.48.0\", \"exported_at\":\"1745329987\"}]}"
 }

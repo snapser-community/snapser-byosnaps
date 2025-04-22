@@ -45,7 +45,7 @@ SNAPS_VERSION_SUFFIX = ''
 if SNAPS_VERSION is not None and SNAPS_VERSION != 'production':
     SNAPS_VERSION_PREFIX = f'-{SNAPS_VERSION}'
 AUTH_SNAP_VERSION = os.getenv(
-    'AUTH_SNAP_VERSION', 'v0.47.0') + SNAPS_VERSION_SUFFIX
+    'AUTH_SNAP_VERSION', 'v0.48.0') + SNAPS_VERSION_SUFFIX
 LANGUAGE = os.getenv('LANGUAGE', 'csharp')
 SNAPEND_ENV = os.getenv('SNAPEND_ENV', 'development')
 

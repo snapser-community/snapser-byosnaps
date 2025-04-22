@@ -1,8 +1,8 @@
 {
-    "name": "Byosnap Typescript Basic",
-    "description": "Basic Node Typescript microservice to demonstrate BYOSnap",
+    "name": "Byosnap Node Intermediate",
+    "description": "Intermediate Node microservice to demonstrate BYOSnap integration with the Internal SDK.",
     "platform": "linux/arm64",
-    "language": "typescript",
+    "language": "csharp",
     "prefix": "/v1",
     "ingress": {
         "external_port": {

@@ -1,5 +1,5 @@
-# BYOSnap Python Basic Example
- This BYOSnap has 4 Restful endpoints
+# BYOSnap Python Intermediate Example
+ This is the documentation for your BYOSnap. You can update it the section below to what you want.
 
  ## Concept
  When a Snapend has the Auth snap, you get authentication and authorization sorted out for you.
@@ -17,4 +17,3 @@
  1. SaveGame: The endpoint that this method exposes is accessible only over api-key auth and internally.
  1. DeleteUser: The endpoint that this method exposes is only available internally.
  1. UpdateUserProfile: This is for you to update as part of the tutorial.
-

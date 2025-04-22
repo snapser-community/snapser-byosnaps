@@ -1,5 +1,5 @@
-# BYOSnap Typescript Basic Example
- This BYOSnap has 4 Restful endpoints
+# BYOSnap Node Typescript Intermediate Example
+ This is the documentation for your BYOSnap. You can update it the section below to what you want.
 
  ## Concept
  When a Snapend has the Auth snap, you get authentication and authorization sorted out for you.

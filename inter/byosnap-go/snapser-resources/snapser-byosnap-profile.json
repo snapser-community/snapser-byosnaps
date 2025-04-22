@@ -1,8 +1,8 @@
 {
-    "name": "Byosnap Go Basic",
-    "description": "Basic Go microservice to demonstrate BYOSnap",
+    "name": "Byosnap Go Intermediate",
+    "description": "Intermediate Go microservice to demonstrate BYOSnap integration with the Internal SDK.",
     "platform": "linux/arm64",
-    "language": "go",
+    "language": "csharp",
     "prefix": "/v1",
     "ingress": {
         "external_port": {
