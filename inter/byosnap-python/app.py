@@ -304,20 +304,21 @@ def update_user_profile(user_id):
         return jsonify({"error": "Missing profile"}), 400
 
     message = ''
-    configuration = snapser_internal.Configuration()
-    with snapser_internal.ApiClient(configuration) as api_client:
-        # Create an instance of the API class
-        api_instance = snapser_internal.ProfilesServiceApi(api_client)
-        body = snapser_internal.UpsertProfileRequest(
-            profile=payload["profile"])
+    # TODO: Uncomment the following code to use the SnapserInternal API
+    # configuration = snapser_internal.Configuration()
+    # with snapser_internal.ApiClient(configuration) as api_client:
+    #     # Create an instance of the API class
+    #     api_instance = snapser_internal.ProfilesServiceApi(api_client)
+    #     body = snapser_internal.UpsertProfileRequest(
+    #         profile=payload["profile"])
 
-        try:
-            # Anonymous Login
-            api_response = api_instance.profiles_internal_upsert_profile(
-                user_id_header, 'internal', body)
-            message = api_response
-        except ApiException as e:
-            message = e
+    #     try:
+    #         # Anonymous Login
+    #         api_response = api_instance.profiles_internal_upsert_profile(
+    #             user_id_header, 'internal', body)
+    #         message = api_response
+    #     except ApiException as e:
+    #         message = e
 
     return make_response(jsonify({
         'api': update_user_profile.__name__,
