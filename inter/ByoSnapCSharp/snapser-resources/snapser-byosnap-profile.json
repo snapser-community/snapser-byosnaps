@@ -1,6 +1,6 @@
 {
-    "name": "Byosnap CSharp Basic",
-    "description": "Basic CSharp microservice to demonstrate BYOSnap",
+    "name": "Byosnap CSharp Intermediate",
+    "description": "Intermediate CSharp microservice to demonstrate BYOSnap integration with the Internal SDK.",
     "platform": "linux/arm64",
     "language": "csharp",
     "prefix": "/v1",

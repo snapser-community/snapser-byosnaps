@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.4",
   "info": {
-    "title": "BYOSnap Basic C# Example",
-    "description": "A simple example BYOSnap example",
+    "title": "BYOSnap Intermediate C# Example",
+    "description": "A BYOSnap example showing how to use the Internal SDK.",
     "termsOfService": "https://snapser.com/resources/tos",
     "contact": {
       "name": "Snapser Admin",
@@ -12,7 +12,7 @@
     "version": "v1"
   },
   "paths": {
-    "/v1/byosnap-basic/users/{UserId}/game": {
+    "/v1/byosnap-inter/users/{UserId}/game": {
       "get": {
         "tags": [
           "Users"
@@ -123,7 +123,7 @@
         ]
       }
     },
-    "/v1/byosnap-basic/users/{UserId}": {
+    "/v1/byosnap-inter/users/{UserId}": {
       "delete": {
         "tags": [
           "Users"
@@ -178,7 +178,7 @@
         ]
       }
     },
-    "/v1/byosnap-basic/users/{UserId}/profile": {
+    "/v1/byosnap-inter/users/{UserId}/profile": {
       "put": {
         "tags": [
           "Users"
@@ -200,17 +200,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PatchProfileRequest"
+                "$ref": "#/components/schemas/UpsertProfileRequestWrapper"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PatchProfileRequest"
+                "$ref": "#/components/schemas/UpsertProfileRequestWrapper"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PatchProfileRequest"
+                "$ref": "#/components/schemas/UpsertProfileRequestWrapper"
               }
             }
           }
@@ -267,10 +267,11 @@
         },
         "additionalProperties": false
       },
-      "PatchProfileRequest": {
+      "ProfileAttributes": {
         "type": "object",
         "properties": {
-          "profile": {
+          "gamer_tag": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -298,6 +299,15 @@
           "message": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpsertProfileRequestWrapper": {
+        "type": "object",
+        "properties": {
+          "profile": {
+            "$ref": "#/components/schemas/ProfileAttributes"
           }
         },
         "additionalProperties": false

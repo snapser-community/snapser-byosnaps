@@ -28,9 +28,9 @@ namespace ByoSnapCSharp
       {
         c.SwaggerDoc("v1", new OpenApiInfo
         {
-          Title = "BYOSnap Basic C# Example",
+          Title = "BYOSnap Intermediate C# Example",
           Version = "v1",
-          Description = "A simple example BYOSnap example",
+          Description = "A BYOSnap example showing how to use the Internal SDK.",
           TermsOfService = new Uri("https://snapser.com/resources/tos"),
           Contact = new OpenApiContact
           {

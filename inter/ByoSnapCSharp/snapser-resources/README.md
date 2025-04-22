@@ -1,4 +1,4 @@
-# BYOSnap CSharp Basic Example
+# BYOSnap CSharp Intermediate Example
  This BYOSnap has 4 Restful endpoints
 
  ## Concept

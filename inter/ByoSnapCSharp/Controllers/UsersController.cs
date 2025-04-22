@@ -16,7 +16,7 @@ using System.Net.Http;
 namespace ByoSnapCSharp.Controllers
 {
   [ApiController]
-  [Route("v1/byosnap-basic/users/{UserId}")]
+  [Route("v1/byosnap-inter/users/{UserId}")]
   [Produces("application/json")]
   public class UsersController : ControllerBase
   {
@@ -92,21 +92,24 @@ namespace ByoSnapCSharp.Controllers
     [SwaggerOperation(OperationId = "UpdateUserProfile", Summary = "User APIs", Description = "This API will work for all auth types.")]
     public ActionResult<SuccessResponseSchema> UpdateUserProfile(
       [FromRoute] UserIdParameterSchema userParams,
-      [FromBody, SwaggerParameter("Payload containing the profile attributes")] PatchProfileRequest body)
+      [FromBody] UpsertProfileRequestWrapper body)
     {
-      var gatewayHeader = HttpContext.Request.Headers[AppConstants.gatewayHeaderKey].FirstOrDefault();
-      var userIdHeader = HttpContext.Request.Headers[AppConstants.userIdHeaderKey].FirstOrDefault();
-      // Make a call to the Snapser Profiles API
-      Configuration config = new Configuration();
-      HttpClient httpClient = new HttpClient();
-      HttpClientHandler httpClientHandler = new HttpClientHandler();
-      var apiInstance = new ProfilesServiceApi(httpClient, config, httpClientHandler);
-      var profileBody = new PatchProfileRequest(body);
-
       try
       {
-        // Profile Patch Request
-        ProfilesPatchProfileResponse result = apiInstance.ProfilesInternalPatchProfile(userParams.UserId, "internal", body);
+        var gatewayHeader = HttpContext.Request.Headers[AppConstants.gatewayHeaderKey].FirstOrDefault();
+        var userIdHeader = HttpContext.Request.Headers[AppConstants.userIdHeaderKey].FirstOrDefault();
+        Object result = null;
+        // TODO: Uncomment the following code to use the SnapserInternal API
+        // Configuration config = new Configuration();
+        // //👇 [IMPORTANT]: Override the base path with the Internal API URL
+        // config.BasePath = config.GetOperationServerUrl("ProfilesServiceApi.ProfilesInternalUpsertProfile", 0);
+        // HttpClient httpClient = new HttpClient();
+        // HttpClientHandler httpClientHandler = new HttpClientHandler();
+        // var apiInstance = new ProfilesServiceApi(httpClient, config, httpClientHandler);
+
+        // // Profile Upsert Request
+        // var upsertRequest = new UpsertProfileRequest(profile: body.Profile);
+        // result = apiInstance.ProfilesInternalUpsertProfile(userParams.UserId, "internal", upsertRequest);
         return Ok(new SuccessResponseSchema
         {
           Api = "UpdateUserProfile",

@@ -7,17 +7,17 @@ What to Watch Out For When Working in This Repo
 namespace ByoSnapCSharp.Controllers
 {
   [ApiController]
-  [Route("v1/byosnap-basic/users/{UserId}")] // (👈 No Snapend Id)
+  [Route("v1/byosnap-inter/users/{UserId}")] // (👈 No Snapend Id)
   public class UsersController : ControllerBase
   ...
 }
 ```
-- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-basic and remaining_path = /users/<user_id>.
+- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-inter and remaining_path = /users/<user_id>.
 ```csharp
 namespace ByoSnapCSharp.Controllers
 {
   [ApiController]
-  [Route("v1/byosnap-basic/users/{UserId}")] // (👈 No Snapend Id)
+  [Route("v1/byosnap-inter/users/{UserId}")] // (👈 No Snapend Id)
   public class UsersController : ControllerBase
   ...
 }
@@ -27,7 +27,7 @@ namespace ByoSnapCSharp.Controllers
 namespace ByoSnapCSharp.Controllers
 {
   [ApiController]
-  [Route("v1/byosnap-basic/users/{UserId}")]
+  [Route("v1/byosnap-inter/users/{UserId}")]
   public class UsersController : ControllerBase
   {
     [HttpGet("game")]
@@ -63,7 +63,7 @@ public ActionResult<SuccessResponseSchema> GetGame([FromRoute] UserIdParameterSc
 - Snapser tech automatically adds the correct header to the SDK and API Explorer for your API. So you do not need to add the headers here against your API. Eg: For APIs exposed over User Auth, both the SDK and API Explorer will expose the Token header for you to fill in. For Api-Key Auth, the API Explorer will expose the Api-Key header for you to fill in. For internal APIs, the SDK and API Explorer will expose the Gateway header.
 ```csharp
 [ApiController]
-  [Route("v1/byosnap-basic/users/{UserId}")]
+  [Route("v1/byosnap-inter/users/{UserId}")]
   public class UsersController : ControllerBase
   {
     [HttpGet("game")]
