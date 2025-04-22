@@ -1,11 +1,13 @@
 '''
-Basic Python BYOSnap Example.
+Intermediate Python BYOSnap Example.
 '''
 import logging
 
 from flask import Flask, request, make_response, jsonify
 from flask_cors import CORS, cross_origin
 from functools import wraps
+import snapser_internal
+from snapser_internal.rest import ApiException
 
 
 # Constants
@@ -95,9 +97,9 @@ def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
 #
 
 
-@app.route('/v1/byosnap-basic/users/<user_id>/game', methods=['OPTIONS'])
-@app.route('/v1/byosnap-basic/users/<user_id>', methods=['OPTIONS'])
-@app.route('/v1/byosnap-basic/users/<user_id>/profile', methods=['OPTIONS'])
+@app.route('/v1/byosnap-inter/users/<user_id>/game', methods=['OPTIONS'])
+@app.route('/v1/byosnap-inter/users/<user_id>', methods=['OPTIONS'])
+@app.route('/v1/byosnap-inter/users/<user_id>/profile', methods=['OPTIONS'])
 @cross_origin()
 def cors_overrides(path):
     return f'{path} Ok'
@@ -115,7 +117,7 @@ def health():
 
 # @GOTCHAS 👋 - Externally available APIs
 #     1. The Snapend Id is NOT part of the URL. This allows you to use the same BYOSnap in multiple Snapends.
-#     2. All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-basic and remaining_path = /users/<user_id>.
+#     2. All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-inter and remaining_path = /users/<user_id>.
 #     3. The YAML comment below is used to generate the swagger.json file.
 #     4. Notice the x-snapser-auth-types tags in the swagger.json. They tell Snapser if it should expose this API in
 #        the SDK and the API Explorer. Note: but you should still validate the auth type in the code.
@@ -126,7 +128,7 @@ def health():
 #       the Gateway header.
 
 
-@app.route("/v1/byosnap-basic/users/<user_id>/game", methods=["GET"])
+@app.route("/v1/byosnap-inter/users/<user_id>/game", methods=["GET"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def get_game(user_id):
     """API that is accessible by User, Api-Key and Internal auth
@@ -172,7 +174,7 @@ def get_game(user_id):
     }), 200)
 
 
-@app.route("/v1/byosnap-basic/users/<user_id>/game", methods=["POST"])
+@app.route("/v1/byosnap-inter/users/<user_id>/game", methods=["POST"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def save_game(user_id):
     """API that is accessible by Api-Key and Internal auth. User auth will not be allowed. Code does this by checking the Auth-Type header.
@@ -215,7 +217,7 @@ def save_game(user_id):
     }), 200)
 
 
-@app.route("/v1/byosnap-basic/users/<user_id>", methods=["DELETE"])
+@app.route("/v1/byosnap-inter/users/<user_id>", methods=["DELETE"])
 @validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def delete_user(user_id):
     """API that is only accessible via Internal auth. Both User Auth calls and Api-Key Auth calls will NOT work, as they are external calls. This is done by checking the Gateway header.
@@ -257,7 +259,7 @@ def delete_user(user_id):
     }), 200)
 
 
-@app.route("/v1/byosnap-basic/users/<user_id>/profile", methods=["PUT"])
+@app.route("/v1/byosnap-inter/users/<user_id>/profile", methods=["PUT"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def update_user_profile(user_id):
     """API that is accessible by User, Api-Key and Internal auth
@@ -273,6 +275,11 @@ def update_user_profile(user_id):
       parameters:
       - in: path
         schema: UserIdParameterSchema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: ProfilePayloadSchema
       responses:
         200:
           content:
@@ -292,13 +299,32 @@ def update_user_profile(user_id):
     """
     gateway_header = request.headers.get(GATEWAY_HEADER_KEY)
     user_id_header = request.headers.get(USER_ID_HEADER_KEY)
+    payload = request.get_json()
+    if not payload or "profile" not in payload:
+        return jsonify({"error": "Missing profile"}), 400
+
+    message = ''
+    configuration = snapser_internal.Configuration()
+    with snapser_internal.ApiClient(configuration) as api_client:
+        # Create an instance of the API class
+        api_instance = snapser_internal.ProfilesServiceApi(api_client)
+        body = snapser_internal.UpsertProfileRequest(
+            profile=payload["profile"])
+
+        try:
+            # Anonymous Login
+            api_response = api_instance.profiles_internal_upsert_profile(
+                user_id_header, 'internal', body)
+            message = api_response
+        except ApiException as e:
+            message = e
+
     return make_response(jsonify({
         'api': update_user_profile.__name__,
         'auth-type': gateway_header,
         'header-user-id': user_id_header if user_id_header else 'N/A',
         'path-user-id': user_id,
-        # TODO: Add a message
-        'message': 'TODO: Add a message',
+        'message': message
     }), 200)
 
 # Uncomment if developing locally

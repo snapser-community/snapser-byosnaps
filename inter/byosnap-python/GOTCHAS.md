@@ -4,15 +4,15 @@ What to Watch Out For When Working in This Repo
 ## Endpoints
 - The Snapend Id is NOT part of the URL. This allows you to use the same BYOSnap in multiple Snapends.
 ```python
-@app.route("/v1/byosnap-python-basic/users/<user_id>/game", methods=["GET"])
+@app.route("/v1/byosnap-inter/users/<user_id>/game", methods=["GET"])
 ```
-- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-python-basic and remaining_path = /users/<user_id>.
+- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-inter and remaining_path = /users/<user_id>.
 ```python
-@app.route("/v1/byosnap-python-basic/users/<user_id>/game", methods=["GET"])
+@app.route("/v1/byosnap-inter/users/<user_id>/game", methods=["GET"])
 ```
 - Notice the `x-snapser-auth-types` tags in the endpoint annotations and swagger.json. They tell Snapser if it should expose this API in the SDK and the API Explorer. Note: but you should still validate the auth type in the code.
 ```python
-@app.route("/v1/byosnap-python-basic/users/<user_id>/game", methods=["GET"])
+@app.route("/v1/byosnap-inter/users/<user_id>/game", methods=["GET"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def get_game(user_id):
     """API that is accessible by User, Api-Key and Internal auth
@@ -29,12 +29,12 @@ def get_game(user_id):
 
 IMPORTANT: But you also have to pass those auth types to the middleware so that you get Authorization checks for free. Just adding those tags for swagger, are not going to do the authorization check for you.
 ```python
-@app.route("/v1/byosnap-basic/users/<user_id>/game", methods=["GET"])
+@app.route("/v1/byosnap-inter/users/<user_id>/game", methods=["GET"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")  # (👈 This tells the middleware that user auth, app auth and internal auth are allowed for this method)
 ```
 - Snapser tech automatically adds the correct header to the SDK and API Explorer for your API. So you do not need to add the headers here against your API. Eg: For APIs exposed over User Auth, both the SDK and API Explorer will expose the Token header for you to fill in. For Api-Key Auth, the API Explorer will expose the Api-Key header for you to fill in. For internal APIs, the SDK and API Explorer will expose the Gateway header.
 ```python
-@app.route("/v1/byosnap-python-basic/users/<user_id>/game", methods=["GET"])
+@app.route("/v1/byosnap-python-inter/users/<user_id>/game", methods=["GET"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def get_game(user_id):
     """API that is accessible by User, Api-Key and Internal auth
@@ -93,7 +93,7 @@ def health():
 - If you add a new API, register them in `generate_swagger.py`. You have to do this at two places
 ```python
 # Register your endpoints
-app.add_url_rule('/v1/byosnap-basic/users/<user_id>/game',
+app.add_url_rule('/v1/byosnap-inter/users/<user_id>/game',
                  view_func=get_game, methods=['GET']) # (👈 #1 Add the rule)
 
 # Generate paths using the FlaskPlugin

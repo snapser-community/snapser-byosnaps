@@ -1,6 +1,6 @@
 {
     "paths": {
-        "/v1/byosnap-basic/users/{user_id}/game": {
+        "/v1/byosnap-inter/users/{user_id}/game": {
             "get": {
                 "summary": "Game APIs",
                 "description": "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
@@ -105,7 +105,7 @@
                 }
             }
         },
-        "/v1/byosnap-basic/users/{user_id}": {
+        "/v1/byosnap-inter/users/{user_id}": {
             "delete": {
                 "summary": "User APIs",
                 "description": "This API will work only when the call is coming from within the Snapend.",
@@ -157,7 +157,7 @@
                 }
             }
         },
-        "/v1/byosnap-basic/users/{user_id}/profile": {
+        "/v1/byosnap-inter/users/{user_id}/profile": {
             "put": {
                 "summary": "User APIs",
                 "description": "This API will work for all auth types.",
@@ -177,6 +177,16 @@
                         "required": true
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProfilePayloadSchema"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "content": {
@@ -213,7 +223,7 @@
         }
     },
     "info": {
-        "title": "BYOSnap Basic Python Example",
+        "title": "BYOSnap Intermediate Python Example",
         "version": "1.0.0"
     },
     "openapi": "3.0.2",
@@ -227,6 +237,18 @@
                     }
                 }
             },
+            "ProfilePayloadSchema": {
+                "type": "object",
+                "properties": {
+                    "profile": {
+                        "type": "object",
+                        "description": "JSON representation of the profile being updated"
+                    }
+                },
+                "required": [
+                    "profile"
+                ]
+            },
             "ErrorResponseSchema": {
                 "type": "object",
                 "properties": {
@@ -238,16 +260,16 @@
             "SuccessResponseSchema": {
                 "type": "object",
                 "properties": {
-                    "header_user_id": {
-                        "type": "string"
-                    },
                     "path_user_id": {
                         "type": "string"
                     },
-                    "auth_type": {
+                    "api": {
                         "type": "string"
                     },
-                    "api": {
+                    "header_user_id": {
+                        "type": "string"
+                    },
+                    "auth_type": {
                         "type": "string"
                     },
                     "message": {

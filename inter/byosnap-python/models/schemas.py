@@ -17,6 +17,14 @@ class UserIdParameterSchema(Schema):
     user_id = fields.Str()
 
 
+class ProfilePayloadSchema(Schema):
+    '''
+    Schema for the profile payload.
+    '''
+    profile = fields.Dict(
+        required=True, description="JSON representation of the profile being updated")
+
+
 class SuccessResponseSchema(Schema):
     '''
     Schema for the success response.

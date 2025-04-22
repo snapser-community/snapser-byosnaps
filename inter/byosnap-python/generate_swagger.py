@@ -1,5 +1,5 @@
 '''
-This script generates a Swagger specification for the BYOSnap Basic Python Example.
+This script generates a Swagger specification for the BYOSnap Intermediate Python Example.
 '''
 import os
 import json
@@ -7,7 +7,8 @@ from flask import Flask
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
-from models.schemas import UserIdParameterSchema, ErrorResponseSchema, SuccessResponseSchema
+from models.schemas import UserIdParameterSchema, ErrorResponseSchema, SuccessResponseSchema, \
+    ProfilePayloadSchema
 from app import get_game, save_game, delete_user, update_user_profile
 
 # Constants
@@ -18,23 +19,24 @@ API_SPEC_FILENAME = 'swagger.json'
 app = Flask(__name__)
 
 # Register your endpoints
-app.add_url_rule('/v1/byosnap-basic/users/<user_id>/game',
+app.add_url_rule('/v1/byosnap-inter/users/<user_id>/game',
                  view_func=get_game, methods=['GET'])
-app.add_url_rule('/v1/byosnap-basic/users/<user_id>/game',
+app.add_url_rule('/v1/byosnap-inter/users/<user_id>/game',
                  view_func=save_game, methods=['POST'])
-app.add_url_rule('/v1/byosnap-basic/users/<user_id>',
+app.add_url_rule('/v1/byosnap-inter/users/<user_id>',
                  view_func=delete_user, methods=['DELETE'])
-app.add_url_rule('/v1/byosnap-basic/users/<user_id>/profile',
+app.add_url_rule('/v1/byosnap-inter/users/<user_id>/profile',
                  view_func=update_user_profile, methods=['PUT'])
 
 # Initialize APISpec
 spec = APISpec(
-    title="BYOSnap Basic Python Example",
+    title="BYOSnap Intermediate Python Example",
     version="1.0.0",
     openapi_version="3.0.2",
     plugins=[FlaskPlugin(), MarshmallowPlugin()],
 )
 spec.components.schema("UserIdParameterSchema", schema=UserIdParameterSchema)
+spec.components.schema("ProfilePayloadSchema", schema=ProfilePayloadSchema)
 spec.components.schema("ErrorResponseSchema", schema=ErrorResponseSchema)
 spec.components.schema("SuccessResponseSchema", schema=SuccessResponseSchema)
 

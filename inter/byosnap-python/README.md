@@ -1,4 +1,4 @@
-# BYOSnap Python Basic Tutorial
+# BYOSnap Python Intermediate Tutorial
 
 ## Application
 - The main application logic is in **app.py**
@@ -56,7 +56,7 @@ Usage
 ```bash
 # $companyId = Your company Id
 # $gameId = Your game ID
-# $byosnapId is the ID of your BYOSnap. For the tutorial, we are using `byosnap-basic`
+# $byosnapId is the ID of your BYOSnap. For the tutorial, we are using `byosnap-inter`
 # $version needs to be in the format "vX.Y.Z" eg: "v1.0.0"
 #   [IMPORTANT] You have to increment the version number for each subsequent publish
 python snapend_create.py $companyId $gameId $byosnapId $version
@@ -82,7 +82,7 @@ python generate_swagger.py
 ### Step 3: Publish the BYOSnap
 Run the following command to publish your BYOSnap to your Snapser account.
 ```
-snapctl byosnap publish --byosnap-id byosnap-basic --version "v1.0.0" --path $pathToThisFolder --resources-path $pathToThisFolder/snapser-resources/
+snapctl byosnap publish --byosnap-id byosnap-inter --version "v1.0.0" --path $pathToThisFolder --resources-path $pathToThisFolder/snapser-resources/
 ```
 
 ### Step 4: Create your cluster
