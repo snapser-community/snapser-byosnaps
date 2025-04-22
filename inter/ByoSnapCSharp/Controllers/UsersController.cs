@@ -7,6 +7,10 @@ using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
+using SnapserInternal.Api;
+using SnapserInternal.Client;
+using SnapserInternal.Model;
+using System.Net.Http;
 
 
 namespace ByoSnapCSharp.Controllers
@@ -86,18 +90,40 @@ namespace ByoSnapCSharp.Controllers
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
     [SwaggerOperation(OperationId = "UpdateUserProfile", Summary = "User APIs", Description = "This API will work for all auth types.")]
-    public ActionResult<SuccessResponseSchema> UpdateUserProfile([FromRoute] UserIdParameterSchema userParams)
+    public ActionResult<SuccessResponseSchema> UpdateUserProfile(
+      [FromRoute] UserIdParameterSchema userParams,
+      [FromBody, SwaggerParameter("Payload containing the profile attributes")] PatchProfileRequest body)
     {
       var gatewayHeader = HttpContext.Request.Headers[AppConstants.gatewayHeaderKey].FirstOrDefault();
       var userIdHeader = HttpContext.Request.Headers[AppConstants.userIdHeaderKey].FirstOrDefault();
-      return Ok(new SuccessResponseSchema
+      // Make a call to the Snapser Profiles API
+      Configuration config = new Configuration();
+      HttpClient httpClient = new HttpClient();
+      HttpClientHandler httpClientHandler = new HttpClientHandler();
+      var apiInstance = new ProfilesServiceApi(httpClient, config, httpClientHandler);
+      var profileBody = new PatchProfileRequest(body);
+
+      try
       {
-        Api = "UpdateUserProfile",
-        AuthType = gatewayHeader ?? "N/A",
-        HeaderUserId = userIdHeader ?? "N/A",
-        PathUserId = userParams.UserId,
-        Message = "TODO: Add a message"
-      });
+        // Profile Patch Request
+        ProfilesPatchProfileResponse result = apiInstance.ProfilesInternalPatchProfile(userParams.UserId, "internal", body);
+        return Ok(new SuccessResponseSchema
+        {
+          Api = "UpdateUserProfile",
+          AuthType = gatewayHeader ?? "N/A",
+          HeaderUserId = userIdHeader ?? "N/A",
+          PathUserId = userParams.UserId,
+          Message = result.ToString()
+        });
+      }
+      catch (ApiException e)
+      {
+        return BadRequest(new ErrorResponseSchema
+        {
+          ErrorMessage = e.Message
+        });
+      }
+
     }
   }
 }
