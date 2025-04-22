@@ -10,8 +10,8 @@
   ],
   "swagger": "2.0",
   "info": {
-    "description": "BYOSnap Basic Go Example\nwith restful endpoints",
-    "title": "BYOSnap Basic Go Example",
+    "description": "BYOSnap Intermediate Go Example\nwith restful endpoints",
+    "title": "BYOSnap Intermediate Go Example",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -20,7 +20,7 @@
   },
   "host": "localhost:5003",
   "paths": {
-    "/v1/byosnap-basic/users/{user_id}": {
+    "/v1/byosnap-inter/users/{user_id}": {
       "delete": {
         "description": "This API will work only when the call is coming from within the Snapend.",
         "summary": "User APIs",
@@ -53,7 +53,7 @@
         ]
       }
     },
-    "/v1/byosnap-basic/users/{user_id}/game": {
+    "/v1/byosnap-inter/users/{user_id}/game": {
       "get": {
         "description": "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
         "summary": "Game APIs",
@@ -120,7 +120,7 @@
         ]
       }
     },
-    "/v1/byosnap-basic/users/{user_id}/profile": {
+    "/v1/byosnap-inter/users/{user_id}/profile": {
       "put": {
         "description": "This API will work only when the call is coming from within the Snapend.",
         "summary": "User APIs",
@@ -132,6 +132,15 @@
             "name": "user_id",
             "in": "path",
             "required": true
+          },
+          {
+            "description": "Payload containing profile fields",
+            "name": "profile_payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProfilePayloadSchema"
+            }
           }
         ],
         "responses": {
@@ -163,6 +172,17 @@
         "error_message": {
           "type": "string",
           "x-go-name": "ErrorMessage"
+        }
+      },
+      "x-go-package": "byosnap-go"
+    },
+    "ProfilePayloadSchema": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "object",
+          "additionalProperties": {},
+          "x-go-name": "Profile"
         }
       },
       "x-go-package": "byosnap-go"

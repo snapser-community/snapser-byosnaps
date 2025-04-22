@@ -4,16 +4,16 @@ What to Watch Out For When Working in This Repo
 ## Endpoints
 - The Snapend Id is NOT part of the URL. This allows you to use the same BYOSnap in multiple Snapends.
 ```go
-// swagger:operation GET /v1/byosnap-basic/users/{user_id}/game apiOne (👈 No Snapend Id in the URL)
+// swagger:operation GET /v1/byosnap-inter/users/{user_id}/game apiOne (👈 No Snapend Id in the URL)
 ```
-- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-basic and remaining_path = /users/<user_id>.
+- All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-inter and remaining_path = /users/<user_id>.
 ```go
-// swagger:operation GET /v1/byosnap-basic/users/{user_id}/game apiOne (👈 Check the URL format)
+// swagger:operation GET /v1/byosnap-inter/users/{user_id}/game apiOne (👈 Check the URL format)
 ```
 - Notice the `x-snapser-auth-types` tags in the endpoint annotations and swagger.json. They tell Snapser if it should expose this API in the SDK and the API Explorer. Note: but you should still validate the auth type in the code.
 ```go
 // ApiOneHandler handles the GET request for an API endpoint
-// swagger:operation GET /v1/byosnap-basic/users/{user_id}/game apiOne
+// swagger:operation GET /v1/byosnap-inter/users/{user_id}/game apiOne
 // ---
 // summary: Retrieves game data for a specified user
 // description: This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.
@@ -24,12 +24,12 @@ What to Watch Out For When Working in This Repo
 IMPORTANT: But you also have to pass those auth types to the middleware so that you get Authorization checks for free. Just adding those tags for swagger, are not going to do the authorization check for you.
 ```go
 apiOneHandler := http.HandlerFunc(ApiOneHandler)
-r.Handle("/v1/byosnap-basic/users/{user_id}/game", validateAuthorization([]string{AuthTypeHeaderValueUserAuth, AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "user_id")(apiOneHandler)).Methods("GET") // (👈 This tells the middleware that user auth, app auth and internal auth are allowed)
+r.Handle("/v1/byosnap-inter/users/{user_id}/game", validateAuthorization([]string{AuthTypeHeaderValueUserAuth, AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "user_id")(apiOneHandler)).Methods("GET") // (👈 This tells the middleware that user auth, app auth and internal auth are allowed)
 ```
 - Snapser tech automatically adds the correct header to the SDK and API Explorer for your API. So you do not need to add the headers here against your API. Eg: For APIs exposed over User Auth, both the SDK and API Explorer will expose the Token header for you to fill in. For Api-Key Auth, the API Explorer will expose the Api-Key header for you to fill in. For internal APIs, the SDK and API Explorer will expose the Gateway header.
 ```go
 // ApiOneHandler handles the GET request for an API endpoint
-// swagger:operation GET /v1/byosnap-basic/users/{user_id}/game apiOne
+// swagger:operation GET /v1/byosnap-inter/users/{user_id}/game apiOne
 // ---
 // summary: Retrieves game data for a specified user
 // description: This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.
@@ -87,9 +87,9 @@ r.HandleFunc("/healthz", HealthCheckHandler).Methods("GET")
 - This repo uses **go-swagger** and method annotations to create a Swagger. There are a few gotchas that you need to be aware of.
 - The comment at the top of the main.go file is what generates the **info** object in the swagger.
 ```go
-// Package main BYOSnap Basic Go Example
+// Package main BYOSnap Intermediate Go Example
 //
-// BYOSnap Basic Go Example
+// BYOSnap Intermediate Go Example
 // with restful endpoints
 //
 //		Schemes: https
@@ -118,7 +118,7 @@ import (
 - Every API needs to have an annotation like this. Check all the gotcha callouts below
 ```go
 // ApiOneHandler handles the GET request for an API endpoint
-// swagger:operation GET /v1/byosnap-basic/users/{user_id}/game apiOne (👈 This is just for you. The ApiSpec does not use this)
+// swagger:operation GET /v1/byosnap-inter/users/{user_id}/game apiOne (👈 This is just for you. The ApiSpec does not use this)
 // ---
 // summary: Retrieves game data for a specified user (👈 required: Add a short summary about the API)
 // description: This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API. (👈 required: Add a verbose description about the API)

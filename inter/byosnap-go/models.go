@@ -18,3 +18,8 @@ type SuccessResponseSchema struct {
 type ErrorResponseSchema struct {
 	ErrorMessage string `json:"error_message"`
 }
+
+// swagger:model ProfilePayloadSchema
+type ProfilePayloadSchema struct {
+	Profile map[string]interface{} `json:"profile"`
+}

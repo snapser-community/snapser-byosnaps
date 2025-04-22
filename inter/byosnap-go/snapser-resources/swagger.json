@@ -1,19 +1,19 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "description" : "BYOSnap Basic Go Example\nwith restful endpoints",
+    "description" : "BYOSnap Intermediate Go Example\nwith restful endpoints",
     "license" : {
       "name" : "Apache 2.0",
       "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "title" : "BYOSnap Basic Go Example",
+    "title" : "BYOSnap Intermediate Go Example",
     "version" : "1.0.0"
   },
   "servers" : [ {
     "url" : "https://localhost:5003/"
   } ],
   "paths" : {
-    "/v1/byosnap-basic/users/{user_id}" : {
+    "/v1/byosnap-inter/users/{user_id}" : {
       "delete" : {
         "description" : "This API will work only when the call is coming from within the Snapend.",
         "operationId" : "DeleteUser",
@@ -52,7 +52,7 @@
         "x-snapser-auth-types" : [ "internal" ]
       }
     },
-    "/v1/byosnap-basic/users/{user_id}/game" : {
+    "/v1/byosnap-inter/users/{user_id}/game" : {
       "get" : {
         "description" : "This API will work with User and Api-Key auth. With a valid user token and api-key, you can access this API.",
         "operationId" : "GetGame",
@@ -128,7 +128,7 @@
         "x-snapser-auth-types" : [ "api-key", "internal" ]
       }
     },
-    "/v1/byosnap-basic/users/{user_id}/profile" : {
+    "/v1/byosnap-inter/users/{user_id}/profile" : {
       "put" : {
         "description" : "This API will work only when the call is coming from within the Snapend.",
         "operationId" : "UpdateUserProfile",
@@ -141,6 +141,17 @@
             "type" : "string"
           }
         } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ProfilePayloadSchema"
+              }
+            }
+          },
+          "description" : "Payload containing profile fields",
+          "required" : true
+        },
         "responses" : {
           "200" : {
             "content" : {
@@ -164,7 +175,8 @@
           }
         },
         "summary" : "User APIs",
-        "x-snapser-auth-types" : [ "user", "api-key", "internal" ]
+        "x-snapser-auth-types" : [ "user", "api-key", "internal" ],
+        "x-codegen-request-body-name" : "profile_payload"
       }
     }
   },
@@ -175,6 +187,19 @@
           "error_message" : {
             "type" : "string",
             "x-go-name" : "ErrorMessage"
+          }
+        },
+        "type" : "object",
+        "x-go-package" : "byosnap-go"
+      },
+      "ProfilePayloadSchema" : {
+        "properties" : {
+          "profile" : {
+            "additionalProperties" : {
+              "type" : "object"
+            },
+            "type" : "object",
+            "x-go-name" : "Profile"
           }
         },
         "type" : "object",
