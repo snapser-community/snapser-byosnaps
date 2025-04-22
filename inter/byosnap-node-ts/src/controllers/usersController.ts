@@ -109,12 +109,15 @@ export class UserController extends Controller {
       const expressReq = req as ExpressRequest;
       const authType = expressReq.header("Auth-Type");
       const headerUserId = expressReq.header("User-Id");
-      const baseUrl = process.env.SNAPEND_PROFILES_HTTP_URL ?? 'http://profiles-service:8090';
-      const profilesApi = new ProfilesServiceApi(baseUrl);
-      const payload: UpsertProfileRequest = {
-        profile: body.profile
-      };
       // TODO: Uncomment the following code
+      // // 👇 [IMPORTANT]: In Node - Typescript you have to set the baseURL via environment variable
+      // //    like SNAPEND_PROFILES_HTTP_URL that Snapser sets for each snap
+      // //    Eg: For the Auth snap it will be SNAPEND_AUTH_HTTP_URL
+      // const baseUrl = process.env.SNAPEND_PROFILES_HTTP_URL ?? 'http://profiles-service:8090';
+      // const profilesApi = new ProfilesServiceApi(baseUrl);
+      // const payload: UpsertProfileRequest = {
+      //   profile: body.profile
+      // };
       // try {
       //   const result = await profilesApi.profilesInternalUpsertProfile(userId, 'internal', payload);
       //   const body = result.body;
