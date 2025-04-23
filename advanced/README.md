@@ -100,7 +100,7 @@ We start by creating a Snapend with the **Auth** and **Storage** Snaps. We are g
 ![Profile Attribute](/images/docs/tutorials/byosnap-advanced-internal-sdk.png)
 1. This will generate a custom internal SDK for our Snapend and soon you will see a zip file containing the SDK for the selected language. Unzip the file.
 1. The folder structure is different for different languages. Check out the instructions below for Python.
-<CollapsableDoc title="Python SDK Structure">
+### Python SDK Structure
 ```bash
 ├── requirements.txt
 ├── snapser_internal/
@@ -111,7 +111,6 @@ We start by creating a Snapend with the **Auth** and **Storage** Snaps. We are g
 │   └── ...
 │   └── models/
 ```
-</CollapsableDoc>
 
 <Checkpoint step={2}>
   You now have an internal SDK that you can integrate into your BYOSnap. This SDK will allow you to communicate with the other Snaps in your Snapend.
@@ -159,7 +158,7 @@ git@github.com:snapser-community/snapser-byosnaps.git
 
 ### B. Copy the Internal SDK Contents
 Copy the contents of the Internal SDK to the root of your BYOSnap code directory. Please check out the instructions for each language below. Doing this, will allow you to use the Internal SDK in your BYOSnap.
-<CollapsableDoc title="Python Instructions">
+#### Python Instructions
 For Python, you need to copy the **snapser_internal** folder from the unzipped folder into your BYOSnap code directory. The folder structure should look like this:
 ```bash
 ├── requirements.txt
@@ -171,11 +170,10 @@ For Python, you need to copy the **snapser_internal** folder from the unzipped f
 │   └── ...
 │   └── models/
 ```
-</CollapsableDoc>
 
 ### C. Add dependencies
 Each language has its own set of dependencies that you need to add to your BYOSnap code. Check out the instructions below for Python.
-<CollapsableDoc title="Python Dependencies">
+#### Python Dependencies
 - Add the following to your main code's **requirements.txt** file:
 ```text
 python_dateutil >= 2.5.3
@@ -192,8 +190,6 @@ Then run the following command to install the dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-
-</CollapsableDoc>
 
 <Checkpoint step={3}>
   With our SDK in and our code compiling / working, we are now ready to update the code for our BYOSnap.
@@ -283,7 +279,7 @@ Lets now understand the code that integrates with the three main Snapser hooks:
 For the configuration tool to function you need two methods. A getter that sends the caller the configuration tool JSON payload and a setter that saves the configuration tool payload to some storage. We are using the storage Snap **character_settings** blob key that we added in `Step 1 > Configure your Snaps` to store the configuration tool JSON.
 
 Snapser expects you to implement the following two endpoints in your BYOSnap code:
-<CollapsableDoc title="View Configuration">
+#### View Configuration
 - `Method`: **GET**
 - `Endpoint`: **/$byoSnapPrefix/$byosnapId/settings**.
 - `Description`: This endpoint is called by the Configuration tool UI to get the configuration tool **payload**. Snapser first uses the **snapser-tool-*.json** file in your BYOSnap code directory to render the Configuration UI. Then the UI, calls this endpoint to get the configuration tool JSON payload. This payload is then used to pre-populate the UI.
@@ -336,8 +332,7 @@ def get_settings():
             pass
     return make_response(jsonify(default_settings), 200)
 ```
-</CollapsableDoc>
-<CollapsableDoc title="Save Configuration">
+#### Save Configuration
 - `Method`: **PUT**
 - `Endpoint`: **/$byoSnapPrefix/$byosnapId/settings**.
 - `Description`: This endpoint is called by the Configuration tool to save the configuration tool JSON. This endpoint is called when the user clicks on the **Save** button in the Configuration tool.
@@ -411,13 +406,12 @@ def update_settings():
                 'error_message': 'Server Exception: ' + str(e)
             }), 500)
 ```
-</CollapsableDoc>
 
 ### B. Snapend Sync and Clone Hooks
 The Snapend sync and clone feature allows you to create a new Snapend that is a clone of your existing Snapend. This includes all the Snaps including BYOSnaps and their configuration data. The BYOSnap sync and clone hooks are called when the Snapend is being synced or cloned.
 
 Snapser expects you to implement the following three endpoints:
-<CollapsableDoc title="Export Configuration">
+#### Export Configuration
 - `Method`: **GET**
 - `Endpoint`: **/$byoSnapPrefix/$byosnapId/settings/export**.
 - `Description`: This endpoint is called when a new Snapend is being cloned and the dev wants to also sync this BYOSnaps configuration data. In our case we are exporting the **character_settings** blob key.
@@ -501,8 +495,8 @@ def settings_export():
             pass
     return make_response(jsonify(response), 200)
 ```
-</CollapsableDoc>
-<CollapsableDoc title="Import Configuration">
+
+#### Import Configuration
 - `Method`: **POST**
 - `Endpoint`: **/$byoSnapPrefix/$byosnapId/settings/import**.
 - `Description`: This endpoint is called when a cloned Snapend is being created. The data that is sent to this endpoint is the same as the data that is returned from the export endpoint of the parent Snapend. Your new BYOSnap is expected to store this data, thus, ensuring both parent and cloned Snapends have the same configuration data.
@@ -636,8 +630,7 @@ def settings_import():
             'error_message': 'Server Exception' + str(e)
         }), 500)
 ```
-</CollapsableDoc>
-<CollapsableDoc title="Validate Configuration for Import">
+#### Validate Configuration for Import
 - `Method`: **POST**
 - `Endpoint`: **/$byoSnapPrefix/$byosnapId/settings/validate-import**.
 - `Description`: This endpoint is called by the sync validator widget, which lets a user know if this Snapend is ready to import and export data or not. This endpoint is also called when the user clicks on the **Validate** button in the sync and clone tool. Whether to accept or reject an import export is entirely up to you. In our case we are checking if the characters are unique and if yes we are accepting the import export. If not we are rejecting it.
@@ -714,11 +707,10 @@ def validate_settings():
             pass
     return make_response(jsonify(response), 200)
 ```
-</CollapsableDoc>
 
 ### C. User Delete
 Snapser provides a User data delete tool that allows you to delete a users game data. Since BYOSnaps are your custom code, Snapser cannot delete data on your behalf and expects you to implement the following endpoint.
-<CollapsableDoc title="Delete User Data">
+#### Delete User Data
 - `Method`: **DELETE**
 - `Endpoint`: **/$byoSnapPrefix/$byosnapId/user**.
 - `Description`: This endpoint is called when a user deletes their account. This endpoint is expected to delete all the data for the user. In our case, we are deleting the **character_settings** blob key for the user.
@@ -758,7 +750,6 @@ def delete_user_data(user_id):
     return make_response(jsonify({}), 200)
 
 ```
-</CollapsableDoc>
 
 <Checkpoint step={5}>
 We now have a configuration tool represented as a JSON. All the hooks integrated in our BYOSnap code. We are now ready to publish our BYOSnap to Snapser.
