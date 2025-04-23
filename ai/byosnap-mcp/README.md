@@ -1,4 +1,4 @@
-# BYOSnap Open AI Wrapper
+# BYOSnap MCP Host
 
 ## Application
 - The main application logic is in **app.py**

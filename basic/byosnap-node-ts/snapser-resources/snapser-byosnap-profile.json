@@ -1,5 +1,5 @@
 {
-    "name": "Byosnap Typescript Basic",
+    "name": "Byosnap Node Basic",
     "description": "Basic Node Typescript microservice to demonstrate BYOSnap",
     "platform": "linux/arm64",
     "language": "typescript",

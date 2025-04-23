@@ -1,0 +1,19 @@
+{
+  "entryFile": "src/server.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": [
+    "src/controllers/**/*Controller.ts"
+  ],
+  "spec": {
+    "outputDirectory": "snapser-resources",
+    "specVersion": 3
+  },
+  "routes": {
+    "routesDir": "./src",
+    "middleware": {
+      "express": {
+        "auth": "src/middleware/authMiddleware"
+      }
+    }
+  }
+}

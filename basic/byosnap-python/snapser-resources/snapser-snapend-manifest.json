@@ -1,7 +1,7 @@
 {
     "version": "v1",
     "id": "i0g3uebq",
-    "name": "byosnap-py-tutorial",
+    "name": "my-dev-cluster",
     "environment": "DEVELOPMENT",
     "service_definitions": [
         {
