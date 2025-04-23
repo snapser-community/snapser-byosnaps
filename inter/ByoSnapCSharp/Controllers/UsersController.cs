@@ -101,7 +101,7 @@ namespace ByoSnapCSharp.Controllers
         Object result = null;
         // TODO: Uncomment the following code to use the SnapserInternal API
         // Configuration config = new Configuration();
-        // //👇 [IMPORTANT]: Override the base path with the Internal API URL
+        // //👇 [IMPORTANT]: Note how the base path has been overridden with the Internal API URL
         // config.BasePath = config.GetOperationServerUrl("ProfilesServiceApi.ProfilesInternalUpsertProfile", 0);
         // HttpClient httpClient = new HttpClient();
         // HttpClientHandler httpClientHandler = new HttpClientHandler();

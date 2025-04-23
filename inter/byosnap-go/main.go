@@ -23,7 +23,6 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
 	snapser_internal "snapser_internal"
@@ -253,70 +252,71 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 //     schema:
 //       $ref: '#/definitions/ErrorResponseSchema'
 func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
+	//TODO: Uncomment the code below to enable the functionality
 	// Simulate fetching data or processing something
 	// Get the header auth-type from the request
-	authType := r.Header.Get("Auth-Type")
-	userIdHeader := r.Header.Get("User-Id")
-	if userIdHeader == "" {
-		userIdHeader = "N/A"
-	}
-	var profilePayload ProfilePayloadSchema
-	bodyBytes, _ := io.ReadAll(r.Body)
-	err := json.Unmarshal(bodyBytes, &profilePayload)
-	if err != nil {
-		w.Write([]byte(`{"error_message": "Error un-marshalling request body"}`))
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	if profilePayload.Profile == nil {
-		w.Write([]byte(`{"error_message": "Profile is required"}`))
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	req := snapserClient.ProfilesServiceAPI.ProfilesInternalUpsertProfile(r.Context(), userIdHeader).Gateway("internal").Body(snapser_internal.UpsertProfileRequest{
-		Profile: profilePayload.Profile,
-	})
-	snapserRes, httpResp, err := req.Execute()
-	if httpResp == nil {
-		w.Write([]byte(`{"error_message": "Error calling snapser"}`))
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if err != nil {
-		body := httpResp.Body
-		bodyBytes, _ := io.ReadAll(body)
-		body.Close()
+	// authType := r.Header.Get("Auth-Type")
+	// userIdHeader := r.Header.Get("User-Id")
+	// if userIdHeader == "" {
+	// 	userIdHeader = "N/A"
+	// }
+	// var profilePayload ProfilePayloadSchema
+	// bodyBytes, _ := io.ReadAll(r.Body)
+	// err := json.Unmarshal(bodyBytes, &profilePayload)
+	// if err != nil {
+	// 	w.Write([]byte(`{"error_message": "Error un-marshalling request body"}`))
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	return
+	// }
+	// if profilePayload.Profile == nil {
+	// 	w.Write([]byte(`{"error_message": "Profile is required"}`))
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	return
+	// }
+	// req := snapserClient.ProfilesServiceAPI.ProfilesInternalUpsertProfile(r.Context(), userIdHeader).Gateway("internal").Body(snapser_internal.UpsertProfileRequest{
+	// 	Profile: profilePayload.Profile,
+	// })
+	// snapserRes, httpResp, err := req.Execute()
+	// if httpResp == nil {
+	// 	w.Write([]byte(`{"error_message": "Error calling snapser"}`))
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	return
+	// }
+	// if err != nil {
+	// 	body := httpResp.Body
+	// 	bodyBytes, _ := io.ReadAll(body)
+	// 	body.Close()
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(httpResp.StatusCode)
-		w.Write(bodyBytes)
-		return
-	}
+	// 	w.Header().Set("Content-Type", "application/json")
+	// 	w.WriteHeader(httpResp.StatusCode)
+	// 	w.Write(bodyBytes)
+	// 	return
+	// }
 
-	jsonResponse, err := json.Marshal(snapserRes)
-	if err != nil {
-		w.WriteHeader(httpResp.StatusCode)
-		w.Write([]byte(`{"error_message": "Error creating response"}`))
-		return
-	}
+	// jsonResponse, err := json.Marshal(snapserRes)
+	// if err != nil {
+	// 	w.WriteHeader(httpResp.StatusCode)
+	// 	w.Write([]byte(`{"error_message": "Error creating response"}`))
+	// 	return
+	// }
 
-	response := SuccessResponseSchema{
-		API:          "UpdateUserProfile",
-		AuthType:     authType,
-		HeaderUserID: userIdHeader,
-		PathUserID:   mux.Vars(r)["user_id"],
-		Message:     string(jsonResponse),
-	}
+	// response := SuccessResponseSchema{
+	// 	API:          "UpdateUserProfile",
+	// 	AuthType:     authType,
+	// 	HeaderUserID: userIdHeader,
+	// 	PathUserID:   mux.Vars(r)["user_id"],
+	// 	Message:     string(jsonResponse),
+	// }
 
-	// Marshal the struct to JSON
-	jsonResponse, err = json.Marshal(response)
-	if err != nil {
-		http.Error(w, "Error creating response", http.StatusInternalServerError)
-		return
-	}
+	// // Marshal the struct to JSON
+	// jsonResponse, err = json.Marshal(response)
+	// if err != nil {
+	// 	http.Error(w, "Error creating response", http.StatusInternalServerError)
+	// 	return
+	// }
 
-	// Set the content type and write the response
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonResponse)
+	// // Set the content type and write the response
+	// w.Header().Set("Content-Type", "application/json")
+	// w.WriteHeader(http.StatusOK)
+	// w.Write(jsonResponse)
 }
