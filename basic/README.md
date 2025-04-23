@@ -1,3 +1,9 @@
+import { DocsButton } from '../../../../components/docs/DocsButton.tsx'
+
+export const meta = {
+  author: 'AJ Apte',
+}
+
 # Bring your own Snap - Basic
 
 BYOSnap is a Snapser feature that enables you to integrate your own custom code. BYOSnaps run in containers within Snapser's Kubernetes platform and can be written in any programming language to cater to your game's specific needs. Once deployed, a BYOSnap resides within the same Kubernetes cluster as your other Snaps, facilitating seamless integration with the broader Snapser ecosystem.
@@ -10,15 +16,6 @@ Before you begin, ensure you have access to the Snapser CLI tool and a basic Sna
 
 
 <div className="parent">
-  <div className="servicesBox">
-    # Create a Snapend
-
-    Check out the tutorial to create a Snapend with the Authentication snap with the Anonymous Connector enabled.
-
-    <div>
-      <DocsButton href={'/docs/guides/tutorials/create-snapend'} variant="contained" color="info" size="small" sx={{ml: 2, mb: 1}}>Tutorial</DocsButton>
-    </div>
-  </div>
   <div className="tutorialBox">
     # Setup Snapser CLI
 
@@ -26,6 +23,15 @@ Before you begin, ensure you have access to the Snapser CLI tool and a basic Sna
 
     <div>
       <DocsButton href={'/docs/guides/tutorials/setup-snapctl'} variant="contained" color="info" size="small" sx={{ml: 2, mb: 1}}>Tutorial</DocsButton>
+    </div>
+  </div>
+  <div className="servicesBox">
+    # Create a Snapend
+
+    Check out the tutorial to create a Snapend with the Authentication snap with the Anonymous Connector enabled.
+
+    <div>
+      <DocsButton href={'/docs/guides/tutorials/create-snapend'} variant="contained" color="info" size="small" sx={{ml: 2, mb: 1}}>Tutorial</DocsButton>
     </div>
   </div>
 </div>
@@ -80,7 +86,7 @@ git@github.com:snapser-community/snapser-byosnaps.git
     │       └── GOTCHAS.md (👈 A file you should read to understand the nuances per language )
     │       └── generate_routes.sh (👈 Only present in byosnap-node-ts/ )
     │       └── generate_swagger.sh|py (👈 Script to generate the swagger )
-    │       └── README.md (👈 Developer Docs for you to run BYOSnap outside swagger )
+    │       └── README.md (👈 Developer Docs for you to run BYOSnap outside Snapser )
   ```
 
 <Checkpoint step={1}>
@@ -101,15 +107,18 @@ Each codebase includes 5 endpoints, located in the files specified below:
 1. **DeleteUser** - An endpoint restricted to other internal BYOSnaps (internal).
 1. **UpdateUserProfile** - An endpoint that you will modify in this tutorial, intended to be available to user auth, api-key auth, and internal auth.
 
-**IMPORTANT**: We highly recommend understanding the **Validate Authorization** helper available in all the BYOSnap examples. This function is essential for validating the authorization headers for each endpoint:
+<Note>
+We highly recommend understanding the **Validate Authorization** helper available in all the BYOSnap examples. This function is essential for validating the authorization headers for each endpoint:
   - C# - Located at `/Attributes/ValidateAuthorizationAttribute.cs`
   - Go - Found in `middleware.go`, method: `validateAuthorization`
   - Python - Available at `app.py`, method: `validate_authorization`
   - Node - Situated in `/src/middlewares/validateAuthorization.ts`
+</Note>
 
 #### A: Update the API code
 For this tutorial, you will update the response message of the **UpdateUserProfile** endpoint, deploy it, and observe the changes in action. Search for **TODO: Add a message** in the file and replace it with your custom message.
 
+<CodeGroup title="Update BYOSnap Code" tag="byosnap" >
 ```csharp
 [HttpPut("profile")]
 [SnapserAuth(AppConstants.userAuthType, AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]
@@ -117,7 +126,7 @@ For this tutorial, you will update the response message of the **UpdateUserProfi
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseSchema))]
 [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
 [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
-[SwaggerOperation(OperationId = "Update User Profile", Summary = "User APIs", Description = "This API will work for all auth types.")]
+[SwaggerOperation(OperationId = "UpdateUserProfile", Summary = "User APIs", Description = "This API will work for all auth types.")]
 public ActionResult<SuccessResponseSchema> UpdateUserProfile([FromRoute] UserIdParameterSchema userParams)
 {
   var gatewayHeader = HttpContext.Request.Headers[AppConstants.gatewayHeaderKey].FirstOrDefault();
@@ -138,7 +147,7 @@ public ActionResult<SuccessResponseSchema> UpdateUserProfile([FromRoute] UserIdP
 // ---
 // summary: User APIs
 // description: This API will work only when the call is coming from within the Snapend.
-// operationId: Update User Profile
+// operationId: UpdateUserProfile
 // x-snapser-auth-types: ["user", "api-key", "internal"]
 // parameters:
 //   - name: user_id
@@ -198,7 +207,7 @@ def update_user_profile(user_id):
     put:
       summary: 'User APIs'
       description: This API will work for all auth types.
-      operationId: 'Update User Profile'
+      operationId: 'UpdateUserProfile'
       x-snapser-auth-types:
         - user
         - api-key
@@ -264,6 +273,7 @@ public async updateUserProfile(
   };
 }
 ```
+</CodeGroup>
 
 <Note>
   If you have just updated the message in the API, you do not need to generate routes and swaggers. But follow the next steps to just get used to the process.
@@ -279,6 +289,7 @@ This step is only required if you are using the Node (Typescript) codebase. The 
 
 After updating the code, you need to generate the Swagger spec for your BYOSnap. This spec is essential for generating SDKs and powering the API Explorer. Use the following helper script to generate the Swagger spec for your BYOSnap.
 
+<CodeGroup title="Generate Swagger Spec" tag="bash" >
 ```csharp
 // Run this command in the root of your code directory
 ./generate_swagger.sh
@@ -295,6 +306,7 @@ python generate_swagger.py
 // Run this command in the root of your code directory
 ./generate_swagger.sh
 ```
+</CodeGroup>
 
 <Checkpoint step={2}>
   You have successfully updated the code for your BYOSnap. We now need to deploy it.
@@ -315,6 +327,7 @@ With the code updated, you are now ready to deploy your BYOSnap to the Private S
 Replace the variables below with your custom values and execute the command to deploy your BYOSnap.
 
 
+<CodeGroup title="Deploy BYOSnap" tag="bash" >
 ```bash
 # $byosnapId = BYOSnap Id. Should start with `byosnap-`. Should not contain spaces and should only contain characters.
 # $version = Version number for your BYOSnap. Should be in the format v1.0.0
@@ -322,6 +335,7 @@ Replace the variables below with your custom values and execute the command to d
 # $tag = Tag for your BYOSnap. This is optional.
 snapctl byosnap publish --byosnap-id $byosnapId --version $version --path $rootCodePath --resources-path $rootCodePath/snapser-resources
 ```
+</CodeGroup>
 
 You will see the output from the Snapctl tool as it deploys your BYOSnap to Snapser. Once the deployment is
 complete, you will see a success message.
@@ -335,6 +349,12 @@ Success BYOSNAP publish version successful
 Success BYOSNAP published successfully
 BYOSnap published successfully with version v1.0.0
 ```
+<Note>
+  The Snapshots below assume you are using the C# codebase. But the steps are the same for all languages.
+</Note>
+
+- Once you publish you will be able to see your BYOSnap in the **Custom Snaps** tool.
+![CustomSnaps](/images/docs/tutorials/byosnap-basic-snaps.png)
 
 <Note>
   The publish command makes your BYOSnap available to other developers in your organization. You must increment the version number with each subsequent publish.
@@ -347,14 +367,43 @@ BYOSnap published successfully with version v1.0.0
 ## Step 4: Add BYOSnap to Snapend
 Now that we have published a BYOSnap, let's integrate it into a Snapend.
 
+### A. Manual Cluster Creation
 1. Go to the Snapser Web App and click on the Snapend you created in the **Snapend Creation** tutorial.
 1. On your Snapend homepage, click the **Edit** button. This will take you to the Snapend Edit page.
+![EditSnapend](/images/docs/tutorials/byosnap-basic-snapend-edit.png)
 1. Here, you will find the Snaps already included in your Snapend. Scroll down to locate the BYOSnap you just published and click the **Add** button.
-<Note>
-  Use the filter widget at the top right to display only BYOSnaps.
-</Note>
+    ![AddBYOSnap](/images/docs/tutorials/byosnap-basic-byosnap-add.png)
+    <Note>
+      Use the filter widget at the top right to display only BYOSnaps.
+    </Note>
 1. Continue clicking **Continue** until you reach the final **Review** step, then click the **Snap it** button.
-1. A pop-up window will show the progress of creating your cluster, which may take a few moments.
+1. A pop-up window will show the progress of creating your cluster. Your updated Snapend should be ready in a few moments.
+
+### B. Automated Cluster Creation
+<Note>
+  If you have already completed the manual **Add BYOSnap to Snapend** steps, you can ignore this.
+</Note>
+
+After you have published a BYOSnap, we offer a helper script that simulates the end state of following the manual instructions to create a snapend with your BYOSnap in it. This script utilizes Snapctl.
+
+To execute this script, you will need the following:
+1. Navigate to the [Game Management](https://snapser.com/games) page on Snapser. Click the Copy Icon next to **ID** to copy the $companyId.
+1. Select the game under which you wish to create your Snapend. This will bring you to the game's home page. Click the Copy Icon next to **ID** to copy the $gameId.
+1. The $byosnapId is the identifier for your BYOSnap, which is **byosnap-basic** as used in the BYOSnap publish step.
+1. Use the version number from the BYOSnap publish step, e.g., v1.0.0.
+
+```bash
+python snapend_create.py $companyId $gameId $byosnapId $version
+```
+
+You will see the output from the Snapctl tool as it creates your Snapend. Once the creation is complete, you will see a success message.
+
+```bash
+Success Updated your snapend. Your snapend is Live.
+Success Snapend clone successful. Do not forget to download the latest manifest.
+Your Snapend is created successfully with Snaps: auth and byosnap-*.
+```
+
 
 <Checkpoint step={4}>
   You now have a configured Snapend with both Auth and BYOSnap with Anonymous Auth enabled. You are ready to test your API.
@@ -362,12 +411,15 @@ Now that we have published a BYOSnap, let's integrate it into a Snapend.
 
 ## Step 5: Test the new API
 Navigate to the Snapend home dashboard and click on the **API Explorer** button under **Quick Links** to access the tool where you can test your API endpoints.
-
+![API Explorer](/images/docs/tutorials/byosnap-basic-ql-api.png)
 ### A. Create an Anonymous User
 1. Click on the **Auth** Snap.
+    ![API Explorer Home](/images/docs/tutorials/byosnap-basic-api-home.png)
 1. Select the **Anonymous Login > AnonLogin PUT** API.
 1. In the payload section, update the **user_name** to any name you prefer and click on the **PUT** button.
+    ![API Call](/images/docs/tutorials/byosnap-basic-anon-login.png)
 1. You will receive a successful response with a **user_id** and **session_token**. This is your Anonymous User ID and the JWT token for the session.
+    ![Anon User](/images/docs/tutorials/byosnap-basic-anon-user.png)
     <Note>
       Please save both the $userId and $sessionToken as you will need them for subsequent steps.
       You can also click the **History** button at the top of the API Explorer to view and copy the user ID and session token for future use.
@@ -376,8 +428,11 @@ Navigate to the Snapend home dashboard and click on the **API Explorer** button 
 ### B. Test UpdateUserProfile
 1. Click on the **Back** Icon above the API List navigation to return to the main API Explorer page.
 1. Click on the **BYOSnap** Snap to view all four publicly available APIs.
+    ![API Home BYOSnap](/images/docs/tutorials/byosnap-basic-api-home-byosnap.png)
 1. Select the **UpdateUserProfile** API. Paste the **$userId** from the previous step into the **URL Parameters > user_id** and the **$sessionToken** from the previous step into the **Headers > Token**.
+    ![BYOSnap API](/images/docs/tutorials/byosnap-basic-byosnap-api.png)
 1. Click on the **PUT** button to receive a response from the API.
+    ![BYOSnap API Response](/images/docs/tutorials/byosnap-basic-byosnap-api-response.png)
     <Note>
       The response should display the message you programmed into the codebase.
     </Note>
@@ -397,11 +452,14 @@ While adhering to the Swagger specification, we have implemented certain practic
 These rules are essential for both the generation of SDKs and the presentation of APIs in the API Explorer.
 </Note>
 
-#### Rule 0: Swagger must be 3.x and valid
+#### Rule 1: Swagger must be 3.x and valid
 Ensure you are using the Swagger 3.x specification to generate the SDKs. Use the [Swagger Editor](https://editor.swagger.io/) to validate your Swagger spec.
 
-#### Rule 1: Every API must have an OperationId
-The OperationId of each API is converted into the method name in the SDK. The API Explorer also utilizes this to display the API name, so it's crucial to assign a unique OperationId to every API.
+#### Rule 2: Every API must have an OperationId
+The **OperationId** of each API is converted into the **method name in the SDK**. The API Explorer also utilizes this to display the API name, so it's crucial to assign a unique OperationId to every API.
+<Note>
+  We recommend you use **no spaces** in the OperationId for clarity and consistency. Example: Use **UpdateUserProfile** instead of **Update User Profile**.
+</Note>
 
 ```json
 { ...
@@ -412,14 +470,14 @@ The OperationId of each API is converted into the method name in the SDK. The AP
       ],
       "summary": "User APIs",
       "description": "This API will work for all auth types.",
-      "operationId": "Update User Profile", (👈 Required field)
+      "operationId": "UpdateUserProfile", (👈 Required field)
     }
   }
   ...
 }
 ```
 
-#### Rule 2: API Summary is used to group APIs
+#### Rule 3: API Summary is used to group APIs
 Every API should have a non-empty summary. Additionally, Snapser uses the API Summary to group APIs in the API Explorer. Typically, APIs associated with the same resource should share the same summary, e.g., all APIs for the User resource should use the summary "User APIs."
 
 ```json
@@ -496,7 +554,7 @@ Every API should have a non-empty summary. Additionally, Snapser uses the API Su
       ],
       "summary": "User APIs", (👈 Summary causes APIs to be grouped in the API Explorer)
       "description": "This API will work for all auth types.",
-      "operationId": "Update User Profile",
+      "operationId": "UpdateUserProfile",
       "parameters": [
         {
           "name": "UserId",
@@ -559,8 +617,9 @@ Every API should have a non-empty summary. Additionally, Snapser uses the API Su
 }
 ```
 
+![BYOSnap APIs Grouped](/images/docs/tutorials/byosnap-basic-api-grouped.png)
 
-#### Rule 3: Every Response must have a Description
+#### Rule 4: Every Response must have a Description
 The Response Description of the API is used by our API Explorer tech. This should be a **non-empty string** and should not be null. The API Explorer uses this description to display the response message.
 
 ```json
@@ -612,25 +671,31 @@ The Response Description of the API is used by our API Explorer tech. This shoul
 }
 ```
 
-### Automated Code Annotations to Swagger
-We have pre-added Swagger annotations to the APIs, along with a helper script to generate the Swagger spec for your BYOSnap. Use the following commands to generate the Swagger spec for your BYOSnap, depending on your development environment:
+<Note>
+  Most of the annotation to swagger libraries will do this for you. But if you are using a custom library, make sure to add this.
+</Note>
 
+### Automated Code Annotations to Swagger
+We have added Swagger annotations to the APIs, along with a helper script to generate the Swagger spec for your BYOSnap. Use the following commands to generate the Swagger spec for your BYOSnap, depending on your development environment:
+
+<CodeGroup title="Generate Swagger Spec" tag="bash" >
 ```csharp
 // Run this command in the root of your code directory
-// ./generate_swagger.sh
+./generate_swagger.sh
 ```
 ```go
 // Run this command in the root of your code directory
-// ./generate_swagger.sh
+./generate_swagger.sh
 ```
 ```python
 # Run this command in the root of your code directory
-# python generate_swagger.py
+python generate_swagger.py
 ```
 ```typescript
 // Run this command in the root of your code directory
-// ./generate_swagger.sh
+./generate_swagger.sh
 ```
+</CodeGroup>
 
 ## Step 7: Understand Gotchas
 Each programming language has its own nuances. We have documented them in files called "Gotchas.md". While we strive to make the BYOSnap experience as seamless as possible, it's important to be aware of these nuances, particularly how they affect route creation, API annotation, and Swagger specification generation. We've documented these issues thoroughly, but if you have any questions, please reach out to us.
@@ -644,31 +709,3 @@ Each programming language has its own nuances. We have documented them in files 
   Congratulations! You have successfully completed the BYOSnap tutorial. You have learned how to deploy a BYOSnap, test it using the API Explorer, and generate SDKs for your BYOSnap APIs.
 </Checkpoint>
 
-## Automated Tutorial
-After you have published a BYOSnap, we offer a helper script that simulates the end state of following the manual instructions to create a snapend with your BYOSnap in it. This script utilizes Snapctl.
-
-<Note>
-  If you have already completed the manual instructions, this script is unnecessary.
-</Note>
-
-To execute this script, you will need the following:
-1. Navigate to the [Game Management](https://snapser.com/games) page on Snapser. Click the Copy Icon next to **ID** to copy the $companyId.
-1. Select the game under which you wish to create your Snapend. This will bring you to the game's home page. Click the Copy Icon next to **ID** to copy the $gameId.
-1. The $byosnapId is the identifier for your BYOSnap, which is **byosnap-basic** as used in the BYOSnap publish step.
-1. Use the version number from the BYOSnap publish step, e.g., v1.0.0.
-
-```bash
-python snapend_create.py $companyId $gameId $byosnapId $version
-```
-
-You will see the output from the Snapctl tool as it creates your Snapend. Once the creation is complete, you will see a success message.
-
-```bash
-Success Updated your snapend. Your snapend is Live.
-Success Snapend clone successful. Do not forget to download the latest manifest.
-Your Snapend is created successfully with Snaps: auth and byosnap-*.
-```
-
-## Next Steps
-1. Make sure you understand the Authorization flow in Snapser.
-1. Check out the SDK that Snapser generates for your Snapends and try integrating it with your game client.
