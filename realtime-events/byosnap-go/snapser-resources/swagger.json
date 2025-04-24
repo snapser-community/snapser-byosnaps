@@ -1,0 +1,16 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "BYOSnap Realtime Events",
+        "description": "BYOSnap to register, listen and emit events",
+        "contact": {},
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "/"
+        }
+    ],
+    "components": {},
+    "paths": {}
+}
