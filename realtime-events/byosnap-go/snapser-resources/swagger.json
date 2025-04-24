@@ -1,8 +1,8 @@
 {
     "openapi": "3.0.1",
     "info": {
-        "title": "Rewards",
-        "description": "Rewards a player on certain actions",
+        "title": "BYOSnap Realtime Events",
+        "description": "BYOSnap to register, listen and emit events",
         "contact": {},
         "version": "1.0"
     },
@@ -11,5 +11,6 @@
             "url": "/"
         }
     ],
-    "components": {}
+    "components": {},
+    "paths": {}
 }

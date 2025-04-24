@@ -9,8 +9,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	eventbuspb "github.com/snapser-community/snapser-byosnaps/byosnap-rewards/snapserpb/eventbus"
-	lobbiespb "github.com/snapser-community/snapser-byosnaps/byosnap-rewards/snapserpb/lobbies"
+	eventbuspb "github.com/snapser-community/snapser-byosnaps/byosnap-go/snapserpb/eventbus"
+	lobbiespb "github.com/snapser-community/snapser-byosnaps/byosnap-go/snapserpb/lobbies"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/proto"
 )
@@ -25,14 +25,15 @@ func (a *app) eventHandler(c *gin.Context) {
 		log.Fatal().Err(err).Msg("failed to read body")
 	}
 
-	// Parse body as eventbus.ByoWebhookMessage
+	// 👇 Parse body as eventbus.ByoWebhookMessage
 	var wr eventbuspb.ByoWebhookRequest
 	err = proto.Unmarshal(body, &wr)
 	if err != nil {
 		log.Fatal().Str("requestBody", string(body)).Err(err).Msg("failed to unmarshal body")
 	}
 
-	// Switch on the message type, currently the only type we handle is snap events
+	// Switch on the message type
+	// NOTE: Currently the only type we handle is snap events
 	switch wr.MessageType {
 	case eventbuspb.MessageType_MESSAGE_TYPE_SNAP_EVENT:
 		snapEvent := wr.GetByoSnapEvent()
@@ -40,6 +41,7 @@ func (a *app) eventHandler(c *gin.Context) {
 
 		// Switch on the subject which is the recommended way to identify the event and payload
 		switch snapEvent.Subject {
+		//👇 For this tutorial we are going to listen on a Lobby member joined event
 		case "snapser.services.lobbies.member.joined":
 			ev := &lobbiespb.EventLobbiesMemberJoined{}
 			if err := proto.Unmarshal([]byte(snapEvent.Payload), ev); err != nil {
@@ -58,7 +60,7 @@ func (a *app) eventHandler(c *gin.Context) {
 			}
 
 			randomPraise := fallbackPraises[rand.Intn(len(fallbackPraises))]
-
+			//👇 After, getting this event we are going to emit the custom Praise event we registered
 			praiseReq := &eventbuspb.PublishByoEventRequest{
 				ByosnapId:  byoSnapID,
 				Subject:    "praise",

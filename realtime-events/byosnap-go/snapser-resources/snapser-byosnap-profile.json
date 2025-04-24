@@ -1,6 +1,6 @@
 {
-    "name": "BYOSnap Rewards",
-    "description": "BYOSnap Rewards example for custom events",
+    "name": "BYOSnap Realtime Events",
+    "description": "BYOSnap to register, listen and emit events",
     "platform": "linux/arm64",
     "language": "go",
     "prefix": "/v1",

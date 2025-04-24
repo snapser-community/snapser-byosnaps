@@ -1,4 +1,4 @@
-module github.com/snapser-community/snapser-byosnaps/byosnap-rewards
+module github.com/snapser-community/snapser-byosnaps/byosnap-go
 
 go 1.22.7
 

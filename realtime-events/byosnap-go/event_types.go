@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	eventbuspb "github.com/snapser-community/snapser-byosnaps/byosnap-rewards/snapserpb/eventbus"
+	eventbuspb "github.com/snapser-community/snapser-byosnaps/byosnap-go/snapserpb/eventbus"
 )
 
 // Praise reward, a message praising the player for doing something
