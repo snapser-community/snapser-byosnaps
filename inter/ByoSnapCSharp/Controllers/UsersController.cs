@@ -100,9 +100,12 @@ namespace ByoSnapCSharp.Controllers
         var userIdHeader = HttpContext.Request.Headers[AppConstants.userIdHeaderKey].FirstOrDefault();
         Object result = null;
         // TODO: Uncomment the following code to use the SnapserInternal API
+        // // // 👇 [IMPORTANT]: You have to set the baseURL using the Snapser provided
+        // // //    environment variables. There will be a different environment variable
+        // // //    for each snap. Eg: for the Profile Snap, Snapser sets the
+        // // //    SNAPEND_PROFILES_HTTP_URL, For the Auth snap it will be SNAPEND_AUTH_HTTP_URL
         // Configuration config = new Configuration();
-        // //👇 [IMPORTANT]: Note how the base path has been overridden with the Internal API URL
-        // config.BasePath = config.GetOperationServerUrl("ProfilesServiceApi.ProfilesInternalUpsertProfile", 0);
+        // config.BasePath = Environment.GetEnvironmentVariable("SNAPEND_PROFILES_HTTP_URL") ?? config.GetOperationServerUrl("ProfilesServiceApi.ProfilesInternalUpsertProfile", 0);
         // HttpClient httpClient = new HttpClient();
         // HttpClientHandler httpClientHandler = new HttpClientHandler();
         // var apiInstance = new ProfilesServiceApi(httpClient, config, httpClientHandler);
