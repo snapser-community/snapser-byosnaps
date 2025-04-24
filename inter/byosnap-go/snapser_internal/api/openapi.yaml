@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   description: Your custom SDK
   title: my-dev-cluster
-  version: "my-dev-cluster: v9 SDK"
+  version: "my-dev-cluster: v1 SDK"
 servers:
 - url: /
 tags:
@@ -55,8 +55,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/associate-logins:
     put:
       description: Associates two logins based on their session tokens
@@ -83,8 +81,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/discord/login:
     put:
       description: Logs in the user based on the discord token specified and returns
@@ -112,8 +108,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/email-password/account-recovery:
     post:
       description: Sends an email to the user for account recovery
@@ -140,8 +134,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/email-password/login:
     put:
       description: Logs in the user based on the email and password specified and
@@ -169,8 +161,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/email-password/password:
     put:
       description: Updates the email and password of the user
@@ -197,8 +187,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/email-password/verification:
     post:
       description: Verifies the email and returns a session
@@ -225,8 +213,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/login/anon:
     put:
       description: Logs in the user with an arbitrary identifier specified and returns
@@ -254,8 +240,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/login/apple:
     put:
       description: Logs in the user based on the apple credential token specified
@@ -283,8 +267,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/login/email:
     put:
       description: Logs in the user based on the email and OTP specified and returns
@@ -312,8 +294,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/login/epic:
     put:
       description: Logs in the user based on the epic credentials specified and returns
@@ -341,8 +321,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/login/facebook:
     put:
       description: Logs in the user based on the facebook credential token specified
@@ -370,8 +348,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/login/google:
     put:
       description: Logs in the user based on the google credential token specified
@@ -399,8 +375,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/login/steam:
     put:
       deprecated: true
@@ -429,8 +403,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/login/xbox:
     put:
       description: Logs in the user based on the xbox token specified and returns
@@ -458,8 +430,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/logout/{token}:
     delete:
       description: Ends the current session of the user
@@ -496,8 +466,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/otp:
     post:
       description: Generates an OTP and sends it to the email for logging in
@@ -524,8 +492,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/refresh:
     patch:
       description: Refreshes the session and returns a new session token with refreshed
@@ -562,8 +528,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/steam/openid/login:
     put:
       description: Logs in the user based on the steam open ID token specified and
@@ -591,8 +555,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/steam/session-ticket/login:
     put:
       description: Logs in the user based on the steam session ticket specified and
@@ -620,8 +582,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/username-password/availability:
     get:
       description: Checks if the username is available
@@ -650,8 +610,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/username-password/login:
     put:
       description: Logs in the user based on the username and password specified and
@@ -679,8 +637,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/username-password/password:
     put:
       description: Updates the username and password of the user
@@ -716,8 +672,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/users:
     get:
       description: Get UserIDs by login IDs and login types
@@ -762,8 +716,6 @@ paths:
       x-snapser-auth-types:
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/users/{user_id}/disassociation:
     post:
       description: Disassociates the specified login from a user
@@ -807,8 +759,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/auth/validate:
     post:
       description: Validates the session of the user and returns the user info
@@ -835,8 +785,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-auth:8090
   /v1/profiles/batch/profiles:
     get:
       description: Gets a list of user profiles
@@ -874,8 +822,6 @@ paths:
       x-snapser-auth-types:
       - api-key
       - internal
-    servers:
-    - url: http://service-profiles:8090
   /v1/profiles/search:
     post:
       description: Searches for user profiles
@@ -911,8 +857,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-profiles:8090
   /v1/profiles/user/{user_id}:
     delete:
       description: Deletes a user's profile
@@ -1068,8 +1012,6 @@ paths:
       - user
       - api-key
       - internal
-    servers:
-    - url: http://service-profiles:8090
 components:
   schemas:
     DisassociateLogin_request:

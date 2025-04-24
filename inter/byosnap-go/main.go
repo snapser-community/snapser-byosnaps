@@ -25,13 +25,14 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	snapser_internal "snapser_internal"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
-var snapserClient *snapser_internal.APIClient
+var profilesClient *snapser_internal.APIClient
 
 func main() {
 	r := mux.NewRouter()
@@ -59,8 +60,9 @@ func main() {
 	r.Handle("/v1/byosnap-inter/users/{user_id}/profile", validateAuthorization([]string{AuthTypeHeaderValueUserAuth, AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "user_id")(updateUserProfileHandler)).Methods("PUT")
 
 	//Init the snapser client
-	snapserClient = snapser_internal.NewAPIClient(snapser_internal.NewConfiguration())
-
+	config := snapser_internal.NewConfiguration()
+	config.Servers[0].URL = os.Getenv("SNAPEND_PROFILES_HTTP_URL")
+	profilesClient = snapser_internal.NewAPIClient(config)
 	// Start server
 	log.Println("Starting server on :5003")
 	log.Fatal(http.ListenAndServe(":5003", handlers.CORS(corsOpts, corsHeaders, corsMethods)(r)))
@@ -252,9 +254,9 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 //     schema:
 //       $ref: '#/definitions/ErrorResponseSchema'
 func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
-	//TODO: Uncomment the code below to enable the functionality
-	// Simulate fetching data or processing something
-	// Get the header auth-type from the request
+	// // TODO: Uncomment the code below to enable the functionality
+	// // Simulate fetching data or processing something
+	// // Get the header auth-type from the request
 	// authType := r.Header.Get("Auth-Type")
 	// userIdHeader := r.Header.Get("User-Id")
 	// if userIdHeader == "" {
@@ -273,7 +275,7 @@ func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
 	// 	w.WriteHeader(http.StatusBadRequest)
 	// 	return
 	// }
-	// req := snapserClient.ProfilesServiceAPI.ProfilesInternalUpsertProfile(r.Context(), userIdHeader).Gateway("internal").Body(snapser_internal.UpsertProfileRequest{
+	// req := profilesClient.ProfilesServiceAPI.ProfilesInternalUpsertProfile(r.Context(), userIdHeader).Gateway("internal").Body(snapser_internal.UpsertProfileRequest{
 	// 	Profile: profilePayload.Profile,
 	// })
 	// snapserRes, httpResp, err := req.Execute()
