@@ -2,6 +2,7 @@
 Intermediate Python BYOSnap Example.
 '''
 import logging
+import os
 
 from flask import Flask, request, make_response, jsonify
 from flask_cors import CORS, cross_origin
@@ -305,13 +306,13 @@ def update_user_profile(user_id):
 
     message = ''
     # TODO: Uncomment the following code to use the SnapserInternal API
-    # configuration = snapser_internal.Configuration()
+    # configuration = snapser_internal.Configuration(
+    #     host=os.getenv("SNAPEND_PROFILES_HTTP_URL"))
     # with snapser_internal.ApiClient(configuration) as api_client:
     #     # Create an instance of the API class
     #     api_instance = snapser_internal.ProfilesServiceApi(api_client)
     #     body = snapser_internal.UpsertProfileRequest(
     #         profile=payload["profile"])
-
     #     try:
     #         # Anonymous Login
     #         api_response = api_instance.profiles_internal_upsert_profile(

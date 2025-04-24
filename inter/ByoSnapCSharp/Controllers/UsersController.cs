@@ -104,15 +104,15 @@ namespace ByoSnapCSharp.Controllers
         // // //    environment variables. There will be a different environment variable
         // // //    for each snap. Eg: for the Profile Snap, Snapser sets the
         // // //    SNAPEND_PROFILES_HTTP_URL, For the Auth snap it will be SNAPEND_AUTH_HTTP_URL
-        Configuration config = new Configuration();
-        config.BasePath = Environment.GetEnvironmentVariable("SNAPEND_PROFILES_HTTP_URL") ?? config.GetOperationServerUrl("ProfilesServiceApi.ProfilesInternalUpsertProfile", 0);
-        HttpClient httpClient = new HttpClient();
-        HttpClientHandler httpClientHandler = new HttpClientHandler();
-        var apiInstance = new ProfilesServiceApi(httpClient, config, httpClientHandler);
+        // Configuration config = new Configuration();
+        // config.BasePath = Environment.GetEnvironmentVariable("SNAPEND_PROFILES_HTTP_URL") ?? config.GetOperationServerUrl("ProfilesServiceApi.ProfilesInternalUpsertProfile", 0);
+        // HttpClient httpClient = new HttpClient();
+        // HttpClientHandler httpClientHandler = new HttpClientHandler();
+        // var apiInstance = new ProfilesServiceApi(httpClient, config, httpClientHandler);
 
-        // Profile Upsert Request
-        var upsertRequest = new UpsertProfileRequest(profile: body.Profile);
-        result = apiInstance.ProfilesInternalUpsertProfile(userParams.UserId, "internal", upsertRequest);
+        // // Profile Upsert Request
+        // var upsertRequest = new UpsertProfileRequest(profile: body.Profile);
+        // result = apiInstance.ProfilesInternalUpsertProfile(userParams.UserId, "internal", upsertRequest);
         return Ok(new SuccessResponseSchema
         {
           Api = "UpdateUserProfile",
