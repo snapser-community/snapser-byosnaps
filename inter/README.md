@@ -390,9 +390,12 @@ public ActionResult<SuccessResponseSchema> UpdateUserProfile(
     var userIdHeader = HttpContext.Request.Headers[AppConstants.userIdHeaderKey].FirstOrDefault();
     Object result = null;
     // TODO: Uncomment the following code to use the SnapserInternal API
+    // // // 👇 [IMPORTANT]: You have to set the baseURL using the Snapser provided
+    // // //    environment variables. There will be a different environment variable
+    // // //    for each snap. Eg: for the Profile Snap, Snapser sets the
+    // // //    SNAPEND_PROFILES_HTTP_URL, For the Auth snap it will be SNAPEND_AUTH_HTTP_URL
     // Configuration config = new Configuration();
-    // //👇 [IMPORTANT]: Note how the base path has been overridden with the Internal API URL
-    // config.BasePath = config.GetOperationServerUrl("ProfilesServiceApi.ProfilesInternalUpsertProfile", 0);
+    // config.BasePath = Environment.GetEnvironmentVariable("SNAPEND_PROFILES_HTTP_URL") ?? config.GetOperationServerUrl("ProfilesServiceApi.ProfilesInternalUpsertProfile", 0);
     // HttpClient httpClient = new HttpClient();
     // HttpClientHandler httpClientHandler = new HttpClientHandler();
     // var apiInstance = new ProfilesServiceApi(httpClient, config, httpClientHandler);
@@ -419,7 +422,24 @@ public ActionResult<SuccessResponseSchema> UpdateUserProfile(
 }
 ```
 ```go
-//File: main.go
+var profilesClient *snapser_internal.APIClient
+
+func main() {
+  ...
+  // // 👇 [IMPORTANT]: You have to set the baseURL using the Snapser provided
+  // //    environment variables. There will be a different environment variable
+  // //    for each snap. Eg: for the Profile Snap, Snapser sets the
+  // //    SNAPEND_PROFILES_HTTP_URL, For the Auth snap it will be SNAPEND_AUTH_HTTP_URL
+  //Init the snapser client
+	config := snapser_internal.NewConfiguration()
+	config.Servers[0].URL = os.Getenv("SNAPEND_PROFILES_HTTP_URL")
+	profilesClient = snapser_internal.NewAPIClient(config)
+
+  ...
+}
+
+...
+
 // UpdateUserProfileHandler handles the PUT request for an API endpoint. TODO: For you to update
 // swagger:operation PUT /v1/byosnap-inter/users/{user_id}/profile updateUserProfile
 // ---
@@ -449,9 +469,9 @@ public ActionResult<SuccessResponseSchema> UpdateUserProfile(
 //     schema:
 //       $ref: '#/definitions/ErrorResponseSchema'
 func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
-	//TODO: Uncomment the code below to enable the functionality
-	// Simulate fetching data or processing something
-	// Get the header auth-type from the request
+	// // TODO: Uncomment the code below to enable the functionality
+	// // Simulate fetching data or processing something
+	// // Get the header auth-type from the request
 	// authType := r.Header.Get("Auth-Type")
 	// userIdHeader := r.Header.Get("User-Id")
 	// if userIdHeader == "" {
@@ -470,7 +490,7 @@ func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
 	// 	w.WriteHeader(http.StatusBadRequest)
 	// 	return
 	// }
-	// req := snapserClient.ProfilesServiceAPI.ProfilesInternalUpsertProfile(r.Context(), userIdHeader).Gateway("internal").Body(snapser_internal.UpsertProfileRequest{
+	// req := profilesClient.ProfilesServiceAPI.ProfilesInternalUpsertProfile(r.Context(), userIdHeader).Gateway("internal").Body(snapser_internal.UpsertProfileRequest{
 	// 	Profile: profilePayload.Profile,
 	// })
 	// snapserRes, httpResp, err := req.Execute()
@@ -526,7 +546,6 @@ from snapser_internal.rest import ApiException
 
 ...
 
-# Update the update_user_profile function in app.py
 @app.route("/v1/byosnap-inter/users/<user_id>/profile", methods=["PUT"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def update_user_profile(user_id):
@@ -572,14 +591,18 @@ def update_user_profile(user_id):
         return jsonify({"error": "Missing profile"}), 400
 
     message = ''
-    # TODO: Uncomment the following code to use the SnapserInternal API
-    # configuration = snapser_internal.Configuration()
+    # # TODO: Uncomment the following code to use the SnapserInternal API
+    # # 👇 [IMPORTANT]: You have to set the baseURL using the Snapser provided
+    # # environment variables. There will be a different environment variable
+    # # for each snap. Eg: for the Profile Snap, Snapser sets the
+    # # SNAPEND_PROFILES_HTTP_URL, For the Auth snap it will be SNAPEND_AUTH_HTTP_URL
+    # configuration = snapser_internal.Configuration(
+    #     host=os.getenv("SNAPEND_PROFILES_HTTP_URL"))
     # with snapser_internal.ApiClient(configuration) as api_client:
     #     # Create an instance of the API class
     #     api_instance = snapser_internal.ProfilesServiceApi(api_client)
     #     body = snapser_internal.UpsertProfileRequest(
     #         profile=payload["profile"])
-
     #     try:
     #         # Anonymous Login
     #         api_response = api_instance.profiles_internal_upsert_profile(
@@ -625,12 +648,16 @@ public async updateUserProfile(
   const expressReq = req as ExpressRequest;
   const authType = expressReq.header("Auth-Type");
   const headerUserId = expressReq.header("User-Id");
-  const baseUrl = process.env.SNAPEND_PROFILES_HTTP_URL ?? 'http://profiles-service:8090';
-  const profilesApi = new ProfilesServiceApi(baseUrl);
-  const payload: UpsertProfileRequest = {
-    profile: body.profile
-  };
   // TODO: Uncomment the following code
+  // // 👇 [IMPORTANT]: You have to set the baseURL using the Snapser provided
+  // //    environment variables. There will be a different environment variable
+  // //    for each snap. Eg: for the Profile Snap, Snapser sets the
+  // //    SNAPEND_PROFILES_HTTP_URL, For the Auth snap it will be SNAPEND_AUTH_HTTP_URL
+  // const baseUrl = process.env.SNAPEND_PROFILES_HTTP_URL ?? 'http://profiles-service:8090';
+  // const profilesApi = new ProfilesServiceApi(baseUrl);
+  // const payload: UpsertProfileRequest = {
+  //   profile: body.profile
+  // };
   // try {
   //   const result = await profilesApi.profilesInternalUpsertProfile(userId, 'internal', payload);
   //   const body = result.body;
