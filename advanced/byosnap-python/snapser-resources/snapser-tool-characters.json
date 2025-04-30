@@ -5,7 +5,7 @@
   "title": "Available Characters",
   "description": "List of available in-game characters",
   "category": "flat_form",
-  "env_support": "single",
+  "env_support": "multi",
   "snap_version": "",
   "sections": [
     {
