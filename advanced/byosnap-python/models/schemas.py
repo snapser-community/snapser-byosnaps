@@ -25,6 +25,13 @@ class ProfilePayloadSchema(Schema):
         required=True, description="JSON representation of the profile being updated")
 
 
+class CharactersResponseSchema(Schema):
+    '''
+    Schema for the characters response.
+    '''
+    characters = fields.List(fields.Str(), required=True)
+
+
 class SuccessResponseSchema(Schema):
     '''
     Schema for the success response.

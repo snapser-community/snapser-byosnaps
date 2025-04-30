@@ -584,31 +584,28 @@ def delete_user_data(user_id):
 
 
 @app.route("/v1/byosnap-advanced/users/<user_id>/characters/<character_id>/active", methods=["GET"])
-def check_character_activation(user_id):
-    """Get Game Characters for a User.
+def check_active_characters(user_id):
+    """Get Active Characters for a User.
     ---
     get:
-      summary: 'Get Characters'
-      description: Get Player Id and Tokens for Characters in a Game
-      operationId: Get Characters
+      summary: 'Character APIs'
+      description: Get
+      operationId: Get Active Characters
+      x-snapser-auth-types:
+        - user
+        - api-key
+        - internal
       parameters:
       - in: path
-        schema: UserIdParameter
-      - in: header
-        schema: TokenHeaderSchema
+        schema: UserIdParameterSchema
       responses:
         200:
           content:
             application/json:
               schema: CharactersResponseSchema
           description: 'Characters retrieved successfully'
-        201:
-          content:
-            application/json:
-              schema: CharactersResponseSchema
-          description: 'Characters retrieved successfully'
     """
-    return make_response(jsonify({'characters': {}}), 200)
+    return make_response(jsonify({'characters': []}), 200)
 
 
 # End: SYSTEM: Used by the Snap Configuration Tool
