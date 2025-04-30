@@ -171,7 +171,7 @@ def get_settings():
                 access_type='private',
                 blob_key='character_settings',
                 owner_id=blob_owner_key,
-                gateway=os.environ['SNAPEND_INTERNAL_HEADER']
+                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
             )
             if api_response is None:
                 return make_response(jsonify(default_settings), 200)
@@ -214,7 +214,7 @@ def update_settings():
                 access_type='private',
                 blob_key='character_settings',
                 owner_id=blob_owner_key,
-                gateway=os.environ['SNAPEND_INTERNAL_HEADER']
+                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
             )
             if api_response is not None:
                 cas = api_response.cas
@@ -258,9 +258,8 @@ def settings_export():
       summary: 'Export Settings'
       description: Export Settings
       operationId: Export Settings
-      parameters:
-      - in: header
-        schema: TokenHeaderSchema
+      x-snapser-auth-types:
+        - internal
       responses:
         200:
           content:
@@ -269,7 +268,7 @@ def settings_export():
           description: 'Settings retrieved successfully'
     """
     response = {
-        "version": os.environ['BYOSNAP_VERSION'],
+        "version": os.environ.get('BYOSNAP_VERSION', "v1.0.0"),
         "exported_at": int(time.time()),
         "data": {
             "dev": {
@@ -336,26 +335,32 @@ def settings_export():
                 access_type='private',
                 blob_key='character_settings',
                 owner_id=blob_key_ids,
-                gateway=os.environ['SNAPEND_INTERNAL_HEADER']
+                gateway=os.environ.get(
+                    'SNAPEND_INTERNAL_HEADER', 'internal')
             )
             if api_response is None:
                 return make_response(jsonify(response), 200)
-            for result in api_response['results']:
-                if result['success'] and result['response']['owner_id'] == blob_key_ids[0]:
+            for result in api_response.results:
+                if result.success and result.response.owner_id == blob_key_ids[0] and \
+                        result.response.value is not None and result.response.value != "":
                     # Load the dev data
                     response['data']['dev']['characters'] = json.loads(
-                        result['response']['value'])
-                elif result['success'] and result['response']['owner_id'] == blob_key_ids[1]:
+                        result.response.value)
+                elif result.success and result.response.owner_id == blob_key_ids[1] and \
+                        result.response.value is not None and result.response.value != "":
                     # Load the stage data
                     response['data']['stage']['characters'] = json.loads(
-                        result['response']['value'])
-                elif result['success'] and result['response']['owner_id'] == blob_key_ids[2]:
+                        result.response.value)
+                elif result.success and result.response.owner_id == blob_key_ids[2] and \
+                        result.response.value is not None and result.response.value != "":
                     # Load the prod data
                     response['data']['prod']['characters'] = json.loads(
-                        result['response']['value'])
+                        result.response.value)
             return make_response(jsonify(response), 200)
         except ApiException as e:
-            pass
+            return make_response(jsonify({
+                'error_message': 'API Exception' + str(e)
+            }), 500)
     return make_response(jsonify(response), 200)
 
 
@@ -368,9 +373,8 @@ def settings_import():
       summary: 'Import Settings'
       description: Import Settings
       operationId: Import Settings
-      parameters:
-      - in: header
-        schema: TokenHeaderSchema
+      x-snapser-auth-types:
+        - internal
       requestBody:
         required: true
         content:
@@ -391,18 +395,18 @@ def settings_import():
         400:
             content:
                 application/json:
-                schema: ErrorResponseSchema
+                    schema: ErrorResponseSchema
             description: 'Error saving settings'
         500:
             content:
                 application/json:
-                schema: ErrorResponseSchema
+                    schema: ErrorResponseSchema
             description: 'Server Exception'
     """
     try:
         # This is coming from the Settings Hook
         response = {
-            "version": os.environ['BYOSNAP_VERSION'],
+            "version": os.environ.get('BYOSNAP_VERSION', "v1.0.0"),
             "exported_at": int(time.time()),
             "data": {
                 "dev": {
@@ -467,7 +471,7 @@ def settings_import():
             }), 500)
         characters_tool_id = 'characters'
         blob_dev = {
-            "value": settings_data['data']['dev']['characters'],
+            "value": json.dumps(settings_data['data']['dev']['characters']),
             "ttl": 0,
             "owner_id": f"{characters_tool_id}_dev",
             "create": True,
@@ -476,7 +480,7 @@ def settings_import():
             "access_type": "private"
         }
         blob_stage = {
-            "value": settings_data['data']['stage']['characters'],
+            "value": json.dumps(settings_data['data']['stage']['characters']),
             "ttl": 0,
             "owner_id": f"{characters_tool_id}_stage",
             "create": True,
@@ -485,7 +489,7 @@ def settings_import():
             "access_type": "private"
         }
         blob_prod = {
-            "value": settings_data['data']['prod']['characters'],
+            "value": json.dumps(settings_data['data']['prod']['characters']),
             "ttl": 0,
             "owner_id": f"{characters_tool_id}_prod",
             "create": True,
@@ -493,6 +497,7 @@ def settings_import():
             "blob_key": "character_settings",
             "access_type": "private"
         }
+        payload = {'blobs': [blob_dev, blob_stage, blob_prod]}
         # Save the characters to the storage
         configuration = snapser_internal.Configuration()
         with snapser_internal.ApiClient(configuration=configuration) as api_client:
@@ -501,7 +506,7 @@ def settings_import():
             try:
                 api_response = api_instance.storage_internal_batch_replace_blob(
                     gateway=os.environ['SNAPEND_INTERNAL_HEADER'],
-                    body={'blobs': [blob_dev, blob_stage, blob_prod]}
+                    body=payload,
                 )
                 if api_response is None:
                     return make_response(jsonify({
@@ -583,7 +588,7 @@ def delete_user_data(user_id):
 # Regular API Endpoints exposed by the Snap
 
 
-@app.route("/v1/byosnap-advanced/users/<user_id>/characters/<character_id>/active", methods=["GET"])
+@app.route("/v1/byosnap-advanced/users/<user_id>/characters/active", methods=["GET"])
 def check_active_characters(user_id):
     """Get Active Characters for a User.
     ---

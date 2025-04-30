@@ -1,6 +1,91 @@
 {
     "paths": {
-        "/v1/byosnap-advanced/users/{user_id}/characters/{character_id}/active": {
+        "/v1/byosnap-advanced/settings/export": {
+            "get": {
+                "summary": "Export Settings",
+                "description": "Export Settings",
+                "operationId": "Export Settings",
+                "x-snapser-auth-types": [
+                    "internal"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExportSettingsSchema"
+                                }
+                            }
+                        },
+                        "description": "Settings retrieved successfully"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-advanced/settings/import": {
+            "post": {
+                "summary": "Import Settings",
+                "description": "Import Settings",
+                "operationId": "Import Settings",
+                "x-snapser-auth-types": [
+                    "internal"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ExportSettingsSchema"
+                            }
+                        }
+                    },
+                    "description": "ExportSettingsSchema payload"
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageSchema"
+                                }
+                            }
+                        },
+                        "description": "SettingsSchema saved successfully"
+                    },
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageSchema"
+                                }
+                            }
+                        },
+                        "description": "SettingsSchema created successfully"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Error saving settings"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Server Exception"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-advanced/users/{user_id}/characters/active": {
             "get": {
                 "summary": "Character APIs",
                 "description": "Get",
@@ -62,6 +147,152 @@
                 },
                 "required": [
                     "characters"
+                ]
+            },
+            "SuccessMessageSchema": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ErrorResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "error_message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "BaseComponent": {
+                "type": "object",
+                "properties": {
+                    "value": {},
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "text",
+                            "textarea",
+                            "number",
+                            "select",
+                            "multi_select",
+                            "checkbox",
+                            "radio",
+                            "group"
+                        ]
+                    },
+                    "id": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "type"
+                ]
+            },
+            "GroupComponentItem": {
+                "type": "object",
+                "properties": {
+                    "component_four": {
+                        "type": "boolean"
+                    },
+                    "component_two": {
+                        "$ref": "#/components/schemas/BaseComponent"
+                    },
+                    "component_three": {
+                        "$ref": "#/components/schemas/BaseComponent"
+                    },
+                    "component_one": {
+                        "$ref": "#/components/schemas/BaseComponent"
+                    }
+                }
+            },
+            "SectionComponent": {
+                "type": "object",
+                "properties": {
+                    "value": {},
+                    "type": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "components": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GroupComponentItem"
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "type"
+                ]
+            },
+            "ByoToolPayloadSection": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "components": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SectionComponent"
+                        }
+                    }
+                },
+                "required": [
+                    "components",
+                    "id"
+                ]
+            },
+            "Settings": {
+                "type": "object",
+                "properties": {
+                    "sections": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ByoToolPayloadSection"
+                        }
+                    }
+                },
+                "required": [
+                    "sections"
+                ]
+            },
+            "SettingsEnvironmentData": {
+                "type": "object",
+                "properties": {
+                    "characters": {
+                        "$ref": "#/components/schemas/Settings"
+                    }
+                },
+                "required": [
+                    "characters"
+                ]
+            },
+            "ExportSettingsSchema": {
+                "type": "object",
+                "properties": {
+                    "version": {
+                        "type": "string"
+                    },
+                    "exported_at": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/SettingsEnvironmentData"
+                        }
+                    }
+                },
+                "required": [
+                    "data",
+                    "exported_at",
+                    "version"
                 ]
             }
         }
