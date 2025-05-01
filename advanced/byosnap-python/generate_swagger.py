@@ -7,9 +7,11 @@ from flask import Flask
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
-from models.schemas import UserIdParameterSchema, ErrorResponseSchema, SuccessResponseSchema, \
-    ProfilePayloadSchema
-from app import get_game, save_game, delete_user, update_user_profile
+from models.schemas import UserIdParameterSchema, ExportSettingsSchema, ErrorResponseSchema, \
+    CharactersResponseSchema, SuccessMessageSchema, SettingsEnvironmentDataSchema, SettingsSchema, \
+    ByoToolPayloadSectionSchema, SectionComponentSchema, GroupComponentItemSchema, \
+    GroupComponentItemSchema, BaseComponentSchema, GroupComponentSchema
+from app import settings_export, settings_import, check_active_characters
 
 # Constants
 RESOURCES_DIR = 'snapser-resources'
@@ -19,34 +21,35 @@ API_SPEC_FILENAME = 'swagger.json'
 app = Flask(__name__)
 
 # Register your endpoints
-app.add_url_rule('/v1/byosnap-inter/users/<user_id>/game',
-                 view_func=get_game, methods=['GET'])
-app.add_url_rule('/v1/byosnap-inter/users/<user_id>/game',
-                 view_func=save_game, methods=['POST'])
-app.add_url_rule('/v1/byosnap-inter/users/<user_id>',
-                 view_func=delete_user, methods=['DELETE'])
-app.add_url_rule('/v1/byosnap-inter/users/<user_id>/profile',
-                 view_func=update_user_profile, methods=['PUT'])
+app.add_url_rule("/v1/byosnap-advanced/settings/export",
+                 view_func=settings_export, methods=['GET'])
+app.add_url_rule("/v1/byosnap-advanced/settings/import",
+                 view_func=settings_import, methods=['POST'])
+app.add_url_rule("/v1/byosnap-advanced/users/<user_id>/characters/active",
+                 view_func=check_active_characters, methods=['GET'])
 
 # Initialize APISpec
 spec = APISpec(
-    title="BYOSnap Intermediate Python Example",
+    title="BYOSnap Advanced Python Example",
     version="1.0.0",
     openapi_version="3.0.2",
     plugins=[FlaskPlugin(), MarshmallowPlugin()],
 )
 spec.components.schema("UserIdParameterSchema", schema=UserIdParameterSchema)
-spec.components.schema("ProfilePayloadSchema", schema=ProfilePayloadSchema)
-spec.components.schema("ErrorResponseSchema", schema=ErrorResponseSchema)
-spec.components.schema("SuccessResponseSchema", schema=SuccessResponseSchema)
-
+spec.components.schema("CharactersResponseSchema",
+                       schema=CharactersResponseSchema)
+spec.components.schema("SuccessMessageSchema",
+                       schema=SuccessMessageSchema)
+spec.components.schema("ErrorResponseSchema",
+                       schema=ErrorResponseSchema)
+spec.components.schema("ExportSettingsSchema",
+                       schema=ExportSettingsSchema)
 
 # Generate paths using the FlaskPlugin
 with app.test_request_context():
-    spec.path(view=get_game)
-    spec.path(view=save_game)
-    spec.path(view=delete_user)
-    spec.path(view=update_user_profile)
+    spec.path(view=settings_export)
+    spec.path(view=settings_import)
+    spec.path(view=check_active_characters)
 
 # Save to JSON
 if not os.path.exists(RESOURCES_DIR):

@@ -143,11 +143,6 @@ def get_settings():
     '''
     # This is coming from the Payload we got in the Configuration tool
     default_settings = {
-        "version": "v1.0.0",
-        "id": "characters",
-        "endpoint": "",
-        "category": "flat_form",
-        "env_support": "single",
         "sections": [
             {
                 "id": "registration",
@@ -161,17 +156,21 @@ def get_settings():
             }
         ]
     }
+    # Get settings call always includes the tool_id and environment
+    tool_id = request.args.get('tool_id')
+    environment = request.args.get('environment', default='DEFAULT')
+    blob_owner_key = f"{tool_id}_{environment}"
+    # Make an internal call to Storage to get the settings
     configuration = snapser_internal.Configuration()
     with snapser_internal.ApiClient(configuration=configuration) as api_client:
         # Create an instance of the API class
         api_instance = snapser_internal.StorageServiceApi(api_client)
         try:
-            # Anonymous Login
             api_response = api_instance.storage_internal_get_blob(
                 access_type='private',
                 blob_key='character_settings',
-                owner_id='byosnap_characters',
-                gateway=os.environ['SNAPEND_INTERNAL_HEADER']
+                owner_id=blob_owner_key,
+                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
             )
             if api_response is None:
                 return make_response(jsonify(default_settings), 200)
@@ -190,20 +189,14 @@ def update_settings():
     Update the settings for the characters microservice
     '''
     try:
+        # Update settings call always includes the tool_id and environment
+        tool_id = request.args.get('tool_id')
+        environment = request.args.get('environment', default='DEFAULT')
+        blob_owner_key = f"{tool_id}_{environment}"
         blob_data = request.get_json()
         if 'payload' in blob_data:
             blob_data = blob_data['payload']
-        character_string = blob_data['sections'][0]['components'][0]['value']
-        # Split the characters by comma but also trim the characters
-        character_list = character_string.split(',')
-        character_list = [character.strip() for character in character_list]
-        # Check for duplicates
-        if len(character_list) != len(set(character_list)):
-            return make_response(jsonify({
-                'error_message': 'Duplicate characters found'
-            }), 400)
-        blob_data['sections'][0]['components'][0]['value'] = ','.join(
-            character_list)
+        # TODO: Add any custom validation here and on error send back `return make_response(jsonify({'error_message': 'Duplicate characters found'}), 400)``
     except Exception as e:
         return make_response(jsonify({
             'error_message': 'Invalid JSON ' + str(e)
@@ -215,12 +208,11 @@ def update_settings():
         # Create an instance of the API class
         api_instance = snapser_internal.StorageServiceApi(api_client)
         try:
-            # Anonymous Login
             api_response = api_instance.storage_internal_get_blob(
                 access_type='private',
                 blob_key='character_settings',
-                owner_id='byosnap_characters',
-                gateway=os.environ['SNAPEND_INTERNAL_HEADER']
+                owner_id=blob_owner_key,
+                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
             )
             if api_response is not None:
                 cas = api_response.cas
@@ -231,7 +223,7 @@ def update_settings():
             api_response = api_instance.storage_internal_replace_blob(
                 access_type='private',
                 blob_key='character_settings',
-                owner_id='byosnap_characters',
+                owner_id=blob_owner_key,
                 gateway=os.environ['SNAPEND_INTERNAL_HEADER'],
                 body={
                     "value": json.dumps(blob_data),
@@ -264,65 +256,109 @@ def settings_export():
       summary: 'Export Settings'
       description: Export Settings
       operationId: Export Settings
-      parameters:
-      - in: header
-        schema: TokenHeaderSchema
+      x-snapser-auth-types:
+        - internal
       responses:
         200:
           content:
             application/json:
-              schema: CharactersResponseSchema
-          description: 'Characters retrieved successfully'
-        201:
-          content:
-            application/json:
-              schema: CharactersResponseSchema
-          description: 'Characters retrieved successfully'
+              schema: ExportSettingsSchema
+          description: 'Settings retrieved successfully'
     """
     response = {
-        "version": os.environ['BYOSNAP_VERSION'],
+        "version": os.environ.get('BYOSNAP_VERSION', "v1.0.0"),
         "exported_at": int(time.time()),
         "data": {
-            "character_settings": {
-                "version": "v1.0.0",
-                "id": "characters",
-                "endpoint": "",
-                "category": "flat_form",
-                "env_support": "single",
-                "sections": [
-                    {
-                        "id": "registration",
-                        "components": [
-                            {
-                                "id": "characters",
-                                "type": "textarea",
-                                "value": ""
-                            }
-                        ]
-                    }
-                ]
+            "dev": {
+                "characters": {  # This is the Tool ID which has the tool Payload inside
+                    "sections": [
+                        {
+                            "id": "registration",
+                            "components": [
+                                {
+                                    "id": "characters",
+                                    "type": "textarea",
+                                    "value": ""
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "stage": {
+                "characters": {  # This is the Tool ID which has the tool Payload inside
+                    "sections": [
+                        {
+                            "id": "registration",
+                            "components": [
+                                {
+                                    "id": "characters",
+                                    "type": "textarea",
+                                    "value": ""
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "prod": {
+                "characters": {  # This is the Tool ID which has the tool Payload inside
+                    "sections": [
+                        {
+                            "id": "registration",
+                            "components": [
+                                {
+                                    "id": "characters",
+                                    "type": "textarea",
+                                    "value": ""
+                                }
+                            ]
+                        }
+                    ]
+                }
             }
         }
     }
+    characters_tool_id = 'characters'
+    # Remember when storing these blobs we are storing them with `characters_dev`, `characters_stage` and `characters_prod` as the blob_key
+    blob_key_ids = [characters_tool_id + '_' +
+                    environment for environment in ['dev', 'stage', 'prod']]
     configuration = snapser_internal.Configuration()
     with snapser_internal.ApiClient(configuration=configuration) as api_client:
         # Create an instance of the API class
         api_instance = snapser_internal.StorageServiceApi(api_client)
         try:
             # Storage Settings
-            api_response = api_instance.storage_internal_get_blob(
+            api_response = api_instance.storage_internal_batch_get_blobs(
                 access_type='private',
                 blob_key='character_settings',
-                owner_id='byosnap_characters',
-                gateway=os.environ['SNAPEND_INTERNAL_HEADER']
+                owner_id=blob_key_ids,
+                gateway=os.environ.get(
+                    'SNAPEND_INTERNAL_HEADER', 'internal')
             )
             if api_response is None:
                 return make_response(jsonify(response), 200)
-            response['data']['character_settings'] = json.loads(
-                api_response.value)
+            for result in api_response.results:
+                if result.success and result.response.owner_id == blob_key_ids[0] and \
+                        result.response.value is not None and result.response.value != "":
+                    # Load the dev data
+                    response['data']['dev']['characters'] = json.loads(
+                        result.response.value)
+                elif result.success and result.response.owner_id == blob_key_ids[1] and \
+                        result.response.value is not None and result.response.value != "":
+                    # Load the stage data
+                    response['data']['stage']['characters'] = json.loads(
+                        result.response.value)
+                elif result.success and result.response.owner_id == blob_key_ids[2] and \
+                        result.response.value is not None and result.response.value != "":
+                    # Load the prod data
+                    response['data']['prod']['characters'] = json.loads(
+                        result.response.value)
             return make_response(jsonify(response), 200)
         except ApiException as e:
-            pass
+            return make_response(jsonify({
+                'error_message': 'API Exception' + str(e)
+            }), 500)
     return make_response(jsonify(response), 200)
 
 
@@ -335,115 +371,146 @@ def settings_import():
       summary: 'Import Settings'
       description: Import Settings
       operationId: Import Settings
-      parameters:
-      - in: header
-        schema: TokenHeaderSchema
+      x-snapser-auth-types:
+        - internal
       requestBody:
         required: true
         content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                data:
-                  type: object
-                  properties:
-                    character_settings:
-                      type: object
-                      properties:
-                        version:
-                          type: string
-                        id:
-                          type: string
-                        endpoint:
-                          type: string
-                        category:
-                          type: string
-                        env_support:
-                          type: string
-                        sections:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              id:
-                                type: string
-                              components:
-                                type: array
-                                items:
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: string
-                                    type:
-                                      type: string
-                                    value:
-                                      type: string
+            application/json:
+              schema: ExportSettingsSchema
+        description: 'ExportSettingsSchema payload'
       responses:
         200:
           content:
             application/json:
-              schema: CharactersResponseSchema
-          description: 'Characters retrieved successfully'
+              schema: SuccessMessageSchema
+          description: 'SettingsSchema saved successfully'
         201:
           content:
             application/json:
-              schema: CharactersResponseSchema
-          description: 'Characters retrieved successfully'
+              schema: SuccessMessageSchema
+          description: 'SettingsSchema created successfully'
+        400:
+            content:
+                application/json:
+                    schema: ErrorResponseSchema
+            description: 'Error saving settings'
+        500:
+            content:
+                application/json:
+                    schema: ErrorResponseSchema
+            description: 'Server Exception'
     """
     try:
+        # This is coming from the Settings Hook
+        response = {
+            "version": os.environ.get('BYOSNAP_VERSION', "v1.0.0"),
+            "exported_at": int(time.time()),
+            "data": {
+                "dev": {
+                    "characters": {  # This is the Tool ID which has the tool Payload inside
+                        "sections": [
+                            {
+                                "id": "registration",
+                                "components": [
+                                    {
+                                        "id": "characters",
+                                        "type": "textarea",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "stage": {
+                    "characters": {  # This is the Tool ID which has the tool Payload inside
+                        "sections": [
+                            {
+                                "id": "registration",
+                                "components": [
+                                    {
+                                        "id": "characters",
+                                        "type": "textarea",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "prod": {
+                    "characters": {  # This is the Tool ID which has the tool Payload inside
+                        "sections": [
+                            {
+                                "id": "registration",
+                                "components": [
+                                    {
+                                        "id": "characters",
+                                        "type": "textarea",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+
         settings_data = request.get_json()
-        if not settings_data or 'data' not in settings_data:
+        if not settings_data or 'data' not in settings_data or 'dev' not in settings_data['data'] or \
+            'stage' not in settings_data['data'] or 'prod' not in settings_data['data'] or \
+                'characters' not in settings_data['data']['dev'] or \
+            'characters' not in settings_data['data']['stage'] or \
+                'characters' not in settings_data['data']['prod']:
             return make_response(jsonify({
                 'error_message': 'Invalid JSON'
             }), 500)
-        settings = settings_data['data']['character_settings']
-        # Split the characters by comma but also trim the characters
-        character_list = settings['sections'][0]['components'][0]['value'].split(
-            ',')
-        character_list = [character.strip() for character in character_list]
-        # Check for duplicates
-        if len(character_list) != len(set(character_list)):
-            return make_response(jsonify({
-                'error_message': 'Duplicate characters found'
-            }), 400)
+        characters_tool_id = 'characters'
+        blob_dev = {
+            "value": json.dumps(settings_data['data']['dev']['characters']),
+            "ttl": 0,
+            "owner_id": f"{characters_tool_id}_dev",
+            "create": True,
+            "cas": "0",  # This forces a replace. Remember in settings we are replacing the blob; but its upto you if you want to merge
+            "blob_key": "character_settings",
+            "access_type": "private"
+        }
+        blob_stage = {
+            "value": json.dumps(settings_data['data']['stage']['characters']),
+            "ttl": 0,
+            "owner_id": f"{characters_tool_id}_stage",
+            "create": True,
+            "cas": "0",  # This forces a replace. Remember in settings we are replacing the blob; but its upto you if you want to merge
+            "blob_key": "character_settings",
+            "access_type": "private"
+        }
+        blob_prod = {
+            "value": json.dumps(settings_data['data']['prod']['characters']),
+            "ttl": 0,
+            "owner_id": f"{characters_tool_id}_prod",
+            "create": True,
+            "cas": "0",  # This forces a replace. Remember in settings we are replacing the blob; but its upto you if you want to merge
+            "blob_key": "character_settings",
+            "access_type": "private"
+        }
+        payload = {'blobs': [blob_dev, blob_stage, blob_prod]}
         # Save the characters to the storage
         configuration = snapser_internal.Configuration()
         with snapser_internal.ApiClient(configuration=configuration) as api_client:
-            cas = '12345'
             # Create an instance of the API class
             api_instance = snapser_internal.StorageServiceApi(api_client)
             try:
-                # Get Storage CAS
-                api_response = api_instance.storage_internal_get_blob(
-                    access_type='private',
-                    blob_key='character_settings',
-                    owner_id='byosnap_characters',
-                    gateway=os.environ['SNAPEND_INTERNAL_HEADER']
-                )
-                if api_response is not None:
-                    cas = api_response.cas
-            except ApiException:
-                # You come here when the doc is not even present
-                pass
-            try:
-                api_response = api_instance.storage_internal_replace_blob(
-                    access_type='private',
-                    blob_key='character_settings',
-                    owner_id='byosnap_characters',
+                api_response = api_instance.storage_internal_batch_replace_blob(
                     gateway=os.environ['SNAPEND_INTERNAL_HEADER'],
-                    body={
-                        "value": json.dumps(settings),
-                        "ttl": 0,
-                        "create": True,
-                        "cas": cas
-                    }
+                    body=payload,
                 )
                 if api_response is None:
                     return make_response(jsonify({
                         'error_message': 'Server Error'
                     }), 500)
-                return make_response(jsonify(settings), 200)
+                return make_response({'message': 'Success'}, 200)
             except ApiException as e:
                 return make_response(jsonify({
                     'error_message': 'Server Exception: ' + str(e)
@@ -458,71 +525,24 @@ def settings_import():
 @validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def validate_settings():
     '''
-    Validate Settings
+    Validate Settings - Think of this as, Snapser is sending you what the settings are going to be
+    1. You need to validate if you are capable of accepting this settings
+    2. If you are not, then return a 500 with the error message
+    3. If you are, then return a 200 with the settings
     '''
     settings_data = request.get_json()
-    if 'data' not in settings_data:
+    # We are performing basic validation here. You can add more validation if you want by fetching the
+    # settings from the storage and comparing it with the incoming settings
+    if not settings_data or 'data' not in settings_data or 'dev' not in settings_data['data'] or \
+        'stage' not in settings_data['data'] or 'prod' not in settings_data['data'] or \
+            'characters' not in settings_data['data']['dev'] or \
+        'characters' not in settings_data['data']['stage'] or \
+            'characters' not in settings_data['data']['prod']:
         return make_response(jsonify({
             'error_message': 'Invalid JSON'
         }), 500)
-    settings = settings_data['data']['character_settings']
-    # Split the characters by comma but also trim the characters
-    character_list = settings['sections'][0]['components'][0]['value'].split(
-        ',')
-    character_list = [character.strip() for character in character_list]
-    # Check for duplicates
-    if len(character_list) != len(set(character_list)):
-        return make_response(jsonify({
-            'error_message': 'Duplicate characters found'
-        }), 400)
-    response = {
-        'version': os.environ['BYOSNAP_VERSION'],
-        'exported_at': int(time.time()),
-        'data': {'character_settings':
-                 # This part is generated by the BYOSnap Tool builder. We are storing it as is into storage
-                 {
-                     "version": "v1.0.0",
-                     "id": "characters",
-                     "endpoint": "",
-                     "category": "flat_form",
-                     "env_support": "single",
-                     "sections": [
-                         {
-                             "id": "registration",
-                             "components": [
-                                 {
-                                     "id": "characters",
-                                     "type": "textarea",
-                                     "value": settings['sections'][0]['components'][0]['value']
-                                 }
-                             ]
-                         }
-                     ]
-                 }}
-    }
-    configuration = snapser_internal.Configuration()
-    with snapser_internal.ApiClient(configuration=configuration) as api_client:
-        # Create an instance of the API class
-        api_instance = snapser_internal.StorageServiceApi(api_client)
-        try:
-            # Storage Settings
-            api_response = api_instance.storage_internal_get_blob(
-                access_type='private',
-                blob_key='character_settings',
-                owner_id='byosnap_characters',
-                gateway=os.environ['SNAPEND_INTERNAL_HEADER']
-            )
-            if api_response is None:
-                return make_response(jsonify(response), 200)
-            # Load storage data
-            response['data']['character_settings'] = json.loads(
-                api_response.value)
-            # Update the characters with the imported characters
-            response['data']['character_settings']['sections'][0]['components'][0]['value'] = settings['sections'][0]['components'][0]['value']
-            return make_response(jsonify(response), 200)
-        except ApiException as e:
-            pass
-    return make_response(jsonify(response), 200)
+    return make_response(jsonify(settings_data), 200)
+
 
 # End: Snapend Sync|Clone: Used by Snapser's built-in configuration import export system
 
@@ -566,32 +586,29 @@ def delete_user_data(user_id):
 # Regular API Endpoints exposed by the Snap
 
 
-@app.route("/v1/byosnap-advanced/users/<user_id>/characters/<character_id>/active", methods=["GET"])
-def check_character_activation(user_id):
-    """Get Game Characters for a User.
+@app.route("/v1/byosnap-advanced/users/<user_id>/characters/active", methods=["GET"])
+def check_active_characters(user_id):
+    """Get Active Characters for a User.
     ---
     get:
-      summary: 'Get Characters'
-      description: Get Player Id and Tokens for Characters in a Game
-      operationId: Get Characters
+      summary: 'Character APIs'
+      description: Get
+      operationId: Get Active Characters
+      x-snapser-auth-types:
+        - user
+        - api-key
+        - internal
       parameters:
       - in: path
-        schema: UserIdParameter
-      - in: header
-        schema: TokenHeaderSchema
+        schema: UserIdParameterSchema
       responses:
         200:
           content:
             application/json:
               schema: CharactersResponseSchema
           description: 'Characters retrieved successfully'
-        201:
-          content:
-            application/json:
-              schema: CharactersResponseSchema
-          description: 'Characters retrieved successfully'
     """
-    return make_response(jsonify({'characters': {}}), 200)
+    return make_response(jsonify({'characters': []}), 200)
 
 
 # End: SYSTEM: Used by the Snap Configuration Tool

@@ -5,14 +5,14 @@
   "title": "Available Characters",
   "description": "List of available in-game characters",
   "category": "flat_form",
-  "env_support": "single",
+  "env_support": "multi",
   "snap_version": "",
   "sections": [
     {
       "id": "registration",
       "title": "Registration",
       "subtitle": "",
-      "help_text": "These are the characters that are available to the use",
+      "help_text": "These are the characters that are available to the user",
       "components": [
         {
           "type": "textarea",
