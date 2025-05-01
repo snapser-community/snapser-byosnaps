@@ -166,7 +166,6 @@ def get_settings():
         # Create an instance of the API class
         api_instance = snapser_internal.StorageServiceApi(api_client)
         try:
-            # Anonymous Login
             api_response = api_instance.storage_internal_get_blob(
                 access_type='private',
                 blob_key='character_settings',
@@ -209,7 +208,6 @@ def update_settings():
         # Create an instance of the API class
         api_instance = snapser_internal.StorageServiceApi(api_client)
         try:
-            # Anonymous Login
             api_response = api_instance.storage_internal_get_blob(
                 access_type='private',
                 blob_key='character_settings',

@@ -23,6 +23,128 @@
           "disabled": false,
           "min_rows": 4,
           "value": ""
+        },
+        {
+          "type": "number",
+          "id": "number-entry",
+          "label": "Number",
+          "placeholder": "",
+          "required": true,
+          "disabled": false,
+          "value": 0
+        },
+        {
+          "type": "group",
+          "id": "group-1",
+          "components": [
+            {
+              "component_one": {
+                "type": "text",
+                "id": "grp-1-text",
+                "label": "Text",
+                "placeholder": "",
+                "required": false,
+                "disabled": false,
+                "value": ""
+              },
+              "component_two": {
+                "type": "textarea",
+                "id": "grp-1-textArea",
+                "label": "Text Area",
+                "placeholder": "",
+                "required": false,
+                "disabled": false,
+                "min_rows": 4,
+                "value": ""
+              },
+              "component_three": {
+                "type": "select",
+                "id": "grp-1-select",
+                "label": "",
+                "required": false,
+                "disabled": false,
+                "options": [
+                  {
+                    "label": "A",
+                    "value": "a"
+                  },
+                  {
+                    "label": "B",
+                    "value": "b"
+                  },
+                  {
+                    "label": "C",
+                    "value": "c"
+                  }
+                ],
+                "options_url": "",
+                "value": "a"
+              },
+              "component_four": true
+            }
+          ],
+          "add_button": true
+        },
+        {
+          "type": "group",
+          "id": "grp-2",
+          "components": [
+            {
+              "component_one": {
+                "type": "multi_select",
+                "id": "grp-2-multi",
+                "label": "Multi",
+                "required": false,
+                "disabled": false,
+                "options": [
+                  {
+                    "label": "D",
+                    "value": "d"
+                  },
+                  {
+                    "label": "E",
+                    "value": "e"
+                  },
+                  {
+                    "label": "F",
+                    "value": "f"
+                  }
+                ],
+                "options_url": "",
+                "value": [
+                  "e",
+                  "f"
+                ]
+              },
+              "component_two": {
+                "type": "checkbox",
+                "id": "grp-2-check",
+                "label": "Check",
+                "required": true,
+                "disabled": false,
+                "value": true
+              },
+              "component_three": {
+                "type": "radio",
+                "id": "grp-2-radio",
+                "label": "Radio",
+                "required": true,
+                "disabled": false,
+                "options": [
+                  {
+                    "label": "Male",
+                    "value": "male"
+                  },
+                  {
+                    "label": "Female",
+                    "value": "female"
+                  }
+                ],
+                "value": ""
+              }
+            }
+          ],
+          "add_button": false
         }
       ]
     }
