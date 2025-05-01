@@ -44,21 +44,6 @@ spec.components.schema("ErrorResponseSchema",
                        schema=ErrorResponseSchema)
 spec.components.schema("ExportSettingsSchema",
                        schema=ExportSettingsSchema)
-# spec.components.schema("SettingsEnvironmentDataSchema",
-#                        schema=SettingsEnvironmentDataSchema)
-# spec.components.schema("SettingsSchema",
-#                        schema=SettingsSchema)
-# spec.components.schema("ByoToolPayloadSectionSchema",
-#                        schema=ByoToolPayloadSectionSchema)
-# spec.components.schema("SectionComponentSchema",
-#                        schema=SectionComponentSchema)
-# spec.components.schema("GroupComponentSchema",
-#                        schema=GroupComponentSchema)
-# spec.components.schema("GroupComponentItemSchema",
-#                        schema=GroupComponentItemSchema)
-# spec.components.schema("BaseComponentSchema",
-#                        schema=BaseComponentSchema)
-
 
 # Generate paths using the FlaskPlugin
 with app.test_request_context():
