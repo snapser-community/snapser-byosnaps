@@ -114,35 +114,35 @@ export class UserController extends Controller {
       // //    environment variables. There will be a different environment variable
       // //    for each snap. Eg: for the Profile Snap, Snapser sets the
       // //    SNAPEND_PROFILES_HTTP_URL, For the Auth snap it will be SNAPEND_AUTH_HTTP_URL
-      const baseUrl = process.env.SNAPEND_PROFILES_HTTP_URL ?? 'http://profiles-service:8090';
-      const profilesApi = new ProfilesServiceApi(baseUrl);
-      const payload: UpsertProfileRequest = {
-        profile: body.profile
-      };
-      try {
-        const result = await profilesApi.profilesInternalUpsertProfile(userId, 'internal', payload);
-        const body = result.body;
-
-        return {
-          api: 'updateUserProfile',
-          authType: authType ?? 'N/A',
-          headerUserId: headerUserId ?? 'N/A',
-          pathUserId: userId,
-          message: JSON.stringify(body)
-        };
-      } catch (error) {
-          //Send ErrorResponse
-          return _badRequest(400, {
-            error_message: error?.message || "Upsert failed"
-          });
-      }
-      // TODO: Once you uncomment the above code, remove the following code
-      // return {
-      //   api: 'updateUserProfile',
-      //   authType: authType ?? 'N/A',
-      //   headerUserId: headerUserId ?? 'N/A',
-      //   pathUserId: userId,
-      //   message: 'Remove this'
+      // const baseUrl = process.env.SNAPEND_PROFILES_HTTP_URL ?? 'http://profiles-service:8090';
+      // const profilesApi = new ProfilesServiceApi(baseUrl);
+      // const payload: UpsertProfileRequest = {
+      //   profile: body.profile
       // };
+      // try {
+      //   const result = await profilesApi.profilesInternalUpsertProfile(userId, 'internal', payload);
+      //   const body = result.body;
+
+      //   return {
+      //     api: 'updateUserProfile',
+      //     authType: authType ?? 'N/A',
+      //     headerUserId: headerUserId ?? 'N/A',
+      //     pathUserId: userId,
+      //     message: JSON.stringify(body)
+      //   };
+      // } catch (error) {
+      //     //Send ErrorResponse
+      //     return _badRequest(400, {
+      //       error_message: error?.message || "Upsert failed"
+      //     });
+      // }
+      // TODO: Once you uncomment the above code, remove the following code
+      return {
+        api: 'updateUserProfile',
+        authType: authType ?? 'N/A',
+        headerUserId: headerUserId ?? 'N/A',
+        pathUserId: userId,
+        message: 'Remove this'
+      };
     }
 }
