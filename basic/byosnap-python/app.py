@@ -5,6 +5,7 @@ import logging
 
 from flask import Flask, request, make_response, jsonify
 from flask_cors import CORS, cross_origin
+from waitress import serve
 from functools import wraps
 
 
@@ -302,6 +303,7 @@ def update_user_profile(user_id):
     }), 200)
 
 # Uncomment if developing locally
-# if __name__ == "__main__":
-#     # Change debug to True if you are in development
-#     app.run(host='0.0.0.0', port=5003, debug=False)
+if __name__ == "__main__":
+    # Change debug to True if you are in development
+    # app.run(host='0.0.0.0', port=5003, debug=False)
+    serve(app, host="::", port=5003)
