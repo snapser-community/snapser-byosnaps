@@ -6,7 +6,6 @@ import os
 
 from flask import Flask, request, make_response, jsonify
 from flask_cors import CORS, cross_origin
-from waitress import serve
 from functools import wraps
 import snapser_internal
 from snapser_internal.rest import ApiException
@@ -330,8 +329,8 @@ def update_user_profile(user_id):
         'message': message
     }), 200)
 
+
 # Uncomment if developing locally
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # Change debug to True if you are in development
     # app.run(host='0.0.0.0', port=5003, debug=False)
-    serve(app, host="::", port=5003)

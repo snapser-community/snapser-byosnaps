@@ -4,4 +4,4 @@ export FLASK_DEBUG=true
 export FLASK_ENV=development
 # flask run
 # For production
-python app.py
+flask run --host=0.0.0.0 --port=5003

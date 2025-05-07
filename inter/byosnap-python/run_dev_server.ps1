@@ -5,4 +5,4 @@ $env:FLASK_DEBUG = "true"
 $env:FLASK_ENV = "development"
 
 # Run via Waitress for production use
-python app.py
+flask run --host=0.0.0.0 --port=5003

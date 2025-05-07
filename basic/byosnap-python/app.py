@@ -303,7 +303,6 @@ def update_user_profile(user_id):
     }), 200)
 
 # Uncomment if developing locally
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # Change debug to True if you are in development
     # app.run(host='0.0.0.0', port=5003, debug=False)
-    serve(app, host="::", port=5003)
