@@ -21,10 +21,6 @@
 /bin/
 /pkg/
 
-# Dependency files (using go modules)
-go.sum
-go.mod
-
 # IntelliJ & VSCode project files
 .idea/
 .vscode/
