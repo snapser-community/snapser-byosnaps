@@ -24,6 +24,7 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"io"
 	"net/http"
 
 	"github.com/gorilla/handlers"
