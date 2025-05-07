@@ -1,6 +1,9 @@
 # Custom
 curl_test.sh
 
+# Python virtual environment
+.venv/
+
 # All env to be committed under snapser-resources but not the .env file
 **/.env
 !**/snapser-resources/.env
