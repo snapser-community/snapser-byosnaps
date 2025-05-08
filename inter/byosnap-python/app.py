@@ -314,7 +314,7 @@ def update_user_profile(user_id):
     #     body = snapser_internal.UpsertProfileRequest(
     #         profile=payload["profile"])
     #     try:
-    #         # Anonymous Login
+    #         # Upsert Profile
     #         api_response = api_instance.profiles_internal_upsert_profile(
     #             user_id_header, 'internal', body)
     #         message = api_response
@@ -329,7 +329,8 @@ def update_user_profile(user_id):
         'message': message
     }), 200)
 
+
 # Uncomment if developing locally
 # if __name__ == "__main__":
-#     # Change debug to True if you are in development
-#     app.run(host='0.0.0.0', port=5003, debug=False)
+    # Change debug to True if you are in development
+    # app.run(host='0.0.0.0', port=5003, debug=False)

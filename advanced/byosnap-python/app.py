@@ -614,5 +614,5 @@ def check_active_characters(user_id):
 # End: SYSTEM: Used by the Snap Configuration Tool
 # Uncomment if developing locally
 # if __name__ == "__main__":
-#     # Change debug to True if you are in development
-#     app.run(host='0.0.0.0', port=5003, debug=False)
+    # Change debug to True if you are in development
+    # app.run(host='0.0.0.0', port=5003, debug=False)
