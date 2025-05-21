@@ -12,7 +12,7 @@ COPY . ./
 RUN dotnet publish -c Release -o out -a amd64
 
 # Use the official ASP.NET Core runtime image for .NET 8.0, targeting arm64
-FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
+FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/sdk:9.0 AS runtime
 WORKDIR /app
 
 # Copy the build output to the runtime image
