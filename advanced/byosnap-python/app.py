@@ -546,7 +546,55 @@ def validate_settings():
 
 # End: Snapend Sync|Clone: Used by Snapser's built-in configuration import export system
 
-# C: User Tool: Delete and Reset User data
+# C: User Tool: Get, Update and Delete User data: Used by the GDPR tool and the User Manager tool
+
+@app.route("/v1/byosnap-advanced/settings/users/<user_id>/data", methods=["GET"])
+@validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
+def get_user_data(user_id):
+    '''
+    Get User Data
+    '''
+    gateway = request.headers.get('Gateway')
+    if not gateway or gateway.lower() != 'internal':
+        return make_response(jsonify({
+            'error_message': 'Unauthorized'
+        }), 401)
+    # Delete the character blob from storage
+    configuration = snapser_internal.Configuration()
+    with snapser_internal.ApiClient(configuration=configuration) as storage_api_client:
+        storage_api_instance = snapser_internal.StorageServiceApi(
+            storage_api_client)
+        try:
+            # Get blob
+            api_response = storage_api_instance.storage_internal_get_blob(
+                access_type='private',
+                blob_key='characters',
+                owner_id=user_id,
+                gateway=os.environ['SNAPEND_INTERNAL_HEADER']
+            )
+            if api_response is None:
+                return make_response(jsonify({
+                    'error_message': 'No data'
+                }), 400)
+            return make_response(jsonify(json.loads(api_response.value)), 200)
+        except ApiException:
+            pass
+    return make_response(jsonify({}), 200)
+
+
+@app.route("/v1/byosnap-advanced/settings/users/<user_id>/data", methods=["PUT"])
+@validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
+def update_user_data(user_id):
+    '''
+    Update User Data
+    '''
+    gateway = request.headers.get('Gateway')
+    if not gateway or gateway.lower() != 'internal':
+        return make_response(jsonify({
+            'error_message': 'Unauthorized'
+        }), 401)
+    # Update the character blob in storage
+    return make_response(jsonify({}), 200)
 
 
 @app.route("/v1/byosnap-advanced/settings/users/<user_id>/data", methods=["DELETE"])
