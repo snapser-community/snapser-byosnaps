@@ -315,7 +315,7 @@ def update_user_profile(user_id):
     #         profile=payload["profile"])
     #     try:
     #         # Upsert Profile
-    #         api_response = api_instance.profiles_internal_upsert_profile(
+    #         api_response = api_instance.profiles_upsert_profile(
     #             user_id_header, 'internal', body)
     #         message = api_response
     #     except ApiException as e:

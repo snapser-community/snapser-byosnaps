@@ -112,7 +112,7 @@ namespace ByoSnapCSharp.Controllers
 
         // // Profile Upsert Request
         // var upsertRequest = new UpsertProfileRequest(profile: body.Profile);
-        // result = apiInstance.ProfilesInternalUpsertProfile(userParams.UserId, "internal", upsertRequest);
+        // result = apiInstance.ProfilesUpsertProfile(userParams.UserId, "internal", upsertRequest);
         return Ok(new SuccessResponseSchema
         {
           Api = "UpdateUserProfile",

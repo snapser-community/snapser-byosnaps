@@ -1,8 +1,8 @@
 openapi: 3.0.1
 info:
   description: Your custom SDK
-  title: my-dev-cluster
-  version: "my-dev-cluster: v1 SDK"
+  title: juhi-dev
+  version: "juhi-dev: v4 SDK"
 servers:
 - url: /
 tags:
@@ -13,7 +13,7 @@ paths:
     get:
       description: Verifies the session token and returns appropriate response based
         on the type
-      operationId: auth.Internal.AppVerify
+      operationId: auth.AppVerify
       parameters:
       - description: Type of app trying to verify the session token. Only acceptable
           value is 'photon'
@@ -58,7 +58,7 @@ paths:
   /v1/auth/associate-logins:
     put:
       description: Associates two logins based on their session tokens
-      operationId: auth.Internal.AssociateLogins
+      operationId: auth.AssociateLogins
       requestBody:
         content:
           application/json:
@@ -85,7 +85,7 @@ paths:
     put:
       description: Logs in the user based on the discord token specified and returns
         a session
-      operationId: auth.Internal.DiscordLogin
+      operationId: auth.DiscordLogin
       requestBody:
         content:
           application/json:
@@ -111,7 +111,7 @@ paths:
   /v1/auth/email-password/account-recovery:
     post:
       description: Sends an email to the user for account recovery
-      operationId: auth.Internal.RecoverEmailAccount
+      operationId: auth.RecoverEmailAccount
       requestBody:
         content:
           application/json:
@@ -138,7 +138,7 @@ paths:
     put:
       description: Logs in the user based on the email and password specified and
         returns a session
-      operationId: auth.Internal.EmailPasswordLogin
+      operationId: auth.EmailPasswordLogin
       requestBody:
         content:
           application/json:
@@ -164,7 +164,7 @@ paths:
   /v1/auth/email-password/password:
     put:
       description: Updates the email and password of the user
-      operationId: auth.Internal.UpdateEmailPassword
+      operationId: auth.UpdateEmailPassword
       requestBody:
         content:
           application/json:
@@ -190,7 +190,7 @@ paths:
   /v1/auth/email-password/verification:
     post:
       description: Verifies the email and returns a session
-      operationId: auth.Internal.VerifyEmail
+      operationId: auth.VerifyEmail
       requestBody:
         content:
           application/json:
@@ -217,7 +217,7 @@ paths:
     put:
       description: Logs in the user with an arbitrary identifier specified and returns
         a session
-      operationId: auth.Internal.AnonLogin
+      operationId: auth.AnonLogin
       requestBody:
         content:
           application/json:
@@ -244,7 +244,7 @@ paths:
     put:
       description: Logs in the user based on the apple credential token specified
         and returns a session
-      operationId: auth.Internal.AppleLogin
+      operationId: auth.AppleLogin
       requestBody:
         content:
           application/json:
@@ -271,7 +271,7 @@ paths:
     put:
       description: Logs in the user based on the email and OTP specified and returns
         a session
-      operationId: auth.Internal.EmailLogin
+      operationId: auth.EmailLogin
       requestBody:
         content:
           application/json:
@@ -298,7 +298,7 @@ paths:
     put:
       description: Logs in the user based on the epic credentials specified and returns
         a session
-      operationId: auth.Internal.EpicLogin
+      operationId: auth.EpicLogin
       requestBody:
         content:
           application/json:
@@ -325,7 +325,7 @@ paths:
     put:
       description: Logs in the user based on the facebook credential token specified
         and returns a session
-      operationId: auth.Internal.FacebookLogin
+      operationId: auth.FacebookLogin
       requestBody:
         content:
           application/json:
@@ -352,7 +352,7 @@ paths:
     put:
       description: Logs in the user based on the google credential token specified
         and returns a session
-      operationId: auth.Internal.GoogleLogin
+      operationId: auth.GoogleLogin
       requestBody:
         content:
           application/json:
@@ -380,7 +380,7 @@ paths:
       deprecated: true
       description: Logs in the user based on the steam token specified and returns
         a session
-      operationId: auth.Internal.SteamLogin
+      operationId: auth.SteamLogin
       requestBody:
         content:
           application/json:
@@ -407,7 +407,7 @@ paths:
     put:
       description: Logs in the user based on the xbox token specified and returns
         a session
-      operationId: auth.Internal.XboxLogin
+      operationId: auth.XboxLogin
       requestBody:
         content:
           application/json:
@@ -433,7 +433,7 @@ paths:
   /v1/auth/logout/{token}:
     delete:
       description: Ends the current session of the user
-      operationId: auth.Internal.Logout
+      operationId: auth.Logout
       parameters:
       - description: Session token to logout
         explode: false
@@ -469,7 +469,7 @@ paths:
   /v1/auth/otp:
     post:
       description: Generates an OTP and sends it to the email for logging in
-      operationId: auth.Internal.Otp
+      operationId: auth.Otp
       requestBody:
         content:
           application/json:
@@ -496,7 +496,7 @@ paths:
     patch:
       description: Refreshes the session and returns a new session token with refreshed
         validity
-      operationId: auth.Internal.Refresh
+      operationId: auth.Refresh
       parameters:
       - description: Gateway
         explode: false
@@ -532,7 +532,7 @@ paths:
     put:
       description: Logs in the user based on the steam open ID token specified and
         returns a session
-      operationId: auth.Internal.SteamOpenIdLogin
+      operationId: auth.SteamOpenIdLogin
       requestBody:
         content:
           application/json:
@@ -559,7 +559,7 @@ paths:
     put:
       description: Logs in the user based on the steam session ticket specified and
         returns a session
-      operationId: auth.Internal.SteamSessionTicketLogin
+      operationId: auth.SteamSessionTicketLogin
       requestBody:
         content:
           application/json:
@@ -582,10 +582,136 @@ paths:
       - user
       - api-key
       - internal
+  /v1/auth/user/{id}/ban:
+    put:
+      description: Bans the user based on the user ID specified
+      operationId: auth.AppBan
+      parameters:
+      - description: UserID of the user to be banned
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Gateway
+        explode: false
+        in: header
+        name: Gateway
+        required: true
+        schema:
+          default: internal
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: A successful response.
+      summary: Ban User
+      tags:
+      - AuthService
+      x-codegen-request-body-name: body
+      x-snapser-auth-types:
+      - api-key
+      - internal
+  /v1/auth/user/{id}/suspend:
+    put:
+      description: Suspends a user by their ID
+      operationId: auth.SuspendUser
+      parameters:
+      - description: UserID of the user to be suspended
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Gateway
+        explode: false
+        in: header
+        name: Gateway
+        required: true
+        schema:
+          default: internal
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuspendUser_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authSuspendUserResponse'
+          description: A successful response.
+      summary: Suspend User
+      tags:
+      - AuthService
+      x-codegen-request-body-name: body
+      x-snapser-auth-types:
+      - api-key
+      - internal
+  /v1/auth/user/{id}/unban:
+    put:
+      description: Unbans the user based on the user ID specified
+      operationId: auth.AppUnban
+      parameters:
+      - description: UserID of the user to be unbanned
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Gateway
+        explode: false
+        in: header
+        name: Gateway
+        required: true
+        schema:
+          default: internal
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: A successful response.
+      summary: Unban User
+      tags:
+      - AuthService
+      x-codegen-request-body-name: body
+      x-snapser-auth-types:
+      - api-key
+      - internal
   /v1/auth/username-password/availability:
     get:
       description: Checks if the username is available
-      operationId: auth.Internal.GetUsernameAvailability
+      operationId: auth.GetUsernameAvailability
       parameters:
       - description: Username to check
         explode: true
@@ -614,7 +740,7 @@ paths:
     put:
       description: Logs in the user based on the username and password specified and
         returns a session
-      operationId: auth.Internal.UsernamePasswordLogin
+      operationId: auth.UsernamePasswordLogin
       requestBody:
         content:
           application/json:
@@ -640,7 +766,7 @@ paths:
   /v1/auth/username-password/password:
     put:
       description: Updates the username and password of the user
-      operationId: auth.Internal.UpdateUsernamePassword
+      operationId: auth.UpdateUsernamePassword
       parameters:
       - description: Gateway
         explode: false
@@ -675,7 +801,7 @@ paths:
   /v1/auth/users:
     get:
       description: Get UserIDs by login IDs and login types
-      operationId: auth.Internal.GetUserIdsByLoginIds
+      operationId: auth.GetUserIdsByLoginIds
       parameters:
       - description: Comma separated login IDs of the user to be retrieved
         explode: true
@@ -719,7 +845,7 @@ paths:
   /v1/auth/users/{user_id}/disassociation:
     post:
       description: Disassociates the specified login from a user
-      operationId: auth.Internal.DisassociateLogin
+      operationId: auth.DisassociateLogin
       parameters:
       - description: UserID of the user to be unbanned
         explode: false
@@ -762,7 +888,7 @@ paths:
   /v1/auth/validate:
     post:
       description: Validates the session of the user and returns the user info
-      operationId: auth.Internal.Validate
+      operationId: auth.Validate
       requestBody:
         content:
           application/json:
@@ -785,10 +911,37 @@ paths:
       - user
       - api-key
       - internal
+  /v1/auth/x/login:
+    put:
+      description: Logs in the user based on the X login credentials specified and
+        returns a session
+      operationId: auth.XLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/authXLoginRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authXLoginResponse'
+          description: A successful response.
+      summary: X Login
+      tags:
+      - AuthService
+      x-codegen-request-body-name: body
+      x-snapser-auth-passthrough: true
+      x-snapser-auth-types:
+      - user
+      - api-key
+      - internal
   /v1/profiles/batch/profiles:
     get:
       description: Gets a list of user profiles
-      operationId: profiles.Internal.BatchGetProfiles
+      operationId: profiles.BatchGetProfiles
       parameters:
       - description: User IDs to fetch profiles for
         explode: true
@@ -825,7 +978,7 @@ paths:
   /v1/profiles/search:
     post:
       description: Searches for user profiles
-      operationId: profiles.Internal.SearchProfiles
+      operationId: profiles.SearchProfiles
       parameters:
       - description: Gateway
         explode: false
@@ -860,7 +1013,7 @@ paths:
   /v1/profiles/user/{user_id}:
     delete:
       description: Deletes a user's profile
-      operationId: profiles.Internal.DeleteProfile
+      operationId: profiles.DeleteProfile
       parameters:
       - description: User ID of the user who's profile is being deleted
         explode: false
@@ -895,7 +1048,7 @@ paths:
       - internal
     get:
       description: Gets a user's profile
-      operationId: profiles.Internal.GetProfile
+      operationId: profiles.GetProfile
       parameters:
       - description: User ID of the user who's profile is being viewed
         explode: false
@@ -930,7 +1083,7 @@ paths:
       - internal
     patch:
       description: Patches a user's profile
-      operationId: profiles.Internal.PatchProfile
+      operationId: profiles.PatchProfile
       parameters:
       - description: User ID of the user who's profile is being patched
         explode: false
@@ -972,7 +1125,7 @@ paths:
       - internal
     put:
       description: Insert or update a user's profile
-      operationId: profiles.Internal.UpsertProfile
+      operationId: profiles.UpsertProfile
       parameters:
       - description: User ID of the user who's profile is being upserted
         explode: false
@@ -1017,8 +1170,7 @@ components:
     DisassociateLogin_request:
       properties:
         login_type:
-          description: Login type
-          type: string
+          $ref: '#/components/schemas/authLoginTypeType'
       required:
       - login_type
       type: object
@@ -1038,6 +1190,15 @@ components:
       - NOT_EQUALS
       - CONTAINS
       type: string
+    SuspendUser_request:
+      properties:
+        suspend_for:
+          description: Duration in seconds for which the user should be suspended
+          format: uint64
+          type: integer
+      required:
+      - suspend_for
+      type: object
     UpsertProfile_request:
       properties:
         profile:
@@ -1120,6 +1281,8 @@ components:
         create_user:
           description: "Whether to create a user, if it does not exist"
           type: boolean
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
         username:
           description: User's login ID
           type: string
@@ -1143,6 +1306,11 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
@@ -1155,6 +1323,8 @@ components:
         create_user:
           description: "Whether to create a user, if it does not exist"
           type: boolean
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
         token:
           description: Apple token generated on the client
           type: string
@@ -1178,6 +1348,11 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
@@ -1210,6 +1385,8 @@ components:
         create_user:
           description: "Whether to create a user, if it does not exist"
           type: boolean
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
       type: object
     authDiscordLoginResponse:
       example:
@@ -1229,6 +1406,11 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
@@ -1246,6 +1428,8 @@ components:
         email:
           description: Email address used as login
           type: string
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
         otp:
           description: OTP code received by the user
           type: string
@@ -1270,6 +1454,11 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
@@ -1285,6 +1474,8 @@ components:
         email:
           description: Email address used as login
           type: string
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
         password:
           description: Password used for login
           type: string
@@ -1310,6 +1501,11 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
@@ -1334,6 +1530,8 @@ components:
         grant_type:
           description: token generated on the client
           type: string
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
         password:
           description: exchange_code generated on the client
           type: string
@@ -1360,6 +1558,11 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
@@ -1372,6 +1575,8 @@ components:
         create_user:
           description: "Whether to create a user, if it does not exist"
           type: boolean
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
         token:
           description: Facebook token generated on the client
           type: string
@@ -1395,6 +1600,11 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
@@ -1425,6 +1635,8 @@ components:
         create_user:
           description: "Whether to create a user, if it does not exist"
           type: boolean
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
         token:
           description: Google IDtoken generated on the client
           type: string
@@ -1448,12 +1660,38 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
       properties:
         user:
           $ref: '#/components/schemas/authUser'
+      type: object
+    authLoginId:
+      example:
+        id: id
+        type: null
+      properties:
+        id:
+          type: string
+        type:
+          $ref: '#/components/schemas/authLoginTypeType'
+      type: object
+    authLoginMetadata:
+      properties:
+        agent:
+          type: string
+        device:
+          type: string
+        location:
+          type: string
+        platform:
+          type: string
       type: object
     authLoginTypeType:
       default: UNSPECIFIED_LOGIN_TYPE
@@ -1472,6 +1710,7 @@ components:
       - DISCORD
       - EMAIL_PASSWORD
       - USERNAME_PASSWORD
+      - X
       type: string
     authOtpRequest:
       properties:
@@ -1494,6 +1733,8 @@ components:
       type: object
     authRefreshRequest:
       properties:
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
         session_token:
           description: Session token to refresh
           type: string
@@ -1517,6 +1758,11 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
@@ -1529,6 +1775,8 @@ components:
         create_user:
           description: "Whether to create a user, if it does not exist"
           type: boolean
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
         openid_parameters:
           additionalProperties:
             type: string
@@ -1554,6 +1802,11 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
@@ -1566,6 +1819,8 @@ components:
         create_user:
           description: "Whether to create a user, if it does not exist"
           type: boolean
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
         openid_parameters:
           additionalProperties:
             type: string
@@ -1582,11 +1837,22 @@ components:
         identity:
           description: Identity string used to generate session ticket (if applicable)
           type: string
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
         session_ticket:
           description: Session ticket generated on the client
           type: string
       required:
       - session_ticket
+      type: object
+    authSuspendUserResponse:
+      example:
+        suspended_until: 0
+      properties:
+        suspended_until:
+          description: Timestamp until which the user is suspended
+          format: int64
+          type: integer
       type: object
     authUpdateEmailPasswordRequest:
       properties:
@@ -1640,6 +1906,11 @@ components:
         suspended_until: 5
         id: id
         is_banned: true
+        logins:
+        - id: id
+          type: null
+        - id: id
+          type: null
         login_types:
         - null
         - null
@@ -1672,6 +1943,11 @@ components:
           items:
             $ref: '#/components/schemas/authLoginTypeType'
           type: array
+        logins:
+          description: List of login IDs associated with the user
+          items:
+            $ref: '#/components/schemas/authLoginId'
+          type: array
         refreshed_at:
           description: Unix timestamp of when the session was last refreshed (If applicable)
           format: int64
@@ -1698,6 +1974,8 @@ components:
         create_user:
           description: "Whether to create a user, if it does not exist"
           type: boolean
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
         password:
           description: Password used for login
           type: string
@@ -1725,6 +2003,11 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
@@ -1765,6 +2048,11 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
@@ -1801,6 +2089,62 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
+          login_types:
+          - null
+          - null
+      properties:
+        user:
+          $ref: '#/components/schemas/authUser'
+      type: object
+    authXLoginRequest:
+      properties:
+        access_token:
+          description: X access token generated on the client. One of code or access_token
+            is required
+          type: string
+        code:
+          description: X code generated on the client. One of code or access_token
+            is required
+          type: string
+        code_verifier:
+          description: X code verifier generated on the client
+          type: string
+        create_user:
+          description: "Whether to create a user, if it does not exist"
+          type: boolean
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
+        redirect_uri:
+          description: redirect url for client
+          type: string
+      type: object
+    authXLoginResponse:
+      example:
+        user:
+          token_validity_seconds: 5
+          created: true
+          created_at: 0
+          is_suspended: true
+          is_verified: true
+          first_login: 6
+          tags:
+          - tags
+          - tags
+          session_token: session_token
+          refreshed_at: 1
+          suspended_until: 5
+          id: id
+          is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
@@ -1816,6 +2160,8 @@ components:
         create_user:
           description: "Whether to create a user, if it does not exist"
           type: boolean
+        login_metadata:
+          $ref: '#/components/schemas/authLoginMetadata'
         redirect_url:
           description: redirect url for client
           type: string
@@ -1840,6 +2186,11 @@ components:
           suspended_until: 5
           id: id
           is_banned: true
+          logins:
+          - id: id
+            type: null
+          - id: id
+            type: null
           login_types:
           - null
           - null
