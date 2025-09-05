@@ -20,6 +20,8 @@ export * from './authGetUserIdsByLoginIdsResponse';
 export * from './authGetUsernameAvailabilityResponse';
 export * from './authGoogleLoginRequest';
 export * from './authGoogleLoginResponse';
+export * from './authLoginId';
+export * from './authLoginMetadata';
 export * from './authLoginTypeType';
 export * from './authOtpRequest';
 export * from './authRecoverEmailAccountRequest';
@@ -29,6 +31,7 @@ export * from './authSteamLoginRequest';
 export * from './authSteamLoginResponse';
 export * from './authSteamOpenIdLoginRequest';
 export * from './authSteamSessionTicketLoginRequest';
+export * from './authSuspendUserResponse';
 export * from './authUpdateEmailPasswordRequest';
 export * from './authUpdateUsernamePasswordRequest';
 export * from './authUser';
@@ -38,6 +41,8 @@ export * from './authValidateRequest';
 export * from './authValidateResponse';
 export * from './authVerifyEmailRequest';
 export * from './authVerifyEmailResponse';
+export * from './authXLoginRequest';
+export * from './authXLoginResponse';
 export * from './authXboxLoginRequest';
 export * from './authXboxLoginResponse';
 export * from './disassociateLoginRequest';
@@ -53,6 +58,7 @@ export * from './profilesSearchProfilesResponse';
 export * from './protobufAny';
 export * from './protobufNullValue';
 export * from './searchFieldOperator';
+export * from './suspendUserRequest';
 export * from './upsertProfileRequest';
 
 import * as fs from 'fs';
@@ -88,6 +94,8 @@ import { AuthGetUserIdsByLoginIdsResponse } from './authGetUserIdsByLoginIdsResp
 import { AuthGetUsernameAvailabilityResponse } from './authGetUsernameAvailabilityResponse';
 import { AuthGoogleLoginRequest } from './authGoogleLoginRequest';
 import { AuthGoogleLoginResponse } from './authGoogleLoginResponse';
+import { AuthLoginId } from './authLoginId';
+import { AuthLoginMetadata } from './authLoginMetadata';
 import { AuthLoginTypeType } from './authLoginTypeType';
 import { AuthOtpRequest } from './authOtpRequest';
 import { AuthRecoverEmailAccountRequest } from './authRecoverEmailAccountRequest';
@@ -97,6 +105,7 @@ import { AuthSteamLoginRequest } from './authSteamLoginRequest';
 import { AuthSteamLoginResponse } from './authSteamLoginResponse';
 import { AuthSteamOpenIdLoginRequest } from './authSteamOpenIdLoginRequest';
 import { AuthSteamSessionTicketLoginRequest } from './authSteamSessionTicketLoginRequest';
+import { AuthSuspendUserResponse } from './authSuspendUserResponse';
 import { AuthUpdateEmailPasswordRequest } from './authUpdateEmailPasswordRequest';
 import { AuthUpdateUsernamePasswordRequest } from './authUpdateUsernamePasswordRequest';
 import { AuthUser } from './authUser';
@@ -106,6 +115,8 @@ import { AuthValidateRequest } from './authValidateRequest';
 import { AuthValidateResponse } from './authValidateResponse';
 import { AuthVerifyEmailRequest } from './authVerifyEmailRequest';
 import { AuthVerifyEmailResponse } from './authVerifyEmailResponse';
+import { AuthXLoginRequest } from './authXLoginRequest';
+import { AuthXLoginResponse } from './authXLoginResponse';
 import { AuthXboxLoginRequest } from './authXboxLoginRequest';
 import { AuthXboxLoginResponse } from './authXboxLoginResponse';
 import { DisassociateLoginRequest } from './disassociateLoginRequest';
@@ -121,6 +132,7 @@ import { ProfilesSearchProfilesResponse } from './profilesSearchProfilesResponse
 import { ProtobufAny } from './protobufAny';
 import { ProtobufNullValue } from './protobufNullValue';
 import { SearchFieldOperator } from './searchFieldOperator';
+import { SuspendUserRequest } from './suspendUserRequest';
 import { UpsertProfileRequest } from './upsertProfileRequest';
 
 /* tslint:disable:no-unused-variable */
@@ -162,6 +174,8 @@ let typeMap: {[index: string]: any} = {
     "AuthGetUsernameAvailabilityResponse": AuthGetUsernameAvailabilityResponse,
     "AuthGoogleLoginRequest": AuthGoogleLoginRequest,
     "AuthGoogleLoginResponse": AuthGoogleLoginResponse,
+    "AuthLoginId": AuthLoginId,
+    "AuthLoginMetadata": AuthLoginMetadata,
     "AuthOtpRequest": AuthOtpRequest,
     "AuthRecoverEmailAccountRequest": AuthRecoverEmailAccountRequest,
     "AuthRefreshRequest": AuthRefreshRequest,
@@ -170,6 +184,7 @@ let typeMap: {[index: string]: any} = {
     "AuthSteamLoginResponse": AuthSteamLoginResponse,
     "AuthSteamOpenIdLoginRequest": AuthSteamOpenIdLoginRequest,
     "AuthSteamSessionTicketLoginRequest": AuthSteamSessionTicketLoginRequest,
+    "AuthSuspendUserResponse": AuthSuspendUserResponse,
     "AuthUpdateEmailPasswordRequest": AuthUpdateEmailPasswordRequest,
     "AuthUpdateUsernamePasswordRequest": AuthUpdateUsernamePasswordRequest,
     "AuthUser": AuthUser,
@@ -179,6 +194,8 @@ let typeMap: {[index: string]: any} = {
     "AuthValidateResponse": AuthValidateResponse,
     "AuthVerifyEmailRequest": AuthVerifyEmailRequest,
     "AuthVerifyEmailResponse": AuthVerifyEmailResponse,
+    "AuthXLoginRequest": AuthXLoginRequest,
+    "AuthXLoginResponse": AuthXLoginResponse,
     "AuthXboxLoginRequest": AuthXboxLoginRequest,
     "AuthXboxLoginResponse": AuthXboxLoginResponse,
     "DisassociateLoginRequest": DisassociateLoginRequest,
@@ -192,6 +209,7 @@ let typeMap: {[index: string]: any} = {
     "ProfilesSearchProfilesRequest": ProfilesSearchProfilesRequest,
     "ProfilesSearchProfilesResponse": ProfilesSearchProfilesResponse,
     "ProtobufAny": ProtobufAny,
+    "SuspendUserRequest": SuspendUserRequest,
     "UpsertProfileRequest": UpsertProfileRequest,
 }
 

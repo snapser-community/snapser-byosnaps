@@ -120,7 +120,7 @@ export class UserController extends Controller {
       //   profile: body.profile
       // };
       // try {
-      //   const result = await profilesApi.profilesInternalUpsertProfile(userId, 'internal', payload);
+      //   const result = await profilesApi.profilesUpsertProfile(userId, 'internal', payload);
       //   const body = result.body;
 
       //   return {

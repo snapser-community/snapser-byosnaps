@@ -23,8 +23,8 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	snapser_internal "snapser_internal"
@@ -276,7 +276,7 @@ func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	req := profilesClient.ProfilesServiceAPI.ProfilesInternalUpsertProfile(r.Context(), userIdHeader).Gateway("internal").Body(snapser_internal.UpsertProfileRequest{
+	req := profilesClient.ProfilesServiceAPI.ProfilesUpsertProfile(r.Context(), userIdHeader).Gateway("internal").Body(snapser_internal.UpsertProfileRequest{
 		Profile: profilePayload.Profile,
 	})
 	snapserRes, httpResp, err := req.Execute()
