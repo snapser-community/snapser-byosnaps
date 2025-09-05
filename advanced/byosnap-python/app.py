@@ -166,7 +166,7 @@ def get_settings():
         # Create an instance of the API class
         api_instance = snapser_internal.StorageServiceApi(api_client)
         try:
-            api_response = api_instance.storage_internal_get_blob(
+            api_response = api_instance.storage_get_blob(
                 access_type='private',
                 blob_key='character_settings',
                 owner_id=blob_owner_key,
@@ -208,7 +208,7 @@ def update_settings():
         # Create an instance of the API class
         api_instance = snapser_internal.StorageServiceApi(api_client)
         try:
-            api_response = api_instance.storage_internal_get_blob(
+            api_response = api_instance.storage_get_blob(
                 access_type='private',
                 blob_key='character_settings',
                 owner_id=blob_owner_key,
@@ -220,7 +220,7 @@ def update_settings():
             # You come here when the doc is not even present
             pass
         try:
-            api_response = api_instance.storage_internal_replace_blob(
+            api_response = api_instance.storage_replace_blob(
                 access_type='private',
                 blob_key='character_settings',
                 owner_id=blob_owner_key,
@@ -329,7 +329,7 @@ def settings_export():
         api_instance = snapser_internal.StorageServiceApi(api_client)
         try:
             # Storage Settings
-            api_response = api_instance.storage_internal_batch_get_blobs(
+            api_response = api_instance.storage_batch_get_blobs(
                 access_type='private',
                 blob_key='character_settings',
                 owner_id=blob_key_ids,
@@ -502,7 +502,7 @@ def settings_import():
             # Create an instance of the API class
             api_instance = snapser_internal.StorageServiceApi(api_client)
             try:
-                api_response = api_instance.storage_internal_batch_replace_blob(
+                api_response = api_instance.storage_batch_replace_blob(
                     gateway=os.environ['SNAPEND_INTERNAL_HEADER'],
                     body=payload,
                 )
@@ -566,7 +566,7 @@ def get_user_data(user_id):
             storage_api_client)
         try:
             # Get blob
-            api_response = storage_api_instance.storage_internal_get_blob(
+            api_response = storage_api_instance.storage_get_blob(
                 access_type='private',
                 blob_key='characters',
                 owner_id=user_id,
@@ -615,7 +615,7 @@ def delete_user_data(user_id):
             storage_api_client)
         try:
             # Get blob
-            storage_api_response = storage_api_instance.storage_internal_delete_blob(
+            storage_api_response = storage_api_instance.storage_delete_blob(
                 access_type='private',
                 blob_key='characters',
                 owner_id=user_id,
