@@ -161,7 +161,9 @@ def get_settings():
     environment = request.args.get('environment', default='DEFAULT')
     blob_owner_key = f"{tool_id}_{environment}"
     # Make an internal call to Storage to get the settings
-    configuration = snapser_internal.Configuration()
+    configuration = snapser_internal.Configuration(
+        host=os.getenv("SNAPEND_STORAGE_HTTP_URL")
+    )
     with snapser_internal.ApiClient(configuration=configuration) as api_client:
         # Create an instance of the API class
         api_instance = snapser_internal.StorageServiceApi(api_client)
@@ -202,7 +204,9 @@ def update_settings():
             'error_message': 'Invalid JSON ' + str(e)
         }), 500)
 
-    configuration = snapser_internal.Configuration()
+    configuration = snapser_internal.Configuration(
+        host=os.getenv("SNAPEND_STORAGE_HTTP_URL")
+    )
     with snapser_internal.ApiClient(configuration=configuration) as api_client:
         cas = '12345'
         # Create an instance of the API class
@@ -323,7 +327,9 @@ def settings_export():
     # Remember when storing these blobs we are storing them with `characters_dev`, `characters_stage` and `characters_prod` as the blob_key
     blob_key_ids = [characters_tool_id + '_' +
                     environment for environment in ['dev', 'stage', 'prod']]
-    configuration = snapser_internal.Configuration()
+    configuration = snapser_internal.Configuration(
+        host=os.getenv("SNAPEND_STORAGE_HTTP_URL")
+    )
     with snapser_internal.ApiClient(configuration=configuration) as api_client:
         # Create an instance of the API class
         api_instance = snapser_internal.StorageServiceApi(api_client)
@@ -497,7 +503,9 @@ def settings_import():
         }
         payload = {'blobs': [blob_dev, blob_stage, blob_prod]}
         # Save the characters to the storage
-        configuration = snapser_internal.Configuration()
+        configuration = snapser_internal.Configuration(
+            host=os.getenv("SNAPEND_STORAGE_HTTP_URL")
+        )
         with snapser_internal.ApiClient(configuration=configuration) as api_client:
             # Create an instance of the API class
             api_instance = snapser_internal.StorageServiceApi(api_client)
@@ -560,7 +568,9 @@ def get_user_data(user_id):
             'error_message': 'Unauthorized'
         }), 401)
     # Delete the character blob from storage
-    configuration = snapser_internal.Configuration()
+    configuration = snapser_internal.Configuration(
+        host=os.getenv("SNAPEND_STORAGE_HTTP_URL")
+    )
     with snapser_internal.ApiClient(configuration=configuration) as storage_api_client:
         storage_api_instance = snapser_internal.StorageServiceApi(
             storage_api_client)
@@ -609,7 +619,9 @@ def delete_user_data(user_id):
             'error_message': 'Unauthorized'
         }), 401)
     # Delete the character blob from storage
-    configuration = snapser_internal.Configuration()
+    configuration = snapser_internal.Configuration(
+        host=os.getenv("SNAPEND_STORAGE_HTTP_URL")
+    )
     with snapser_internal.ApiClient(configuration=configuration) as storage_api_client:
         storage_api_instance = snapser_internal.StorageServiceApi(
             storage_api_client)
