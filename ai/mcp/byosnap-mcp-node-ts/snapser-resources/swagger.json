@@ -1,0 +1,184 @@
+{
+  "openapi": "3.0.0",
+  "components": {
+    "examples": {},
+    "headers": {},
+    "parameters": {},
+    "requestBodies": {},
+    "responses": {},
+    "schemas": {
+      "JsonRpcId": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number",
+            "format": "double"
+          }
+        ],
+        "nullable": true
+      },
+      "JsonRpcSuccessResponse": {
+        "properties": {
+          "jsonrpc": {
+            "type": "string",
+            "enum": [
+              "2.0"
+            ],
+            "nullable": false
+          },
+          "id": {
+            "$ref": "#/components/schemas/JsonRpcId"
+          },
+          "result": {}
+        },
+        "required": [
+          "jsonrpc",
+          "id",
+          "result"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "JsonRpcError": {
+        "properties": {
+          "code": {
+            "type": "number",
+            "format": "double"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {}
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "JsonRpcErrorResponse": {
+        "properties": {
+          "jsonrpc": {
+            "type": "string",
+            "enum": [
+              "2.0"
+            ],
+            "nullable": false
+          },
+          "id": {
+            "$ref": "#/components/schemas/JsonRpcId"
+          },
+          "error": {
+            "$ref": "#/components/schemas/JsonRpcError"
+          }
+        },
+        "required": [
+          "jsonrpc",
+          "id",
+          "error"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error_message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error_message"
+        ],
+        "type": "object"
+      },
+      "JsonRpcRequest": {
+        "properties": {
+          "jsonrpc": {
+            "type": "string",
+            "enum": [
+              "2.0"
+            ],
+            "nullable": false
+          },
+          "id": {
+            "$ref": "#/components/schemas/JsonRpcId"
+          },
+          "method": {
+            "type": "string"
+          },
+          "params": {}
+        },
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {}
+  },
+  "info": {
+    "title": "byosnap-mcp",
+    "version": "1.0.0",
+    "description": "BYOSnap MCP written in Node.js with TypeScript",
+    "license": {
+      "name": "MIT"
+    },
+    "contact": {}
+  },
+  "paths": {
+    "/v1/byosnap-mcp/mcp": {
+      "post": {
+        "operationId": "HandleMcp",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/JsonRpcSuccessResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/JsonRpcErrorResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "MCP Endpoint",
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonRpcRequest"
+              }
+            }
+          }
+        },
+        "description": "MCP Endpoint to demonstrate BYOSnap MCP functionality."
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ]
+}

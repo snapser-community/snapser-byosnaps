@@ -104,3 +104,9 @@ coverage/
 # NCrunch
 .ncrunch*
 
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+dist/

@@ -1,8 +1,0 @@
-.snapser-companion.env
-
-__pycache__/
-venv/
-*.pyc
-.DS_Store
-.idea/
-.vscode/

@@ -23,7 +23,7 @@ def load_env(parent_folder, env_file='.env'):
 # Check if enough arguments have been passed
 if len(sys.argv) < 5:
     print("Usage: python snapend_create.py $companyId $gameId $byosnapId $byosnapVersion")
-    print("Note: For $byosnapId please enter the BYOSnap prefix of `byosnap-` as well. eg: byosnap-py-basic")
+    print("Note: For $byosnapId please enter the BYOSnap prefix of `byosnap-` as well. eg: byosnap-inter")
     sys.exit(1)
 
 # Accessing user arguments
@@ -45,7 +45,7 @@ SNAPS_VERSION_SUFFIX = ''
 if SNAPS_VERSION is not None and SNAPS_VERSION != 'production':
     SNAPS_VERSION_PREFIX = f'-{SNAPS_VERSION}'
 AUTH_SNAP_VERSION = os.getenv(
-    'AUTH_SNAP_VERSION', 'v0.47.0') + SNAPS_VERSION_SUFFIX
+    'AUTH_SNAP_VERSION', 'v1.0.0') + SNAPS_VERSION_SUFFIX
 LANGUAGE = os.getenv('LANGUAGE', 'typescript')
 SNAPEND_ENV = os.getenv('SNAPEND_ENV', 'development')
 
@@ -69,8 +69,8 @@ if not os.path.exists(os.path.join(RESOURCES_DIR, SOURCE_SNAPEND_MANIFEST)):
 
 # Action starts
 # First lets update the Snapend manifest file
+snapend_manifest = None
 try:
-    snapend_manifest = None
     with open(os.path.join(RESOURCES_DIR, SOURCE_SNAPEND_MANIFEST), 'r') as f:
         snapend_manifest = json.load(f)
         snapend_manifest['environment'] = 'DEVELOPMENT'
@@ -104,12 +104,14 @@ except Exception as e:
 
 # Now lets create the Snapend
 # snapctl snapend clone --game-id 6e0d68e9-a679-461d-a4c5-f5e29e655a87 --name byosnap-python-aj-demo --env development --manifest-path-filename "C:\Users\name\Downloads\snapser-ox1bcyim-manifest.json" --blocking
-snapend_name = byosnap_id.split('-')[-1]
+snapend_name = f"{byosnap_id.split('-')[-1]}-demo"
+if snapend_manifest is not None:
+    snapend_name = snapend_manifest.get('name', byosnap_id.split('-')[-1])
 print(
-    f"Creating Snapend with name: {snapend_name}-demo in environment: {SNAPEND_ENV}")
+    f"Creating Snapend with name: {snapend_name} in environment: {SNAPEND_ENV}")
 cmd = [
     'snapctl', 'snapend', 'clone', '--game-id', game_id,
-    '--name', f"{snapend_name}-demo", '--env', SNAPEND_ENV,
+    '--name', f"{snapend_name}", '--env', SNAPEND_ENV,
     '--manifest-path-filename',
     os.path.join(RESOURCES_DIR, DEST_SNAPEND_MANIFEST),
     '--blocking'
@@ -121,6 +123,6 @@ if response.returncode == 0:
     print(
         f"Your Snapend is created successfully with Snaps: auth and {byosnap_id}")
 else:
-    print(f"Failed to create a Snapend.")
+    print("Failed to create a Snapend.")
     print('IMPORTANT: Check if you have already created a Snapend with the same name.')
     sys.exit(1)
