@@ -82,6 +82,7 @@ export function RegisterRoutes(app: Router) {
     
         const argsMcpController_handleMcp: Record<string, TsoaRoute.ParameterSchema> = {
                 _unauthorized: {"in":"res","name":"401","required":true,"ref":"ErrorResponse"},
+                apiKey: {"in":"query","name":"api-key","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"ref":"JsonRpcRequest"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };

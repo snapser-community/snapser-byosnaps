@@ -161,7 +161,16 @@
         },
         "summary": "MCP Endpoint",
         "security": [],
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
