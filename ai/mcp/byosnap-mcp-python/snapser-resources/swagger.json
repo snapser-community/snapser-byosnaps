@@ -5,6 +5,17 @@
                 "summary": "MCP JSON-RPC endpoint",
                 "description": "Snapser-hosted MCP endpoint that speaks JSON-RPC 2.0 and exposes initialize, tools/list, and tools/call.\n",
                 "operationId": "McpRpc",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "api-key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "API key used for authentication"
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -60,14 +71,6 @@
             "MCPRequestSchema": {
                 "type": "object",
                 "properties": {
-                    "method": {
-                        "type": "string",
-                        "description": "JSON-RPC method name"
-                    },
-                    "params": {
-                        "type": "object",
-                        "description": "JSON-RPC params object"
-                    },
                     "id": {
                         "oneOf": [
                             {
@@ -78,6 +81,14 @@
                             }
                         ],
                         "description": "JSON-RPC request id (string or number)"
+                    },
+                    "params": {
+                        "type": "object",
+                        "description": "JSON-RPC params object"
+                    },
+                    "method": {
+                        "type": "string",
+                        "description": "JSON-RPC method name"
                     }
                 },
                 "required": [
@@ -87,15 +98,6 @@
             "SuccessResponseSchema": {
                 "type": "object",
                 "properties": {
-                    "jsonrpc": {
-                        "type": "string",
-                        "description": "JSON-RPC version, always '2.0'.",
-                        "example": "2.0"
-                    },
-                    "result": {
-                        "type": "object",
-                        "description": "JSON-RPC result object containing MCP tool/resource output."
-                    },
                     "id": {
                         "oneOf": [
                             {
@@ -106,6 +108,15 @@
                             }
                         ],
                         "description": "Echoed JSON-RPC request id."
+                    },
+                    "jsonrpc": {
+                        "type": "string",
+                        "description": "JSON-RPC version, always '2.0'.",
+                        "example": "2.0"
+                    },
+                    "result": {
+                        "type": "object",
+                        "description": "JSON-RPC result object containing MCP tool/resource output."
                     }
                 },
                 "required": [
@@ -115,6 +126,18 @@
             "ErrorResponseSchema": {
                 "type": "object",
                 "properties": {
+                    "id": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer"
+                            }
+                        ],
+                        "description": "Echoed request id; null/omitted for parse errors."
+                    },
                     "jsonrpc": {
                         "type": "string",
                         "description": "JSON-RPC version, always '2.0'.",
@@ -127,18 +150,6 @@
                             "code": -32600,
                             "message": "Invalid Request"
                         }
-                    },
-                    "id": {
-                        "nullable": true,
-                        "oneOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "integer"
-                            }
-                        ],
-                        "description": "Echoed request id; null/omitted for parse errors."
                     }
                 },
                 "required": [

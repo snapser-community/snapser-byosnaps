@@ -5,16 +5,13 @@ import {
   Controller,
   Route,
   Post,
-  Put,
-  Delete,
   Extension,
   Body,
-  Middlewares,
+  Query,
   TsoaResponse,
   Response,
   Res,
   Request,
-  Path,
 } from 'tsoa';
 import { Todo } from '../types/app';
 import { JsonRpcId, JsonRpcRequest, JsonRpcErrorResponse, JsonRpcSuccessResponse, JsonRpcError } from '../types/responses';
@@ -25,10 +22,14 @@ import { ReplaceBlobRequest, StorageGetBlobRequest, StorageGetBlobResponse, Stor
 
 // MCP error codes
 const PARSE_ERROR = -32700;
+const UNAUTHORIZED_REQUEST = -32001;
 const INVALID_REQUEST = -32600;
 const METHOD_NOT_FOUND = -32601;
 const INVALID_PARAMS = -32602;
 const INTERNAL_ERROR = -32603;
+
+// TODO: Replace with your MCP API key
+const MCP_API_KEY = '171206450ee690fc4062bf3c4880d4b3'
 
 // -----------------------------------------------------------------------------
 // In-memory TODO storage (per user)
@@ -370,6 +371,7 @@ export class McpController extends Controller {
     @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
     // Optional: if you decide to include {userId} in the route path later
     // @Path() userId: string,
+    @Query("api-key") apiKey: string,
     @Body() body: JsonRpcRequest,
     @Request() req: ExpressRequest,
   ): Promise<JsonRpcSuccessResponse | JsonRpcErrorResponse> {
@@ -386,6 +388,15 @@ export class McpController extends Controller {
     //   this.setStatus(400);
     //   return jsonRpcError(null, PARSE_ERROR, 'Invalid JSON');
     // }
+
+    if (!apiKey || apiKey.trim() === "") {
+      this.setStatus(401);
+      return jsonRpcError(null, UNAUTHORIZED_REQUEST, 'Missing API Key');
+    }
+    if( apiKey !== MCP_API_KEY ) {
+      this.setStatus(401);
+      return jsonRpcError(null, UNAUTHORIZED_REQUEST, 'Invalid API Key');
+    }
 
     if (!body || typeof body !== 'object') {
       this.setStatus(400);

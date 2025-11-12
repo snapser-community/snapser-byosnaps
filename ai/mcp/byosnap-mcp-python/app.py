@@ -34,6 +34,9 @@ ALL_AUTH_TYPES = [
     GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE,
 ]
 
+# TODO: Replace with your MCP API key
+MCP_API_KEY = '171206450ee690fc4062bf3c4880d4b3'
+
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -443,6 +446,13 @@ def mcp_entrypoint():
         Snapser-hosted MCP endpoint that speaks JSON-RPC 2.0 and exposes
         initialize, tools/list, and tools/call.
       operationId: McpRpc
+      parameters:
+        - in: query
+          name: api-key
+          schema:
+            type: string
+          required: true
+          description: API key used for authentication
       requestBody:
         required: true
         content:
@@ -466,6 +476,16 @@ def mcp_entrypoint():
               schema: ErrorResponseSchema
     """
     try:
+        # Get query param api-key
+        api_key = request.args.get("api-key", None)
+        if not api_key:
+            return make_response(
+                jsonify({"error_message": "Unauthorized: missing api-key"}), 401
+            )
+        if api_key != MCP_API_KEY:
+            return make_response(
+                jsonify({"error_message": "Unauthorized: invalid api-key"}), 401
+            )
         body = request.get_json(force=True, silent=False)
     except Exception:
         logging.exception("Failed to parse JSON body")
