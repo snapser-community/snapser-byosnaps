@@ -132,7 +132,7 @@ def health():
 #       expose the Api-Key header for you to fill in. For internal APIs, the SDK and API Explorer will expose
 #       the Gateway header.
 
-# A: Configuration Tool: Used by the Snap Configuration Tool
+# A i]: Configuration Tool: Used by the Snap Configuration Tool
 
 
 @app.route("/v1/byosnap-advanced/settings", methods=["GET"])
@@ -247,6 +247,111 @@ def update_settings():
             }), 500)
 
 # End: Configuration Tool: Used by the Snap Configuration Tool
+
+# A ii]: Configuration Tool: Used by the new HTML Snap Configuration Tool
+
+
+@app.route("/v1/byosnap-advanced/settings/custom", methods=["GET"])
+@validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
+def get_settings_custom():
+    '''
+    Get the settings for the characters microservice
+    '''
+    # This is coming from the Payload we got in the Configuration tool
+    default_settings = {"payload": ""}
+    # Get settings call always includes the tool_id and environment
+    tool_id = request.args.get('tool_id')
+    environment = request.args.get('environment', default='DEFAULT')
+    blob_owner_key = f"{tool_id}_{environment}"
+    # Make an internal call to Storage to get the settings
+    configuration = snapser_internal.Configuration(
+        host=os.getenv("SNAPEND_STORAGE_HTTP_URL")
+    )
+    with snapser_internal.ApiClient(configuration=configuration) as api_client:
+        # Create an instance of the API class
+        api_instance = snapser_internal.StorageServiceApi(api_client)
+        try:
+            api_response = api_instance.storage_get_blob(
+                access_type='private',
+                blob_key='character_settings',
+                owner_id=blob_owner_key,
+                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
+            )
+            if api_response is None:
+                return make_response(jsonify(default_settings), 200)
+            final_payload = {"payload": json.loads(api_response.value)}
+            return make_response(jsonify(final_payload), 200)
+        except ApiException as e:
+            pass
+    return make_response(jsonify(default_settings), 200)
+
+   # return make_response(jsonify(), 200)
+
+
+@app.route("/v1/byosnap-advanced/settings/custom", methods=["PUT"])
+@validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
+def update_settings_custom():
+    '''
+    Update the settings for the characters microservice
+    '''
+    try:
+        # Update settings call always includes the tool_id and environment
+        tool_id = request.args.get('tool_id')
+        environment = request.args.get('environment', default='DEFAULT')
+        blob_owner_key = f"{tool_id}_{environment}"
+        blob_data = request.get_json()
+        if 'payload' in blob_data:
+            blob_data = blob_data['payload']
+        # TODO: Add any custom validation here and on error send back `return make_response(jsonify({'error_message': 'Duplicate characters found'}), 400)``
+    except Exception as e:
+        return make_response(jsonify({
+            'error_message': 'Invalid JSON ' + str(e)
+        }), 500)
+
+    configuration = snapser_internal.Configuration(
+        host=os.getenv("SNAPEND_STORAGE_HTTP_URL")
+    )
+    with snapser_internal.ApiClient(configuration=configuration) as api_client:
+        cas = '12345'
+        # Create an instance of the API class
+        api_instance = snapser_internal.StorageServiceApi(api_client)
+        try:
+            api_response = api_instance.storage_get_blob(
+                access_type='private',
+                blob_key='character_settings',
+                owner_id=blob_owner_key,
+                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
+            )
+            if api_response is not None:
+                cas = api_response.cas
+        except ApiException:
+            # You come here when the doc is not even present
+            pass
+        try:
+            api_response = api_instance.storage_replace_blob(
+                access_type='private',
+                blob_key='character_settings',
+                owner_id=blob_owner_key,
+                gateway=os.environ['SNAPEND_INTERNAL_HEADER'],
+                body={
+                    "value": json.dumps(blob_data),
+                    "ttl": 0,
+                    "create": True,
+                    "cas": cas
+                }
+            )
+            if api_response is None:
+                return make_response(jsonify({
+                    'error_message': 'Server Error'
+                }), 500)
+            return make_response(jsonify(blob_data), 200)
+        except ApiException as e:
+            return make_response(jsonify({
+                'error_message': 'Server Exception: ' + str(e)
+            }), 500)
+
+# End: Configuration Tool: Used by the Snap Configuration Tool
+
 
 # B: Snapend Sync|Clone: Used by Snapser's built-in configuration import export system
 
