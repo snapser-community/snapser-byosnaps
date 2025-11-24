@@ -25,7 +25,7 @@
 
   // Initial load (GET)
   try {
-    const { data } = await window.Snapser.rpc('/custom', { method: 'GET' });
+    const { data } = await window.Snapser.config.rpc('/custom', { method: 'GET' });
     //console.log('Loaded data:', data);
     if (data && data.payload) {
       txt.value = data.payload;
@@ -37,7 +37,7 @@
     ev.preventDefault();
     msg.textContent = 'Saving…';
     try {
-      await window.Snapser.rpc('/custom', {
+      await window.Snapser.config.rpc('/custom', {
         method: 'PUT',
         body: { payload: txt.value }
       });

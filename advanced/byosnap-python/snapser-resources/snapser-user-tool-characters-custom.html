@@ -7,7 +7,8 @@
 <h1>BYOSnap User Tool</h1>
 <form id="f">
   <div class="row">
-    <input id="txt" name="value" placeholder="Type something…" />
+    <input id="user" name="User" placeholder="Type something…" />
+    <input id="txt" name="Characters" placeholder="Type something…" />
     <button type="submit">Save</button>
   </div>
   <div id="msg" role="status" aria-live="polite"></div>
@@ -20,12 +21,17 @@
   await window.Snapser.ready();
 
   const f = document.getElementById('f');
+  const user = document.getElementById('user');
   const txt = document.getElementById('txt');
   const msg = document.getElementById('msg');
 
   // Initial load (GET)
   try {
-    const { data } = await window.Snapser.rpc('/custom', { method: 'GET' });
+    const { id } = await window.Snapser.user.getId(); // returns { id }
+    if(id) {
+      user.value = id;
+    }
+    const { data } = await window.Snapser.user.rpc('/custom', { method: 'GET' });
     //console.log('Loaded data:', data);
     if (data && data.payload) {
       txt.value = data.payload;
@@ -37,8 +43,8 @@
     ev.preventDefault();
     msg.textContent = 'Saving…';
     try {
-      await window.Snapser.rpc('/custom', {
-        method: 'PUT',
+      await window.Snapser.user.rpc('/custom', {
+        method: 'POST',
         body: { payload: txt.value }
       });
       msg.textContent = 'Saved ✅';
