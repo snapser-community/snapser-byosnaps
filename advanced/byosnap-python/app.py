@@ -132,7 +132,7 @@ def health():
 #       expose the Api-Key header for you to fill in. For internal APIs, the SDK and API Explorer will expose
 #       the Gateway header.
 
-# A i]: Deprecated: Configuration Tool: Used by the Snap Configuration Tool
+# A i]: Configuration Tool: Built using the Snapser UI Builder
 
 
 @app.route("/v1/byosnap-advanced/settings", methods=["GET"])
@@ -246,9 +246,9 @@ def update_settings():
                 'error_message': 'Server Exception: ' + str(e)
             }), 500)
 
-# End: Configuration Tool: Used by the Snap Configuration Tool
+# End: Configuration Tool: Built using the Snapser UI Builder
 
-# A ii]: New Configuration Tool: Used by the new HTML Snap Configuration Tool
+# A ii]: New Configuration Tool: Custom HTML Snap Configuration Tool
 
 
 @app.route("/v1/byosnap-advanced/settings/custom", methods=["GET"])
@@ -350,9 +350,9 @@ def update_settings_custom():
                 'error_message': 'Server Exception: ' + str(e)
             }), 500)
 
-# End: Configuration Tool: Used by the Snap Configuration Tool
+# End: Configuration Tool: Custom HTML Snap Configuration Tool
 
-# A iii]: User Manager Tool: Used by the new HTML Snap User Manager Tool
+# A iii]: User Manager Tool: Custom HTML User Manager Tool
 
 
 @app.route("/v1/byosnap-advanced/settings/users/<user_id>/custom", methods=["GET"])
@@ -444,6 +444,7 @@ def update_user_data_custom(user_id):
                 'error_message': 'Server Exception: ' + str(e)
             }), 500)
 
+# End: User Manager Tool: Custom HTML User Manager Tool
 
 # B: Snapend Sync|Clone: Used by Snapser's built-in configuration import export system
 
