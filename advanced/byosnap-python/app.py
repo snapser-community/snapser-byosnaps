@@ -132,7 +132,7 @@ def health():
 #       expose the Api-Key header for you to fill in. For internal APIs, the SDK and API Explorer will expose
 #       the Gateway header.
 
-# A i]: Configuration Tool: Used by the Snap Configuration Tool
+# A i]: Deprecated: Configuration Tool: Used by the Snap Configuration Tool
 
 
 @app.route("/v1/byosnap-advanced/settings", methods=["GET"])
@@ -248,14 +248,14 @@ def update_settings():
 
 # End: Configuration Tool: Used by the Snap Configuration Tool
 
-# A ii]: Configuration Tool: Used by the new HTML Snap Configuration Tool
+# A ii]: New Configuration Tool: Used by the new HTML Snap Configuration Tool
 
 
 @app.route("/v1/byosnap-advanced/settings/custom", methods=["GET"])
 @validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def get_settings_custom():
     '''
-    Get the settings for the characters microservice
+    Get the settings for the custom HTML tool
     '''
     # This is coming from the Payload we got in the Configuration tool
     default_settings = {"payload": ""}
@@ -292,7 +292,7 @@ def get_settings_custom():
 @validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def update_settings_custom():
     '''
-    Update the settings for the characters microservice
+    Update the settings from
     '''
     try:
         # Update settings call always includes the tool_id and environment
@@ -359,7 +359,7 @@ def update_settings_custom():
 @validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def get_user_data_custom(user_id):
     '''
-    Get the user data for the characters microservice
+    Get the user data for custom HTML User Manager tool
     '''
     # Make an internal call to Storage to get the user data
     configuration = snapser_internal.Configuration(
@@ -388,7 +388,7 @@ def get_user_data_custom(user_id):
 @validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def update_user_data_custom(user_id):
     '''
-    Update the settings for the characters microservice
+    Update the user data for the custom HTML User Manager tool
     '''
     try:
         # Update settings call always includes the tool_id and environment
