@@ -1,0 +1,56 @@
+<!doctype html>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Simple Save Tool</title>
+<style>body{font:14px system-ui;margin:16px} input,button{padding:8px} .row{display:flex;gap:8px}</style>
+
+<h1>BYOSnap User Tool</h1>
+<form id="f">
+  <div class="row">
+    <input id="user" name="User" placeholder="Type something…" />
+    <input id="txt" name="Characters" placeholder="Type something…" />
+    <button type="submit">Save</button>
+  </div>
+  <div id="msg" role="status" aria-live="polite"></div>
+</form>
+
+<!-- No SDK tag needed; proxy will inject it if missing -->
+<script>
+(async function () {
+  // Wait until host sends welcome
+  await window.Snapser.ready();
+
+  const f = document.getElementById('f');
+  const user = document.getElementById('user');
+  const txt = document.getElementById('txt');
+  const msg = document.getElementById('msg');
+
+  // Initial load (GET)
+  try {
+    const { id } = await window.Snapser.user.getId(); // returns { id }
+    if(id) {
+      user.value = id;
+    }
+    const { data } = await window.Snapser.user.rpc('/custom', { method: 'GET' });
+    //console.log('Loaded data:', data);
+    if (data && data.payload) {
+      txt.value = data.payload;
+    }
+  } catch (_) {}
+
+  // Save (POST)
+  f.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    msg.textContent = 'Saving…';
+    try {
+      await window.Snapser.user.rpc('/custom', {
+        method: 'POST',
+        body: { payload: txt.value }
+      });
+      msg.textContent = 'Saved ✅';
+    } catch (e) {
+      msg.textContent = 'Failed ❌';
+    }
+  });
+})();
+</script>

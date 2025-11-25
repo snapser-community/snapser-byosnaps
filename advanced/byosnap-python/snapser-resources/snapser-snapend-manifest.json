@@ -208,7 +208,7 @@
           "xbox": null
         }
       },
-      "version": "v0.48.4",
+      "version": "v1.0.0",
       "exported_at": "1745438303"
     },
     {
@@ -248,10 +248,18 @@
             "scope": "internal",
             "storage_type": "blob",
             "strict_array_validation": false
+          },
+          {
+            "access_type": "protected",
+            "key": "characters",
+            "schema": {},
+            "scope": "external",
+            "storage_type": "blob",
+            "strict_array_validation": false
           }
         ]
       },
-      "version": "v0.48.0",
+      "version": "v1.0.0",
       "exported_at": "1745438303"
     }
   ],
