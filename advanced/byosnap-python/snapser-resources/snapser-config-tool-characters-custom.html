@@ -1,8 +1,33 @@
 <!doctype html>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Simple Save Tool</title>
-<style>body{font:14px system-ui;margin:16px} input,button{padding:8px} .row{display:flex;gap:8px}</style>
+<title>BYOSnap Configuration Tool</title>
+
+<style>
+  :root {
+    --bg: white;
+    --text: black;
+    --input-bg: white;
+    --input-text: black;
+    --input-border: #ccc;
+  }
+
+  body {
+    font:14px system-ui;
+    margin:16px;
+    background-color: var(--bg);
+    color: var(--text);
+  }
+
+  input, button {
+    padding:8px;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid var(--input-border);
+  }
+
+  .row { display:flex; gap:8px }
+</style>
 
 <h1>BYOSnap Configuration Tool</h1>
 <form id="f">
@@ -13,26 +38,55 @@
   <div id="msg" role="status" aria-live="polite"></div>
 </form>
 
-<!-- No SDK tag needed; proxy will inject it if missing -->
 <script>
 (async function () {
-  // Wait until host sends welcome
   await window.Snapser.ready();
 
-  const f = document.getElementById('f');
+  const f   = document.getElementById('f');
   const txt = document.getElementById('txt');
   const msg = document.getElementById('msg');
+
+  // -------- THEME HANDLING --------
+
+  function applyTheme(mode) {
+    const m = mode === 'dark' ? 'dark' : 'light'; // normalize
+
+    if (m === 'dark') {
+      document.documentElement.style.setProperty('--bg', '#1b2225');
+      document.documentElement.style.setProperty('--text', '#ffffff');
+      document.documentElement.style.setProperty('--input-bg', '#1e1e1e');
+      document.documentElement.style.setProperty('--input-text', '#ffffff');
+      document.documentElement.style.setProperty('--input-border', '#444444');
+    } else {
+      document.documentElement.style.setProperty('--bg', '#ffffff');
+      document.documentElement.style.setProperty('--text', '#000000');
+      document.documentElement.style.setProperty('--input-bg', '#ffffff');
+      document.documentElement.style.setProperty('--input-text', '#000000');
+      document.documentElement.style.setProperty('--input-border', '#cccccc');
+    }
+  }
+
+  // Initial theme from SDK (set in host.welcome or default "light")
+  console.log('Initial theme from Snapser._theme:', window.Snapser._theme);
+  applyTheme(window.Snapser._theme);
+
+  // Watch for dynamic updates (host.theme.update)
+  window.Snapser.onTheme((mode) => {
+    console.log('Received theme update from Snapser:', mode);
+    applyTheme(mode);
+  });
+
+  // -------- END THEME HANDLING --------
 
   // Initial load (GET)
   try {
     const { data } = await window.Snapser.config.rpc('/custom', { method: 'GET' });
-    //console.log('Loaded data:', data);
     if (data && data.payload) {
       txt.value = data.payload;
     }
   } catch (_) {}
 
-  // Save (POST)
+  // Save (PUT)
   f.addEventListener('submit', async (ev) => {
     ev.preventDefault();
     msg.textContent = 'Saving…';
