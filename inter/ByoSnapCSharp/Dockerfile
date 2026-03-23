@@ -12,10 +12,10 @@ RUN dotnet nuget locals all --clear
 # $ echo "my-file-secret-456" > /tmp/test_secret.txt
 # Then uncomment the following lines to use the secrets in the Dockerfile
 
-RUN --mount=type=secret,id=token_from_env \
-  --mount=type=secret,id=token_from_file \
-  echo "Env secret:" && cat /run/secrets/token_from_env && \
-  echo "File secret:" && cat /run/secrets/token_from_file
+# RUN --mount=type=secret,id=token_from_env \
+#   --mount=type=secret,id=token_from_file \
+#   echo "Env secret:" && cat /run/secrets/token_from_env && \
+#   echo "File secret:" && cat /run/secrets/token_from_file
 
 # You can pass secrets to the snapctl publish command like this:
 # snapctl byosnap publish ... --secrets "id=token_from_env,env=token_from_env|id=token_from_file,src=/tmp/test_secret.txt"
