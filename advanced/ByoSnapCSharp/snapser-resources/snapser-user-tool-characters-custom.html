@@ -1,0 +1,113 @@
+<!doctype html>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BYOSnap User Tool</title>
+
+<style>
+  :root {
+    --bg: white;
+    --text: black;
+    --input-bg: white;
+    --input-text: black;
+    --input-border: #ccc;
+  }
+
+  body {
+    font: 14px system-ui;
+    margin: 16px;
+    background-color: var(--bg);
+    color: var(--text);
+  }
+
+  input,
+  button {
+    padding: 8px;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid var(--input-border);
+  }
+
+  .row {
+    display: flex;
+    gap: 8px;
+  }
+</style>
+
+<h1>BYOSnap User Tool</h1>
+<form id="f">
+  <div class="row">
+    <input id="user" name="User" placeholder="Type something…" />
+    <input id="txt" name="Characters" placeholder="Type something…" />
+    <button type="submit">Save</button>
+  </div>
+  <div id="msg" role="status" aria-live="polite"></div>
+</form>
+
+<script>
+  (async function () {
+    await window.Snapser.ready();
+
+    const f    = document.getElementById('f');
+    const user = document.getElementById('user');
+    const txt  = document.getElementById('txt');
+    const msg  = document.getElementById('msg');
+
+    // ---------- THEME HANDLING ----------
+
+    function applyTheme(mode) {
+      const m = mode === 'dark' ? 'dark' : 'light'; // normalize
+
+      if (m === 'dark') {
+        document.documentElement.style.setProperty('--bg', '#1b2225');
+        document.documentElement.style.setProperty('--text', '#ffffff');
+        document.documentElement.style.setProperty('--input-bg', '#1e1e1e');
+        document.documentElement.style.setProperty('--input-text', '#ffffff');
+        document.documentElement.style.setProperty('--input-border', '#444444');
+      } else {
+        document.documentElement.style.setProperty('--bg', '#ffffff');
+        document.documentElement.style.setProperty('--text', '#000000');
+        document.documentElement.style.setProperty('--input-bg', '#ffffff');
+        document.documentElement.style.setProperty('--input-text', '#000000');
+        document.documentElement.style.setProperty('--input-border', '#cccccc');
+      }
+    }
+
+    // Initial theme from SDK (set via host.welcome or default)
+    console.log('Initial theme from Snapser._theme:', window.Snapser._theme);
+    applyTheme(window.Snapser._theme);
+
+    // Subscribe to future theme updates (host.theme.update)
+    window.Snapser.onTheme((mode) => {
+      console.log('Received theme update from Snapser:', mode);
+      applyTheme(mode);
+    });
+
+    // ---------- END THEME HANDLING ----------
+
+    // Load user data
+    try {
+      const { id } = await window.Snapser.user.getId();
+      if (id) user.value = id;
+
+      const { data } = await window.Snapser.user.rpc('/custom', {
+        method: 'GET',
+      });
+      if (data?.payload) txt.value = data.payload;
+    } catch (_) {}
+
+    // Save data
+    f.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      msg.textContent = 'Saving…';
+      try {
+        await window.Snapser.user.rpc('/custom', {
+          method: 'POST',
+          body: { payload: txt.value },
+        });
+        msg.textContent = 'Saved ✅';
+      } catch (e) {
+        msg.textContent = 'Failed ❌';
+      }
+    });
+  })();
+</script>
