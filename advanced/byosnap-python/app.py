@@ -120,6 +120,31 @@ def health():
     '''
     return "Ok"
 
+# Testing Endpoints
+
+
+@app.route("/v1/byosnap-advanced/user-auth/<user_id>", methods=["GET"])
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_USER_AUTH, user_id_resource_key="user_id")
+def test_user_auth(user_id):
+    '''
+    Test User Auth
+    '''
+    return make_response(jsonify({
+        'message': f'Hello User {user_id}, you have passed the User Auth validation'
+    }), 200)
+
+
+@app.route("/v1/byosnap-advanced/api-key-auth", methods=["GET"])
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH)
+def test_api_key_auth():
+    '''
+    Test API Key Auth
+    '''
+    api_key_name = request.headers.get('Api-Key-Name')
+    return make_response(jsonify({
+        'message': f'You have passed the API Key Auth validation using the key {api_key_name}'
+    }), 200)
+
 # @GOTCHAS 👋 - Externally available APIs
 #     1. The Snapend Id is NOT part of the URL. This allows you to use the same BYOSnap in multiple Snapends.
 #     2. All externally accessible APIs need to start with /$prefix/$byosnapId/remaining_path. where $prefix = v1, $byosnapId = byosnap-inter and remaining_path = /users/<user_id>.

@@ -18,6 +18,8 @@ namespace ByoSnapCSharp.Controllers
     [HttpOptions("v1/byosnap-advanced/settings/validate-import")]
     [HttpOptions("v1/byosnap-advanced/settings/users/{userId}/custom")]
     [HttpOptions("v1/byosnap-advanced/settings/users/{userId}/data")]
+    [HttpOptions("v1/byosnap-advanced/user-auth/{UserId}")]
+    [HttpOptions("v1/byosnap-advanced/api-key-auth")]
     public IActionResult CorsOverrides()
     {
       return Ok("Ok");

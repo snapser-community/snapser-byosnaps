@@ -101,6 +101,15 @@ func main() {
 	r.Handle("/v1/byosnap-advanced/settings/users/{user_id}/data",
 		validateAuthorization([]string{GatewayHeaderValueInternalOrigin}, "user_id")(deleteUserDataHandler)).Methods("DELETE")
 
+	// --- Test Auth Methods ---
+	testUserAuthHandler := http.HandlerFunc(TestUserAuth)
+	r.Handle("/v1/byosnap-advanced/user-auth/{user_id}",
+		validateAuthorization([]string{AuthTypeHeaderValueUserAuth}, "user_id")(testUserAuthHandler)).Methods("GET")
+
+	testApiKeyAuthHandler := http.HandlerFunc(TestApiKeyAuth)
+	r.Handle("/v1/byosnap-advanced/api-key-auth",
+		validateAuthorization([]string{AuthTypeHeaderValueApiKeyAuth}, "")(testApiKeyAuthHandler)).Methods("GET")
+
 	// --- Regular API Endpoints exposed by the Snap ---
 	getActiveCharactersHandler := http.HandlerFunc(GetActiveCharacters)
 	r.Handle("/v1/byosnap-advanced/users/{user_id}/characters/active",
@@ -785,5 +794,66 @@ func DeleteUserData(w http.ResponseWriter, r *http.Request) {
 func GetActiveCharacters(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, CharactersResponseSchema{
 		Characters: []string{},
+	})
+}
+
+// ===========================================================================
+// Test Auth Methods
+// ===========================================================================
+
+// TestUserAuth tests user authentication
+// swagger:operation GET /v1/byosnap-advanced/user-auth/{user_id} testUserAuth
+// ---
+// summary: Test User Auth
+// description: Test user authentication. This API supports User auth type only.
+// operationId: TestUserAuth
+// x-snapser-auth-types: ["user"]
+// parameters:
+//   - name: user_id
+//     in: path
+//     required: true
+//     description: Unique identifier of the user
+//     type: string
+//
+// responses:
+//   200:
+//     description: User auth validation passed
+//     schema:
+//       $ref: '#/definitions/SuccessMessageSchema'
+//   401:
+//     description: Unauthorized access
+//     schema:
+//       $ref: '#/definitions/ErrorResponseSchema'
+func TestUserAuth(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userID := vars["user_id"]
+
+	writeJSON(w, http.StatusOK, SuccessMessageSchema{
+		Message: fmt.Sprintf("Hello User %s, you have passed the User Auth validation", userID),
+	})
+}
+
+// TestApiKeyAuth tests API key authentication
+// swagger:operation GET /v1/byosnap-advanced/api-key-auth testApiKeyAuth
+// ---
+// summary: Test API Key Auth
+// description: Test API key authentication. This API supports API-Key auth type only.
+// operationId: TestApiKeyAuth
+// x-snapser-auth-types: ["api-key"]
+//
+// responses:
+//   200:
+//     description: API key auth validation passed
+//     schema:
+//       $ref: '#/definitions/SuccessMessageSchema'
+//   401:
+//     description: Unauthorized access
+//     schema:
+//       $ref: '#/definitions/ErrorResponseSchema'
+func TestApiKeyAuth(w http.ResponseWriter, r *http.Request) {
+	apiKeyName := r.Header.Get("Api-Key-Name")
+
+	writeJSON(w, http.StatusOK, SuccessMessageSchema{
+		Message: fmt.Sprintf("You have passed the API Key Auth validation using the key %s", apiKeyName),
 	})
 }
