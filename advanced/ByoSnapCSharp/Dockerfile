@@ -28,7 +28,7 @@ RUN dotnet restore --source https://api.nuget.org/v3/index.json
 COPY . ./
 RUN dotnet publish -c Release -o out
 
-# Use the official ASP.NET Core runtime image for .NET 8.0, targeting arm64
+# Use the official ASP.NET Core runtime image for .NET 9.0, targeting arm64
 FROM --platform=$PLATFORM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 

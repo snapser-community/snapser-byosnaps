@@ -1,0 +1,746 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "description" : "BYOSnap Advanced Go Example\nwith restful endpoints demonstrating configuration tools, import/export, GDPR user data, and Storage API integration.",
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "title" : "BYOSnap Advanced Go Example",
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "https://localhost:5003/"
+  } ],
+  "paths" : {
+    "/v1/byosnap-advanced/settings" : {
+      "get" : {
+        "description" : "Get the settings for the characters microservice. This endpoint is called by the Snapser Configuration Tool.",
+        "operationId" : "GetSettings",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "tool_id",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "environment",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SettingsSchema"
+                }
+              }
+            },
+            "description" : "Settings retrieved successfully"
+          },
+          "401" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Unauthorized access"
+          }
+        },
+        "summary" : "Configuration Tool",
+        "x-snapser-auth-types" : [ "internal" ]
+      },
+      "put" : {
+        "description" : "Update the settings for the characters microservice. This endpoint is called by the Snapser Configuration Tool.",
+        "operationId" : "UpdateSettings",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "tool_id",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "environment",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SettingsSchema"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SettingsSchema"
+                }
+              }
+            },
+            "description" : "Settings updated successfully"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Bad request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Server error"
+          }
+        },
+        "summary" : "Configuration Tool",
+        "x-snapser-auth-types" : [ "internal" ],
+        "x-codegen-request-body-name" : "body"
+      }
+    },
+    "/v1/byosnap-advanced/settings/custom" : {
+      "get" : {
+        "description" : "Get the settings for the custom HTML configuration tool.",
+        "operationId" : "GetSettingsCustom",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "tool_id",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "environment",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CustomSettingsPayload"
+                }
+              }
+            },
+            "description" : "Custom settings retrieved successfully"
+          },
+          "401" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Unauthorized access"
+          }
+        },
+        "summary" : "Custom Configuration Tool",
+        "x-snapser-auth-types" : [ "internal" ]
+      },
+      "put" : {
+        "description" : "Update the settings from the custom HTML configuration tool.",
+        "operationId" : "UpdateSettingsCustom",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "tool_id",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "environment",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CustomSettingsPayload"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : { },
+            "description" : "Custom settings updated successfully"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Server error"
+          }
+        },
+        "summary" : "Custom Configuration Tool",
+        "x-snapser-auth-types" : [ "internal" ],
+        "x-codegen-request-body-name" : "body"
+      }
+    },
+    "/v1/byosnap-advanced/settings/export" : {
+      "get" : {
+        "description" : "Export all settings across environments (dev, stage, prod) for Snapend Sync/Clone.",
+        "operationId" : "ExportSettings",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ExportSettingsSchema"
+                }
+              }
+            },
+            "description" : "Settings exported successfully"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Server error"
+          }
+        },
+        "summary" : "Export Settings",
+        "x-snapser-auth-types" : [ "internal" ]
+      }
+    },
+    "/v1/byosnap-advanced/settings/import" : {
+      "post" : {
+        "description" : "Import settings across environments (dev, stage, prod) for Snapend Sync/Clone.",
+        "operationId" : "ImportSettings",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ExportSettingsSchema"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SuccessMessageSchema"
+                }
+              }
+            },
+            "description" : "Settings imported successfully"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Bad request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Server error"
+          }
+        },
+        "summary" : "Import Settings",
+        "x-snapser-auth-types" : [ "internal" ],
+        "x-codegen-request-body-name" : "body"
+      }
+    },
+    "/v1/byosnap-advanced/settings/users/{user_id}/custom" : {
+      "get" : {
+        "description" : "Get the user data for the custom HTML User Manager tool.",
+        "operationId" : "GetUserDataCustom",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "user_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CustomSettingsPayload"
+                }
+              }
+            },
+            "description" : "User data retrieved successfully"
+          },
+          "401" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Unauthorized access"
+          }
+        },
+        "summary" : "User Manager Tool",
+        "x-snapser-auth-types" : [ "internal" ]
+      },
+      "post" : {
+        "description" : "Update the user data for the custom HTML User Manager tool.",
+        "operationId" : "UpdateUserDataCustom",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "user_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CustomSettingsPayload"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : { },
+            "description" : "User data updated successfully"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Server error"
+          }
+        },
+        "summary" : "User Manager Tool",
+        "x-snapser-auth-types" : [ "internal" ],
+        "x-codegen-request-body-name" : "body"
+      }
+    },
+    "/v1/byosnap-advanced/settings/users/{user_id}/data" : {
+      "delete" : {
+        "description" : "Delete user data. Implements the GDPR right-to-be-forgotten.",
+        "operationId" : "DeleteUserData",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "user_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : { },
+            "description" : "User data deleted successfully"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "No blob found"
+          },
+          "401" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Unauthorized access"
+          }
+        },
+        "summary" : "User Data (GDPR)",
+        "x-snapser-auth-types" : [ "internal" ]
+      },
+      "get" : {
+        "description" : "Get user data. Used by the GDPR tool and the User Manager tool.",
+        "operationId" : "GetUserData",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "user_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : { },
+            "description" : "User data retrieved successfully"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "No data found"
+          },
+          "401" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Unauthorized access"
+          }
+        },
+        "summary" : "User Data (GDPR)",
+        "x-snapser-auth-types" : [ "internal" ]
+      },
+      "put" : {
+        "description" : "Update user data. Used by the GDPR tool and the User Manager tool.",
+        "operationId" : "UpdateUserData",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "user_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : { },
+            "description" : "User data updated successfully"
+          },
+          "401" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Unauthorized access"
+          }
+        },
+        "summary" : "User Data (GDPR)",
+        "x-snapser-auth-types" : [ "internal" ]
+      }
+    },
+    "/v1/byosnap-advanced/settings/validate-import" : {
+      "post" : {
+        "description" : "Validate settings before importing. Snapser sends the settings that are about to be imported - validate if you can accept them.",
+        "operationId" : "ValidateImportSettings",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ExportSettingsSchema"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ExportSettingsSchema"
+                }
+              }
+            },
+            "description" : "Settings are valid"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Invalid settings"
+          }
+        },
+        "summary" : "Validate Import Settings",
+        "x-snapser-auth-types" : [ "internal" ],
+        "x-codegen-request-body-name" : "body"
+      }
+    },
+    "/v1/byosnap-advanced/users/{user_id}/characters/active" : {
+      "get" : {
+        "description" : "Get active characters for a user. This API supports User, API-Key, and Internal auth types.",
+        "operationId" : "GetActiveCharacters",
+        "parameters" : [ {
+          "description" : "Unique identifier of the user",
+          "in" : "path",
+          "name" : "user_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CharactersResponseSchema"
+                }
+              }
+            },
+            "description" : "Characters retrieved successfully"
+          },
+          "401" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            },
+            "description" : "Unauthorized access"
+          }
+        },
+        "summary" : "Character APIs",
+        "x-snapser-auth-types" : [ "user", "api-key", "internal" ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "CharactersResponseSchema" : {
+        "properties" : {
+          "characters" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : "array",
+            "x-go-name" : "Characters"
+          }
+        },
+        "type" : "object",
+        "x-go-package" : "byosnap-go"
+      },
+      "CustomSettingsPayload" : {
+        "properties" : {
+          "payload" : {
+            "type" : "object",
+            "x-go-name" : "Payload"
+          }
+        },
+        "type" : "object",
+        "x-go-package" : "byosnap-go"
+      },
+      "ErrorResponseSchema" : {
+        "properties" : {
+          "error_message" : {
+            "type" : "string",
+            "x-go-name" : "ErrorMessage"
+          }
+        },
+        "type" : "object",
+        "x-go-package" : "byosnap-go"
+      },
+      "ExportSettingsSchema" : {
+        "properties" : {
+          "data" : {
+            "additionalProperties" : {
+              "additionalProperties" : {
+                "$ref" : "#/components/schemas/SettingsSchema"
+              },
+              "type" : "object"
+            },
+            "type" : "object",
+            "x-go-name" : "Data"
+          },
+          "exported_at" : {
+            "format" : "int64",
+            "type" : "integer",
+            "x-go-name" : "ExportedAt"
+          },
+          "version" : {
+            "type" : "string",
+            "x-go-name" : "Version"
+          }
+        },
+        "type" : "object",
+        "x-go-package" : "byosnap-go"
+      },
+      "GroupComponentItemSchema" : {
+        "properties" : {
+          "component_four" : {
+            "type" : "boolean",
+            "x-go-name" : "ComponentFour"
+          },
+          "component_one" : {
+            "$ref" : "#/components/schemas/SettingsComponentSchema"
+          },
+          "component_three" : {
+            "$ref" : "#/components/schemas/SettingsComponentSchema"
+          },
+          "component_two" : {
+            "$ref" : "#/components/schemas/SettingsComponentSchema"
+          }
+        },
+        "type" : "object",
+        "x-go-package" : "byosnap-go"
+      },
+      "SettingsComponentSchema" : {
+        "properties" : {
+          "components" : {
+            "items" : {
+              "$ref" : "#/components/schemas/GroupComponentItemSchema"
+            },
+            "type" : "array",
+            "x-go-name" : "Components"
+          },
+          "id" : {
+            "type" : "string",
+            "x-go-name" : "ID"
+          },
+          "type" : {
+            "type" : "string",
+            "x-go-name" : "Type"
+          },
+          "value" : {
+            "type" : "object",
+            "x-go-name" : "Value"
+          }
+        },
+        "type" : "object",
+        "x-go-package" : "byosnap-go"
+      },
+      "SettingsSchema" : {
+        "properties" : {
+          "sections" : {
+            "items" : {
+              "$ref" : "#/components/schemas/SettingsSectionSchema"
+            },
+            "type" : "array",
+            "x-go-name" : "Sections"
+          }
+        },
+        "type" : "object",
+        "x-go-package" : "byosnap-go"
+      },
+      "SettingsSectionSchema" : {
+        "properties" : {
+          "components" : {
+            "items" : {
+              "$ref" : "#/components/schemas/SettingsComponentSchema"
+            },
+            "type" : "array",
+            "x-go-name" : "Components"
+          },
+          "id" : {
+            "type" : "string",
+            "x-go-name" : "ID"
+          }
+        },
+        "type" : "object",
+        "x-go-package" : "byosnap-go"
+      },
+      "SuccessMessageSchema" : {
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "x-go-name" : "Message"
+          }
+        },
+        "type" : "object",
+        "x-go-package" : "byosnap-go"
+      },
+      "SuccessResponseSchema" : {
+        "properties" : {
+          "api" : {
+            "type" : "string",
+            "x-go-name" : "API"
+          },
+          "auth_type" : {
+            "type" : "string",
+            "x-go-name" : "AuthType"
+          },
+          "header_user_id" : {
+            "type" : "string",
+            "x-go-name" : "HeaderUserID"
+          },
+          "message" : {
+            "type" : "string",
+            "x-go-name" : "Message"
+          },
+          "path_user_id" : {
+            "type" : "string",
+            "x-go-name" : "PathUserID"
+          }
+        },
+        "type" : "object",
+        "x-go-package" : "byosnap-go"
+      },
+      "UserIdParameterSchema" : {
+        "properties" : {
+          "user_id" : {
+            "type" : "string",
+            "x-go-name" : "UserID"
+          }
+        },
+        "type" : "object",
+        "x-go-package" : "byosnap-go"
+      }
+    }
+  },
+  "x-original-swagger-version" : "2.0"
+}
