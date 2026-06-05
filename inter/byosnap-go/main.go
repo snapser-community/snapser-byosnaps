@@ -64,6 +64,15 @@ func main() {
 	config := snapser_internal.NewConfiguration()
 	config.Servers[0].URL = os.Getenv("SNAPEND_PROFILES_HTTP_URL")
 	profilesClient = snapser_internal.NewAPIClient(config)
+
+	// Log the contents of the secrets file if it exists
+	const secretsPath = "/opt/byosnap-secrets/db.env"
+	if data, err := os.ReadFile(secretsPath); err != nil {
+		log.Printf("Secrets file %s not found or unreadable: %v", secretsPath, err)
+	} else {
+		log.Printf("Secrets file %s contents:\n%s", secretsPath, string(data))
+	}
+
 	// Start server
 	log.Println("Starting server on :5003")
 	log.Fatal(http.ListenAndServe(":5003", handlers.CORS(corsOpts, corsHeaders, corsMethods)(r)))

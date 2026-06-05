@@ -25,6 +25,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -54,6 +55,14 @@ func main() {
 
 	updateUserProfileHandler := http.HandlerFunc(UpdateUserProfile)
 	r.Handle("/v1/byosnap-basic/users/{user_id}/profile", validateAuthorization([]string{AuthTypeHeaderValueUserAuth, AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "user_id")(updateUserProfileHandler)).Methods("PUT")
+
+	// Log the contents of the secrets file if it exists
+	const secretsPath = "/opt/byosnap-secrets/db.env"
+	if data, err := os.ReadFile(secretsPath); err != nil {
+		log.Printf("Secrets file %s not found or unreadable: %v", secretsPath, err)
+	} else {
+		log.Printf("Secrets file %s contents:\n%s", secretsPath, string(data))
+	}
 
 	// Start server
 	log.Println("Starting server on :5003")
