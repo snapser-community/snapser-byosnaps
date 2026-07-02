@@ -56,6 +56,7 @@ namespace ByoSnapCSharp.Controllers
 
     [HttpGet("")]
     [SnapserAuth(AppConstants.internalAuthType)]
+    [SnapserSdkCategory("admin")]
     [ValidateAuthorization(AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SettingsSchema))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
@@ -103,6 +104,7 @@ namespace ByoSnapCSharp.Controllers
 
     [HttpPut("")]
     [SnapserAuth(AppConstants.internalAuthType)]
+    [SnapserSdkCategory("admin")]
     [ValidateAuthorization(AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SettingsSchema))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
@@ -198,6 +200,7 @@ namespace ByoSnapCSharp.Controllers
 
     [HttpGet("custom")]
     [SnapserAuth(AppConstants.internalAuthType)]
+    [SnapserSdkCategory("admin")]
     [ValidateAuthorization(AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CustomSettingsPayload))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]
@@ -245,6 +248,7 @@ namespace ByoSnapCSharp.Controllers
 
     [HttpPut("custom")]
     [SnapserAuth(AppConstants.internalAuthType)]
+    [SnapserSdkCategory("admin")]
     [ValidateAuthorization(AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseSchema))]

@@ -17,7 +17,7 @@
   "paths": {
     "/v1/byosnap-core/example/admin": {
       "get": {
-        "description": "Surfaces in the Admin SDK for admin tooling / the Snapser dashboard. `admin` controls SDK exposure, not authentication.",
+        "description": "Exposed over api-key + internal auth and surfaced in the Admin SDK via x-snapser-sdk-categories.",
         "operationId": "ExampleAdminSdk",
         "responses": {
           "200": {
@@ -43,8 +43,10 @@
         },
         "summary": "Example: Admin SDK",
         "x-snapser-auth-types": [
-          "admin"
-        ]
+          "api-key",
+          "internal"
+        ],
+        "x-snapser-sdk-categories": ["admin"]
       }
     },
     "/v1/byosnap-core/example/api-key": {
@@ -156,7 +158,8 @@
         "summary": "Configuration Tool",
         "x-snapser-auth-types": [
           "internal"
-        ]
+        ],
+        "x-snapser-sdk-categories": ["admin"]
       },
       "put": {
         "description": "Update the settings for the characters microservice. This endpoint is called by the Snapser Configuration Tool.",
@@ -223,6 +226,7 @@
         "x-snapser-auth-types": [
           "internal"
         ],
+        "x-snapser-sdk-categories": ["admin"],
         "x-codegen-request-body-name": "body"
       }
     },
@@ -271,7 +275,8 @@
         "summary": "Custom Configuration Tool",
         "x-snapser-auth-types": [
           "internal"
-        ]
+        ],
+        "x-snapser-sdk-categories": ["admin"]
       },
       "put": {
         "description": "Update the settings from the custom HTML configuration tool.",
@@ -322,6 +327,7 @@
         "x-snapser-auth-types": [
           "internal"
         ],
+        "x-snapser-sdk-categories": ["admin"],
         "x-codegen-request-body-name": "body"
       }
     },

@@ -404,12 +404,12 @@ async fn example_internal_endpoint(req: HttpRequest) -> HttpResponse {
 
 // Example endpoint surfaced in the special Admin SDK.
 //
-// Note: `admin` is NOT an auth type. In the other language examples an `admin`
-// swagger tag surfaces the API in the Admin SDK; there is no swagger for Rust,
-// so here we simply guard via the INTERNAL check. Admin-SDK calls reach the Snap
-// through the internal gateway.
+// Note: `admin` is NOT an auth type. The endpoint is exposed over normal auth
+// types (here api-key + internal). In the other language examples the
+// `x-snapser-sdk-categories: [admin]` swagger tag is what surfaces the API in the
+// Admin SDK; there is no swagger for Rust, so we just enforce the auth types.
 async fn example_admin_endpoint(req: HttpRequest) -> HttpResponse {
-    if !validate_authorization(&req, &[AuthType::Internal], None) {
+    if !validate_authorization(&req, &[AuthType::ApiKey, AuthType::Internal], None) {
         return unauthorized();
     }
     // TODO: add your business logic here

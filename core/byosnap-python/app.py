@@ -77,9 +77,10 @@ def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
     GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE). Snapser injects the relevant headers;
     this decorator enforces them so you get authorization checks for free.
 
-    Note on Admin-SDK APIs: admin calls reach the Snap through the internal
-    gateway, so guard admin endpoints with GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE
-    and expose them by adding `admin` to the swagger x-snapser-auth-types tag.
+    Note on Admin-SDK APIs: `admin` is NOT an auth type. Guard admin endpoints
+    with their real auth types (e.g. api-key + internal) and surface them in the
+    Admin SDK by adding the `x-snapser-sdk-categories: [admin]` tag to the swagger
+    operation.
     '''
     def decorator(f):
         @wraps(f)
@@ -178,12 +179,25 @@ def health():
 @app.route(f"{API_PREFIX}/settings", methods=["GET"])
 @validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def get_settings():
-    '''
-    Get the settings for this Snap's Configuration Tool.
+    """Get the settings for this Snap's Configuration Tool.
 
     Snapser always sends `tool_id` and `environment` as query params so you can
     scope the settings blob per environment (dev / stage / prod).
-    '''
+    ---
+    get:
+      summary: 'Configuration Tool'
+      description: Get the settings for the Configuration Tool.
+      operationId: Get Settings
+      x-snapser-auth-types:
+        - internal
+      x-snapser-sdk-categories: [admin]
+      responses:
+        200:
+          content:
+            application/json:
+              schema: SettingsSchema
+          description: 'Settings retrieved successfully'
+    """
     # This is the default payload shape the Configuration Tool expects.
     default_settings = {
         "sections": [
@@ -218,10 +232,8 @@ def update_settings():
       description: Put
       operationId: Update Settings
       x-snapser-auth-types:
-        - user
-        - api-key
         - internal
-        - admin
+      x-snapser-sdk-categories: [admin]
       requestBody:
         required: true
         content:
@@ -269,9 +281,22 @@ def update_settings():
 @app.route(f"{API_PREFIX}/settings/custom", methods=["GET"])
 @validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def get_settings_custom():
-    '''
-    Get the settings for a custom HTML Configuration Tool.
-    '''
+    """Get the settings for a custom HTML Configuration Tool.
+    ---
+    get:
+      summary: 'Custom Configuration Tool'
+      description: Get the settings for the custom HTML Configuration Tool.
+      operationId: Get Settings Custom
+      x-snapser-auth-types:
+        - internal
+      x-snapser-sdk-categories: [admin]
+      responses:
+        200:
+          content:
+            application/json:
+              schema: SuccessMessageSchema
+          description: 'Settings retrieved successfully'
+    """
     # The custom HTML tool expects the settings wrapped in a `payload` key.
     default_settings = {"payload": ""}
     tool_id = request.args.get('tool_id')
@@ -285,9 +310,33 @@ def get_settings_custom():
 @app.route(f"{API_PREFIX}/settings/custom", methods=["PUT"])
 @validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE, user_id_resource_key="user_id")
 def update_settings_custom():
-    '''
-    Update the settings for a custom HTML Configuration Tool.
-    '''
+    """Update the settings for a custom HTML Configuration Tool.
+    ---
+    put:
+      summary: 'Custom Configuration Tool'
+      description: Update the settings for the custom HTML Configuration Tool.
+      operationId: Update Settings Custom
+      x-snapser-auth-types:
+        - internal
+      x-snapser-sdk-categories: [admin]
+      requestBody:
+        required: true
+        content:
+            application/json:
+              schema: SettingsSchema
+        description: 'Settings payload'
+      responses:
+        200:
+          content:
+            application/json:
+              schema: SuccessMessageSchema
+          description: 'Settings updated successfully'
+        500:
+            content:
+                application/json:
+                    schema: ErrorResponseSchema
+            description: 'Server Exception'
+    """
     try:
         tool_id = request.args.get('tool_id')
         environment = request.args.get('environment', default='DEFAULT')
@@ -578,20 +627,23 @@ def example_internal_endpoint():
 
 
 @app.route(f"{API_PREFIX}/example/admin", methods=["GET"])
-@validate_authorization(GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
+@validate_authorization(AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def example_admin_endpoint():
     """Example endpoint surfaced in the special Admin SDK.
 
-    Note: `admin` is not an auth type. Tagging an endpoint with `admin` simply
-    makes it show up in the Admin SDK (used by admin tooling / the Snapser
-    dashboard). The request itself still arrives through the internal gateway.
+    Note: `admin` is NOT an auth type. The endpoint is exposed over normal auth
+    types (here api-key + internal); the `x-snapser-sdk-categories: [admin]` tag is
+    what places it in the Admin SDK (used by admin tooling / the Snapser
+    dashboard).
     ---
     get:
       summary: 'Example: Admin SDK'
-      description: 'Surfaces in the Admin SDK for admin tooling / the Snapser dashboard. `admin` controls SDK exposure, not authentication.'
+      description: 'Exposed over api-key + internal auth and surfaced in the Admin SDK via x-snapser-sdk-categories.'
       operationId: ExampleAdminSdk
       x-snapser-auth-types:
-        - admin
+        - api-key
+        - internal
+      x-snapser-sdk-categories: [admin]
       responses:
         200:
           content:
@@ -599,10 +651,10 @@ def example_admin_endpoint():
               schema: SuccessMessageSchema
           description: 'Success'
     """
-    # Admin-SDK calls reach the Snap through the internal gateway, so we guard
-    # this with the INTERNAL check. The `admin` tag above is what makes this API
-    # surface in the Admin SDK.
-    # TODO: Add your admin-only business logic here.
+    # This endpoint is reachable via api-key or internal auth (enforced by the
+    # decorator). The `x-snapser-sdk-categories: [admin]` tag above is what surfaces
+    # it in the Admin SDK.
+    # TODO: Add your admin business logic here.
     return make_response(jsonify({'message': 'Hello admin caller'}), 200)
 
 

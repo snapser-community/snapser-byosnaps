@@ -27,5 +27,21 @@ public class SnapserAuthTypesOperationFilter : IOperationFilter
         operation.Extensions.Add("x-snapser-auth-types", authTypes);
       }
     }
+
+    // `admin` is NOT an auth type. The [SnapserSdkCategory("admin")] attribute
+    // emits the separate `x-snapser-sdk-categories` extension (an array), which
+    // is what surfaces an endpoint in the Admin SDK (independent of its auth types).
+    var sdkCategoryAttribute = context.MethodInfo.GetCustomAttributes(true)
+        .OfType<SnapserSdkCategoryAttribute>()
+        .FirstOrDefault();
+
+    if (sdkCategoryAttribute != null)
+    {
+      if (!operation.Extensions.ContainsKey("x-snapser-sdk-categories"))
+      {
+        var sdkCategories = new OpenApiArray { new OpenApiString(sdkCategoryAttribute.Category) };
+        operation.Extensions.Add("x-snapser-sdk-categories", sdkCategories);
+      }
+    }
   }
 }

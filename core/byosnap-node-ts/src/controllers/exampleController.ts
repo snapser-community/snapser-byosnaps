@@ -81,19 +81,20 @@ export class ExampleController extends Controller {
      * @summary Example: Admin SDK
      */
     @Get("example/admin")
-    @Extension("x-description", 'Surfaces in the Admin SDK for admin tooling / the Snapser dashboard. `admin` controls SDK exposure, not authentication.')
-    @Extension("x-snapser-auth-types", ["admin"])
+    @Extension("x-description", 'Exposed over api-key + internal auth and surfaced in the Admin SDK via x-snapser-sdk-categories.')
+    @Extension("x-snapser-auth-types", ["api-key", "internal"])
+    @Extension("x-snapser-sdk-categories", ["admin"])
     @Response<SuccessMessageResponse>(200, "Success")
     @Response<ErrorResponse>(401, "Unauthorized")
-    @Middlewares([authMiddleware(["internal"])])
+    @Middlewares([authMiddleware(["api-key", "internal"])])
     public async exampleAdminSdk(
         @Res() _unauthorized: TsoaResponse<401, ErrorResponse>,
         @Request() req: ExpressRequest,
     ): Promise<SuccessMessageResponse> {
-        // NOTE: `admin` is NOT an auth type. Tagging an endpoint with `admin` in
-        // x-snapser-auth-types only makes it surface in the Admin SDK; the request
-        // itself still arrives through the internal gateway, so we guard it with
-        // the INTERNAL auth check.
+        // NOTE: `admin` is NOT an auth type. This endpoint is exposed over normal
+        // auth types (here api-key + internal, enforced by authMiddleware); the
+        // `x-snapser-sdk-categories: [admin]` tag is what surfaces it in the Admin SDK
+        // (used by admin tooling / the Snapser dashboard).
         // TODO: Add your admin-only business logic here.
         //       See advanced/byosnap-node-ts for a full implementation.
         return { message: 'Hello admin caller' };

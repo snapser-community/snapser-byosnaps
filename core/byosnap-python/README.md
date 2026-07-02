@@ -1,4 +1,6 @@
-# BYOSnap Python Intermediate Tutorial
+# BYOSnap Core Python Example
+
+A minimal starter scaffold for a new Python BYOSnap, built with Flask. Every endpoint Snapser expects is present, but each handler body is a stub that returns a simple placeholder and carries a `# TODO`. Use this as the starting point for your own microservice, and see `advanced/byosnap-python` for complete, working implementations.
 
 ## Application
 - The main application logic is in **app.py**
@@ -11,7 +13,7 @@ Create a python virtualenv and then activate the virtualenv
 ```bash
 # Mac
 python3 -m venv venv
-source snapctl/venv/bin/activate
+source venv/bin/activate
 ```
 ```bash
 # Windows
@@ -20,7 +22,7 @@ source snapctl/venv/bin/activate
 ```
 #### Install dependencies
 ```bash
-pip isntall -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ### B. Snapctl Setup
@@ -56,7 +58,7 @@ Usage
 ```bash
 # $companyId = Your company Id
 # $gameId = Your game ID
-# $byosnapId is the ID of your BYOSnap. For the tutorial, we are using `byosnap-inter`
+# $byosnapId is the ID of your BYOSnap. For this scaffold, we are using `byosnap-core`
 # $version needs to be in the format "vX.Y.Z" eg: "v1.0.0"
 #   [IMPORTANT] You have to increment the version number for each subsequent publish
 python snapend_create.py $companyId $gameId $byosnapId $version
@@ -67,7 +69,7 @@ python snapend_create.py $companyId $gameId $byosnapId $version
 - Please read the GOTCHAS.md before you begin Development
 
 ### Step 1: Update Code
-For this tutorial, we want to update `api_four` return message, deploy it to Snapser and see it live. Please go to `api.py` and search for `api_four` and update the return message.
+This scaffold ships with stubbed endpoints. For this walk-through, open `app.py`, find `example_user_endpoint` (the handler for `GET /v1/byosnap-core/users/<user_id>/example`), and replace its `# TODO` with your own return message so you can deploy it and see it live.
 
 ### Step 2 Build
 - Build your swagger
@@ -82,7 +84,7 @@ python generate_swagger.py
 ### Step 3: Publish the BYOSnap
 Run the following command to publish your BYOSnap to your Snapser account.
 ```
-snapctl byosnap publish --byosnap-id byosnap-inter --version "v1.0.0" --path $pathToThisFolder --resources-path $pathToThisFolder/snapser-resources/
+snapctl byosnap publish --byosnap-id byosnap-core --version "v1.0.0" --path $pathToThisFolder --resources-path $pathToThisFolder/snapser-resources/
 ```
 
 ### Step 4: Create your cluster
@@ -107,7 +109,7 @@ At the end, you will have a new Snapend running with an Auth Snap & your BYOSnap
 - Go to the Snapend API explorer, which you can find under **Quick Links** on the Snapend Home page.
 - Use the Authentication.AnonLogin to create a test user.
 - The API Explorer History button will show you details of the created users Id and session token.
-- Then you can go to the BYOSnap API, add the users session token, and access the BYOSnap endpoint `UpdateUserProfile` to see your updated message.
+- Then you can go to the BYOSnap API, add the user's session token, and call the BYOSnap endpoint `ExampleUserAuth` (`GET /v1/byosnap-core/users/{user_id}/example`) to see your updated message.
 
 ## Development Process
 ### Pre-requisites - Read the Gotchas
@@ -116,7 +118,7 @@ At the end, you will have a new Snapend running with an Auth Snap & your BYOSnap
 ### A. Running the Server Locally
 - Make sure you have installed the dependencies
 ```bash
-pip isntall -r requirements.txt
+pip install -r requirements.txt
 ```
 - Build your swagger
 ```bash
@@ -140,5 +142,5 @@ IMPORTANT: The Sync command reuses the published `$version` tag but keeps buildi
 Once you are happy with the state of your BYOSnap and you want to "commit" it. Which essentially means you are ready to bump the version number.
 
 1. Generate a new swagger if you need to by running `python generate_swagger.py`.
-2. Run `snapctl byosnap publish --byosnap-id byosnap-$byosnapName --version $newVersion --path $rootCodePath --resources-path $rootCodePath/snapser-resources` to publish your new BYOSnap version to Snapser. IMPORTANT: Make sure your new version is greater than the version that is presently on Snapser.
+2. Run `snapctl byosnap publish --byosnap-id byosnap-core --version $newVersion --path $rootCodePath --resources-path $rootCodePath/snapser-resources` to publish your new BYOSnap version to Snapser. IMPORTANT: Make sure your new version is greater than the version that is presently on Snapser.
 3. Any new or existing Snapend can now just use this new version of your BYOSnap. There is a handy command `snapctl snapend update byosnaps ...` that allows you to "Commit" your changes to any existing BYOSnap using the CLI. You can always do this using the web app as well by clicking on `Edit Snapend`.

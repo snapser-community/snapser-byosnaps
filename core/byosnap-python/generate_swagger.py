@@ -15,6 +15,7 @@ from models.schemas import UserIdParameterSchema, ExportSettingsSchema, ErrorRes
     ByoToolPayloadSectionSchema, SectionComponentSchema, GroupComponentItemSchema, \
     GroupComponentItemSchema, BaseComponentSchema, GroupComponentSchema
 from app import API_PREFIX, settings_export, settings_import, update_settings, \
+    get_settings, get_settings_custom, update_settings_custom, \
     example_user_endpoint, example_api_key_endpoint, example_internal_endpoint, \
     example_admin_endpoint, example_multi_auth_endpoint
 
@@ -33,6 +34,12 @@ app.add_url_rule(f"{API_PREFIX}/settings/import",
                  view_func=settings_import, methods=['POST'])
 app.add_url_rule(f"{API_PREFIX}/settings",
                  view_func=update_settings, methods=['PUT'])
+app.add_url_rule(f"{API_PREFIX}/settings",
+                 view_func=get_settings, methods=['GET'])
+app.add_url_rule(f"{API_PREFIX}/settings/custom",
+                 view_func=get_settings_custom, methods=['GET'])
+app.add_url_rule(f"{API_PREFIX}/settings/custom",
+                 view_func=update_settings_custom, methods=['PUT'])
 app.add_url_rule(f"{API_PREFIX}/users/<user_id>/example",
                  view_func=example_user_endpoint, methods=['GET'])
 app.add_url_rule(f"{API_PREFIX}/example/api-key",
@@ -68,6 +75,9 @@ with app.test_request_context():
     spec.path(view=settings_export)
     spec.path(view=settings_import)
     spec.path(view=update_settings)
+    spec.path(view=get_settings)
+    spec.path(view=get_settings_custom)
+    spec.path(view=update_settings_custom)
     spec.path(view=example_user_endpoint)
     spec.path(view=example_api_key_endpoint)
     spec.path(view=example_internal_endpoint)

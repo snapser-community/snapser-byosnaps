@@ -106,26 +106,29 @@ namespace ByoSnapCSharp.Controllers
     /// <summary>
     /// Example endpoint surfaced in the special Admin SDK.
     ///
-    /// Note: `admin` is NOT an auth type. Tagging an endpoint with `admin` only
-    /// makes it surface in the Admin SDK (used by admin tooling / the Snapser
-    /// dashboard). The request itself still arrives through the internal gateway,
-    /// so this is guarded with the INTERNAL check.
+    /// Note: `admin` is NOT an auth type. The endpoint is exposed over normal
+    /// auth types (here api-key + internal) via [SnapserAuth(...)]; the separate
+    /// [SnapserSdkCategory("admin")] attribute emits `x-snapser-sdk-categories:
+    /// admin`, which is what surfaces it in the Admin SDK (used by admin tooling
+    /// / the Snapser dashboard).
     /// </summary>
     [HttpGet("example/admin")]
-    [SnapserAuth("admin")]
-    [ValidateAuthorization(AppConstants.internalAuthType)]
+    [SnapserAuth(AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]
+    [SnapserSdkCategory("admin")]
+    [ValidateAuthorization(AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessMessageSchema))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseSchema))]
     [SwaggerOperation(
       OperationId = "ExampleAdminSdk",
       Summary = "Example: Admin SDK",
-      Description = "Surfaces in the Admin SDK for admin tooling / the Snapser dashboard. `admin` controls SDK exposure, not authentication."
+      Description = "Exposed over api-key + internal auth and surfaced in the Admin SDK via x-snapser-sdk-categories."
     )]
     public ActionResult ExampleAdminSdk()
     {
-      // Admin-SDK calls reach the Snap through the internal gateway, so we guard
-      // this with the INTERNAL check. The `admin` tag above is what makes this
-      // API surface in the Admin SDK.
+      // This endpoint is reachable via api-key or internal auth (enforced by the
+      // [ValidateAuthorization(...)] attribute). The [SnapserSdkCategory("admin")]
+      // attribute above is what surfaces it in the Admin SDK — `admin` is a SDK
+      // category, not an auth type.
       // TODO: Add your admin-only business logic here.
       //       See advanced/ByoSnapCSharp for the full implementation.
       return Ok(new SuccessMessageSchema

@@ -133,7 +133,7 @@
           "Example"
         ],
         "summary": "Example: Admin SDK",
-        "description": "Surfaces in the Admin SDK for admin tooling / the Snapser dashboard. `admin` controls SDK exposure, not authentication.",
+        "description": "Exposed over api-key + internal auth and surfaced in the Admin SDK via x-snapser-sdk-categories.",
         "operationId": "ExampleAdminSdk",
         "responses": {
           "200": {
@@ -158,8 +158,10 @@
           }
         },
         "x-snapser-auth-types": [
-          "admin"
-        ]
+          "api-key",
+          "internal"
+        ],
+        "x-snapser-sdk-categories": ["admin"]
       }
     },
     "/v1/byosnap-core/users/{UserId}/example/multi-auth": {
@@ -430,7 +432,8 @@
         },
         "x-snapser-auth-types": [
           "internal"
-        ]
+        ],
+        "x-snapser-sdk-categories": ["admin"]
       },
       "put": {
         "tags": [
@@ -512,7 +515,8 @@
         },
         "x-snapser-auth-types": [
           "internal"
-        ]
+        ],
+        "x-snapser-sdk-categories": ["admin"]
       }
     },
     "/v1/byosnap-core/settings/custom": {
@@ -573,7 +577,8 @@
         },
         "x-snapser-auth-types": [
           "internal"
-        ]
+        ],
+        "x-snapser-sdk-categories": ["admin"]
       },
       "put": {
         "tags": [
@@ -648,7 +653,8 @@
         },
         "x-snapser-auth-types": [
           "internal"
-        ]
+        ],
+        "x-snapser-sdk-categories": ["admin"]
       }
     },
     "/v1/byosnap-core/settings/users/{UserId}/custom": {

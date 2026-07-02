@@ -146,12 +146,13 @@ func main() {
 	r.Handle(fmt.Sprintf("%s/example/internal", APIPrefix),
 		validateAuthorization([]string{GatewayHeaderValueInternalOrigin}, "")(exampleInternalHandler)).Methods("GET")
 
-	// d. Admin SDK. `admin` is NOT an auth type; the tag only surfaces the API
-	//    in the Admin SDK. Requests still arrive via the internal gateway, so we
-	//    guard this endpoint with the INTERNAL check.
+	// d. Admin SDK. `admin` is NOT an auth type; the endpoint is exposed over
+	//    real auth types (api-key + internal) and the `x-snapser-sdk-categories:
+	//    admin` tag is what surfaces it in the Admin SDK. Guard it with those
+	//    same auth types.
 	exampleAdminHandler := http.HandlerFunc(ExampleAdminSdk)
 	r.Handle(fmt.Sprintf("%s/example/admin", APIPrefix),
-		validateAuthorization([]string{GatewayHeaderValueInternalOrigin}, "")(exampleAdminHandler)).Methods("GET")
+		validateAuthorization([]string{AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "")(exampleAdminHandler)).Methods("GET")
 
 	// e. Multi-auth. One endpoint can accept multiple auth types; no separate
 	//    route per type is needed.
@@ -240,6 +241,7 @@ func CorsOverridesHandler(w http.ResponseWriter, r *http.Request) {
 // description: Get the settings for this Snap's Configuration Tool. This endpoint is called by the Snapser Configuration Tool.
 // operationId: GetSettings
 // x-snapser-auth-types: ["internal"]
+// x-snapser-sdk-categories: [admin]
 // parameters:
 //   - name: tool_id
 //     in: query
@@ -282,6 +284,7 @@ func GetSettings(w http.ResponseWriter, r *http.Request) {
 // description: Update the settings for this Snap's Configuration Tool. This endpoint is called by the Snapser Configuration Tool.
 // operationId: UpdateSettings
 // x-snapser-auth-types: ["internal"]
+// x-snapser-sdk-categories: [admin]
 // parameters:
 //   - name: tool_id
 //     in: query
@@ -350,6 +353,7 @@ func UpdateSettings(w http.ResponseWriter, r *http.Request) {
 // description: Get the settings for the custom HTML configuration tool.
 // operationId: GetSettingsCustom
 // x-snapser-auth-types: ["internal"]
+// x-snapser-sdk-categories: [admin]
 // parameters:
 //   - name: tool_id
 //     in: query
@@ -391,6 +395,7 @@ func GetSettingsCustom(w http.ResponseWriter, r *http.Request) {
 // description: Update the settings from the custom HTML configuration tool.
 // operationId: UpdateSettingsCustom
 // x-snapser-auth-types: ["internal"]
+// x-snapser-sdk-categories: [admin]
 // parameters:
 //   - name: tool_id
 //     in: query
@@ -827,16 +832,17 @@ func ExampleInternalAuth(w http.ResponseWriter, r *http.Request) {
 
 // ExampleAdminSdk is an example endpoint surfaced in the special Admin SDK.
 //
-// Note: `admin` is NOT an auth type. Tagging an endpoint with `admin` simply
-// makes it show up in the Admin SDK (used by admin tooling / the Snapser
-// dashboard). The request itself still arrives through the internal gateway, so
-// we guard this with the INTERNAL check.
+// Note: `admin` is NOT an auth type. The endpoint is exposed over normal auth
+// types (here api-key + internal); the `x-snapser-sdk-categories: [admin]` tag is
+// what places it in the Admin SDK (used by admin tooling / the Snapser
+// dashboard).
 // swagger:operation GET /v1/byosnap-core/example/admin exampleAdminSdk
 // ---
 // summary: 'Example: Admin SDK'
-// description: Surfaces in the Admin SDK for admin tooling / the Snapser dashboard. `admin` controls SDK exposure, not authentication.
+// description: Exposed over api-key + internal auth and surfaced in the Admin SDK via x-snapser-sdk-categories.
 // operationId: ExampleAdminSdk
-// x-snapser-auth-types: ["admin"]
+// x-snapser-auth-types: ["api-key", "internal"]
+// x-snapser-sdk-categories: [admin]
 // responses:
 //   200:
 //     description: Success
@@ -847,6 +853,9 @@ func ExampleInternalAuth(w http.ResponseWriter, r *http.Request) {
 //     schema:
 //       $ref: '#/definitions/ErrorResponseSchema'
 func ExampleAdminSdk(w http.ResponseWriter, r *http.Request) {
+	// This endpoint is reachable via api-key or internal auth (enforced by the
+	// router). The `x-snapser-sdk-categories: [admin]` tag is what surfaces it in
+	// the Admin SDK. `admin` is NOT an auth type.
 	// TODO: add your business logic here (admin-only).
 	writeJSON(w, http.StatusOK, SuccessMessageSchema{
 		Message: "Hello admin caller",

@@ -93,9 +93,7 @@
                 "x-snapser-auth-types": [
                     "internal"
                 ],
-                "x-snapser-sdk-categories": [
-                    "admin"
-                ],
+                "x-snapser-sdk-categories": ["admin"],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -147,9 +145,7 @@
                 "x-snapser-auth-types": [
                     "internal"
                 ],
-                "x-snapser-sdk-categories": [
-                    "admin"
-                ],
+                "x-snapser-sdk-categories": ["admin"],
                 "responses": {
                     "200": {
                         "content": {
@@ -172,9 +168,7 @@
                 "x-snapser-auth-types": [
                     "internal"
                 ],
-                "x-snapser-sdk-categories": [
-                    "admin"
-                ],
+                "x-snapser-sdk-categories": ["admin"],
                 "responses": {
                     "200": {
                         "content": {
@@ -195,9 +189,7 @@
                 "x-snapser-auth-types": [
                     "internal"
                 ],
-                "x-snapser-sdk-categories": [
-                    "admin"
-                ],
+                "x-snapser-sdk-categories": ["admin"],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -318,9 +310,7 @@
                     "api-key",
                     "internal"
                 ],
-                "x-snapser-sdk-categories": [
-                    "admin"
-                ],
+                "x-snapser-sdk-categories": ["admin"],
                 "responses": {
                     "200": {
                         "content": {
@@ -338,7 +328,7 @@
         "/v1/byosnap-core/users/{user_id}/example/multi-auth": {
             "get": {
                 "summary": "Example: Multi Auth",
-                "description": "One endpoint reachable by a logged-in user, a valid API key, or an internal Snap. List every auth type you want to allow \u2014 no need for a separate route per type.",
+                "description": "One endpoint reachable by a logged-in user, a valid API key, or an internal Snap. List every auth type you want to allow — no need for a separate route per type.",
                 "operationId": "ExampleMultiAuth",
                 "x-snapser-auth-types": [
                     "user",
@@ -371,7 +361,7 @@
         }
     },
     "info": {
-        "title": "BYOSnap Core Python Example",
+        "title": "BYOSnap Core Java Example",
         "version": "1.0.0"
     },
     "openapi": "3.0.2",
@@ -418,6 +408,10 @@
             "BaseComponent": {
                 "type": "object",
                 "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "value": {},
                     "type": {
                         "type": "string",
                         "enum": [
@@ -430,10 +424,6 @@
                             "radio",
                             "group"
                         ]
-                    },
-                    "value": {},
-                    "id": {
-                        "type": "string"
                     }
                 },
                 "required": [
@@ -444,16 +434,16 @@
             "GroupComponentItem": {
                 "type": "object",
                 "properties": {
-                    "component_three": {
-                        "$ref": "#/components/schemas/BaseComponent"
-                    },
                     "component_four": {
                         "type": "boolean"
                     },
-                    "component_one": {
+                    "component_three": {
                         "$ref": "#/components/schemas/BaseComponent"
                     },
                     "component_two": {
+                        "$ref": "#/components/schemas/BaseComponent"
+                    },
+                    "component_one": {
                         "$ref": "#/components/schemas/BaseComponent"
                     }
                 }
@@ -461,7 +451,7 @@
             "SectionComponent": {
                 "type": "object",
                 "properties": {
-                    "type": {
+                    "id": {
                         "type": "string"
                     },
                     "value": {},
@@ -471,7 +461,7 @@
                             "$ref": "#/components/schemas/GroupComponentItem"
                         }
                     },
-                    "id": {
+                    "type": {
                         "type": "string"
                     }
                 },
@@ -483,14 +473,14 @@
             "ByoToolPayloadSection": {
                 "type": "object",
                 "properties": {
+                    "id": {
+                        "type": "string"
+                    },
                     "components": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/SectionComponent"
                         }
-                    },
-                    "id": {
-                        "type": "string"
                     }
                 },
                 "required": [
