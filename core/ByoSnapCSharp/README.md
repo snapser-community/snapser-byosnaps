@@ -123,11 +123,38 @@ The Storage API calls are stubbed with TODO comments. To enable them:
 3. Uncomment the `using SnapserInternal.*` imports in the controllers
 4. Uncomment the Storage API call blocks
 
+## Eventbus (Custom BYO Events)
+
+This scaffold includes best-effort stubs for the Snapser Eventbus, wired through
+`Utilities/EventbusClient.cs`:
+
+- **Register event types (on startup):** `EventbusRegistrationHostedService` (an
+  `IHostedService`) calls `EventbusClient.RegisterEventTypesAsync()` ONCE at boot,
+  in the background. It `PUT`s your custom event types to the Eventbus Snap. It is
+  best-effort and never blocks boot or crashes the app / `/healthz`.
+- **Publish events:** `EventbusClient.PublishEventAsync(subject, recipients, message)`
+  is a reusable helper you can call from your business logic to emit events. It is
+  not wired into any endpoint by default.
+- **Receive events:** `POST /internal/events` (`Controllers/EventsController.cs`)
+  is the inbound webhook the Eventbus Snap calls to DELIVER events to your Snap. It
+  is a RESERVED, root-level URL (no `/v1` prefix, no byosnap id — like `/healthz`)
+  and is intentionally hidden from Swagger/SDK via `[ApiExplorerSettings(IgnoreApi = true)]`.
+
+Internal Snap-to-Snap calls use the Eventbus base URL from `SNAPEND_EVENTBUS_HTTP_URL`
+plus a `Gateway: internal` header (value from `SNAPEND_INTERNAL_HEADER`, default
+`internal`). If `SNAPEND_EVENTBUS_HTTP_URL` is empty (e.g. local dev, or the Eventbus
+Snap is not attached to this Snapend), the register/publish calls log a notice and skip.
+
+> **Confirm the env var name:** This scaffold reads `SNAPEND_EVENTBUS_HTTP_URL`. The
+> exact name may differ for your Snapend (e.g. `SNAPEND_EVENT_BUS_HTTP_URL`) — verify
+> it and update `AppConstants.eventbusHttpUrlEnvKey` if needed.
+
 ## Environment Variables
 
 | Variable | Description |
 |----------|-------------|
 | `SNAPEND_STORAGE_HTTP_URL` | Storage service endpoint URL |
+| `SNAPEND_EVENTBUS_HTTP_URL` | Eventbus service endpoint URL (confirm exact name; may differ per Snapend). Empty = register/publish skipped |
 | `SNAPEND_INTERNAL_HEADER` | Gateway header value for internal calls (default: "internal") |
 | `BYOSNAP_VERSION` | Version string for export responses (default: "v1.0.0") |
 | `SNAPSER_ENVIRONMENT` | Current environment (DEVELOPMENT, STAGING, PRODUCTION) |

@@ -11,6 +11,21 @@ RegisterRoutes(app);
 
 app.get('/healthz', (req, res) => { res.send('OK'); });
 
+// Inbound Eventbus receiver.
+//
+// The Snapser Eventbus calls this endpoint to DELIVER events to this Snap. It
+// is a RESERVED, root-level URL (like /healthz): no /v1 prefix and no
+// byosnap id. It is intentionally a raw Express route (NOT a tsoa controller)
+// so it stays OUT of the generated OpenAPI spec.
+//
+// express.json() (applied above via bodyParser.json()) populates req.body.
+app.post('/internal/events', (req, res) => {
+    console.log('[eventbus] Received inbound event:', JSON.stringify(req.body));
+    // TODO: Parse req.body and switch on the event subject to route each event
+    //       to the appropriate handler in your business logic.
+    res.sendStatus(200);
+});
+
 // Handle undefined routes
 app.use((req, res) => {
     res.status(404).send({ message: 'Not Found' });

@@ -6,6 +6,15 @@ A minimal starter scaffold for a new Python BYOSnap, built with Flask. Every end
 - The main application logic is in **app.py**
 - This example is built using Flask and is served via gunicorn
 
+## Eventbus
+This scaffold ships with best-effort stubs showing how to work with the Snapser Eventbus for custom BYO events. All three pieces live in `app.py`:
+
+1. **`register_event_types()`** — Runs once on server startup and registers this Snap's custom event types with the Eventbus (`PUT /v1/eventbus/byo/event-types/byosnap-core`). It is best-effort: failures are logged and swallowed so they can never crash the app or block boot / `/healthz`. Registration is idempotent, so it is safe to run per gunicorn worker. Customize the `event_types` list to declare your own events.
+2. **`publish_event(subject, recipients, message)`** — A reusable helper stub that publishes an event to the Eventbus (`POST /v1/eventbus/byo/events/byosnap-core/<subject>`). It is not wired into any endpoint by default; call it from your business logic once you are ready to emit events.
+3. **`POST /internal/events`** — A reserved inbound receiver. The Eventbus calls this URL to deliver events to your Snap. It is root-level (no `/v1` prefix and no byosnap id, like `/healthz`) and is intentionally kept out of the generated SDK spec (`generate_swagger.py`). The stub logs the raw body; add your own parsing and subject-based routing.
+
+Outbound calls to the Eventbus use the `SNAPEND_EVENTBUS_HTTP_URL` environment variable as the base URL (Snapser injects it when the Eventbus Snap is part of your Snapend) plus a `Gateway: internal` header (value from `SNAPEND_INTERNAL_HEADER`, default `internal`). If `SNAPEND_EVENTBUS_HTTP_URL` is empty, the helpers log a notice and skip. NOTE: confirm the exact env var name for your Snapend — it may differ (e.g. `SNAPEND_EVENT_BUS_HTTP_URL`).
+
 ## Pre-Requisites
 
 ### A. Python Virtual Environment

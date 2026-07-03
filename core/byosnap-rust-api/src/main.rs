@@ -173,6 +173,199 @@ fn default_characters_payload() -> HashMap<String, SettingsSchema> {
 }
 
 // ===========================================================================
+// Snapser Eventbus integration (stubs)
+//
+// The Eventbus lets Snaps publish custom events and receive events delivered by
+// other Snaps within the same Snapend. Three pieces live here:
+//
+//   1. register_event_types() - declare the custom event types this Snap emits.
+//      Called ONCE on startup (see main()). BEST-EFFORT: it logs success or
+//      failure and never panics, so a missing/unreachable Eventbus can never
+//      crash boot or block the /healthz probe.
+//   2. publish_event(...)     - publish a single event onto the bus. A reusable
+//      BEST-EFFORT helper you can call from your own business logic.
+//   3. event_handler(...)     - inbound receiver the Eventbus POSTs events to.
+//      Wired as a reserved, root-level route in main() (see /internal/events).
+//
+// Internal Snap-to-Snap calls go through the internal gateway: use the base URL
+// from SNAPEND_EVENTBUS_HTTP_URL and send the `Gateway: internal` header (its
+// value comes from SNAPEND_INTERNAL_HEADER, defaulting to "internal").
+// ===========================================================================
+
+const EVENTBUS_HTTP_URL_ENV_KEY: &str = "SNAPEND_EVENTBUS_HTTP_URL";
+const INTERNAL_HEADER_ENV_KEY: &str = "SNAPEND_INTERNAL_HEADER";
+
+// How long to wait on an Eventbus HTTP call before giving up.
+const EVENTBUS_REQUEST_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(5);
+
+// Value of the `Gateway` header that marks a call as internal (Snap-to-Snap).
+fn internal_header_value() -> String {
+    std::env::var(INTERNAL_HEADER_ENV_KEY).unwrap_or_else(|_| GATEWAY_INTERNAL.to_string())
+}
+
+/// Register the custom event types this Snap publishes.
+///
+/// Call this ONCE on startup (see main()). It is BEST-EFFORT: it logs success
+/// or failure and never panics, so a missing/unreachable Eventbus can never
+/// crash the process or block the /healthz probe.
+///
+/// `PUT {SNAPEND_EVENTBUS_HTTP_URL}/v1/eventbus/byo/event-types/{BYOSNAP_ID}`
+async fn register_event_types() {
+    let base = std::env::var(EVENTBUS_HTTP_URL_ENV_KEY).unwrap_or_default();
+    if base.is_empty() {
+        log::info!(
+            "[eventbus] {} not set - skipping event type registration.",
+            EVENTBUS_HTTP_URL_ENV_KEY
+        );
+        return;
+    }
+
+    let url = format!("{}/v1/eventbus/byo/event-types/{}", base, BYOSNAP_ID);
+
+    // TODO: Customize the event types your Snap publishes. Each entry declares
+    //       one subject the Eventbus will accept from this Snap.
+    let body = serde_json::json!({
+        "event_types": [
+            {
+                "subject": "byosnap-core.example.created",
+                "service_name": "byosnap-core",
+                "message_type": "example",
+                "event_type_id": 0,
+                "event_type_enum_value": 0,
+                "description": "Example custom event registered by byosnap-core"
+            }
+        ]
+    });
+
+    let client = match reqwest::Client::builder()
+        .timeout(EVENTBUS_REQUEST_TIMEOUT)
+        .build()
+    {
+        Ok(c) => c,
+        Err(err) => {
+            log::warn!("[eventbus] Failed to build HTTP client: {}", err);
+            return;
+        }
+    };
+
+    match client
+        .put(&url)
+        .header("Content-Type", "application/json")
+        .header(GATEWAY_HEADER_KEY, internal_header_value())
+        .json(&body)
+        .send()
+        .await
+    {
+        Ok(resp) if resp.status().is_success() => {
+            log::info!("[eventbus] Registered event types successfully.");
+        }
+        Ok(resp) => {
+            log::warn!(
+                "[eventbus] Event type registration returned HTTP {}.",
+                resp.status()
+            );
+        }
+        Err(err) => {
+            // Best-effort: log and move on. Never propagate.
+            log::warn!("[eventbus] Failed to register event types: {}", err);
+        }
+    }
+}
+
+/// Publish a single event onto the Eventbus.
+///
+/// Reusable BEST-EFFORT helper: it logs and swallows errors so a publish never
+/// breaks your request flow. Call it from your own business logic wherever you
+/// want to emit an event.
+///
+/// `POST {SNAPEND_EVENTBUS_HTTP_URL}/v1/eventbus/byo/events/{BYOSNAP_ID}/{subject}`
+///
+/// # Arguments
+/// * `subject`    - The event subject, e.g. `"byosnap-core.example.created"`.
+/// * `recipients` - Recipient user IDs the event should be delivered to.
+/// * `message`    - Arbitrary event payload (serialized as JSON).
+///
+/// # Example
+/// ```ignore
+/// publish_event(
+///     "byosnap-core.example.created",
+///     vec!["user-123".to_string()],
+///     serde_json::json!({ "example_id": "abc", "name": "My Example" }),
+/// )
+/// .await;
+/// ```
+#[allow(dead_code)]
+async fn publish_event(subject: &str, recipients: Vec<String>, message: serde_json::Value) {
+    let base = std::env::var(EVENTBUS_HTTP_URL_ENV_KEY).unwrap_or_default();
+    if base.is_empty() {
+        log::info!(
+            "[eventbus] {} not set - skipping publish_event.",
+            EVENTBUS_HTTP_URL_ENV_KEY
+        );
+        return;
+    }
+
+    let url = format!("{}/v1/eventbus/byo/events/{}/{}", base, BYOSNAP_ID, subject);
+
+    // TODO: Set event_type_id to match the registered event type for `subject`,
+    //       and populate `payload` if your consumers expect a raw string body.
+    let body = serde_json::json!({
+        "event_type_id": 0,
+        "message": message,
+        "payload": "",
+        "recipients": recipients,
+    });
+
+    let client = match reqwest::Client::builder()
+        .timeout(EVENTBUS_REQUEST_TIMEOUT)
+        .build()
+    {
+        Ok(c) => c,
+        Err(err) => {
+            log::warn!("[eventbus] Failed to build HTTP client: {}", err);
+            return;
+        }
+    };
+
+    match client
+        .post(&url)
+        .header("Content-Type", "application/json")
+        .header(GATEWAY_HEADER_KEY, internal_header_value())
+        .json(&body)
+        .send()
+        .await
+    {
+        Ok(resp) if resp.status().is_success() => {
+            log::info!("[eventbus] Published event \"{}\".", subject);
+        }
+        Ok(resp) => {
+            log::warn!(
+                "[eventbus] Publishing \"{}\" returned HTTP {}.",
+                subject,
+                resp.status()
+            );
+        }
+        Err(err) => {
+            // Best-effort: log and move on. Never propagate.
+            log::warn!("[eventbus] Failed to publish event \"{}\": {}", subject, err);
+        }
+    }
+}
+
+/// Inbound Eventbus receiver.
+///
+/// The Snapser Eventbus calls this endpoint to DELIVER events to this Snap. It
+/// is a RESERVED, root-level URL (like /healthz): no /v1 prefix and no byosnap
+/// id.
+async fn event_handler(body: web::Bytes) -> HttpResponse {
+    let raw = String::from_utf8_lossy(&body);
+    log::info!("[eventbus] Received inbound event: {}", raw);
+    // TODO: Parse the body and switch on the event subject to route each event
+    //       to the appropriate handler in your business logic.
+    HttpResponse::Ok().finish()
+}
+
+// ===========================================================================
 // Health Check
 // ===========================================================================
 
@@ -445,6 +638,11 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
     log::info!("Starting {} server on :5003", BYOSNAP_ID);
 
+    // Register the custom event types this Snap publishes. BEST-EFFORT: this
+    // logs success/failure and never panics, so it can never block boot or the
+    // /healthz probe even if the Eventbus is missing or unreachable.
+    register_event_types().await;
+
     HttpServer::new(|| {
         let cors = Cors::permissive();
 
@@ -455,6 +653,10 @@ async fn main() -> std::io::Result<()> {
             .wrap(cors)
             // Health check (no prefix)
             .route("/healthz", web::get().to(healthz))
+            // Inbound Eventbus receiver. The Snapser Eventbus POSTs events here
+            // to deliver them to this Snap. RESERVED, root-level URL (like
+            // /healthz): no /v1 prefix and no byosnap id.
+            .route("/internal/events", web::post().to(event_handler))
             // Configuration Tool (Snapser UI Builder)
             .route(
                 &format!("{}/settings", prefix),

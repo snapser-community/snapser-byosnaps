@@ -4,7 +4,7 @@ import { ExportSettingsSchema } from '../models/exportSettingsModel';
 import { CustomSettingsPayload } from '../models/customSettingsModel';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { Request as ExpressRequest } from 'express';
-import { Controller, Route, Get, Put, Post, Delete, Path, Query, Extension, Body, Middlewares, TsoaResponse, Response, Res, Request } from 'tsoa';
+import { Controller, Route, Get, Put, Post, Delete, Path, Query, Extension, Body, Middlewares, TsoaResponse, Response, Res, Request, Hidden } from 'tsoa';
 
 // # @GOTCHAS 👋 - Please read GOTCHAS.md
 
@@ -180,6 +180,7 @@ export class SettingsController extends Controller {
      * @summary Validate Import Settings
      */
     @Post("validate-import")
+    @Hidden()
     @Extension("x-description", 'Validate settings before importing. Snapser sends the settings that are about to be imported - validate if you can accept them.')
     @Extension("x-snapser-auth-types", ["internal"])
     @Response<ExportSettingsSchema>(200, "Settings are valid")
@@ -204,6 +205,7 @@ export class SettingsController extends Controller {
      * @summary User Manager Tool
      */
     @Get("users/{userId}/custom")
+    @Hidden()
     @Extension("x-description", 'Get the user data for the custom HTML User Manager tool.')
     @Extension("x-snapser-auth-types", ["internal"])
     @Response<CustomSettingsPayload>(200, "User data retrieved successfully")
@@ -224,6 +226,7 @@ export class SettingsController extends Controller {
      * @summary User Manager Tool
      */
     @Post("users/{userId}/custom")
+    @Hidden()
     @Extension("x-description", 'Update the user data for the custom HTML User Manager tool.')
     @Extension("x-snapser-auth-types", ["internal"])
     @Response(200, "User data updated successfully")
@@ -248,6 +251,7 @@ export class SettingsController extends Controller {
      * @summary User Data (GDPR)
      */
     @Get("users/{userId}/data")
+    @Hidden()
     @Extension("x-description", 'Get user data. Used by the GDPR tool and the User Manager tool.')
     @Extension("x-snapser-auth-types", ["internal"])
     @Response(200, "User data retrieved successfully")
@@ -269,6 +273,7 @@ export class SettingsController extends Controller {
      * @summary User Data (GDPR)
      */
     @Put("users/{userId}/data")
+    @Hidden()
     @Extension("x-description", 'Update user data. Used by the GDPR tool and the User Manager tool.')
     @Extension("x-snapser-auth-types", ["internal"])
     @Response(200, "User data updated successfully")
@@ -288,6 +293,7 @@ export class SettingsController extends Controller {
      * @summary User Data (GDPR)
      */
     @Delete("users/{userId}/data")
+    @Hidden()
     @Extension("x-description", 'Delete user data. Implements the GDPR right-to-be-forgotten.')
     @Extension("x-snapser-auth-types", ["internal"])
     @Response(200, "User data deleted successfully")

@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ByoSnapCSharp.Filters;
+using ByoSnapCSharp.Utilities;
 
 namespace ByoSnapCSharp
 {
@@ -13,6 +14,13 @@ namespace ByoSnapCSharp
     {
       // Add controllers
       services.AddControllers();
+
+      // Eventbus (custom BYO events). AddHttpClient supplies the HttpClient the
+      // EventbusClient depends on. The hosted service registers this Snap's
+      // custom event types ONCE on startup, in the background, best-effort — it
+      // never blocks boot or crashes the app / /healthz.
+      services.AddHttpClient<EventbusClient>();
+      services.AddHostedService<EventbusRegistrationHostedService>();
 
       // Add CORS policy
       services.AddCors(options =>

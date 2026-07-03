@@ -171,6 +171,12 @@ suspend fun validateAuthorization(
 // =========================================================================
 
 fun main() {
+    // Register this Snap's custom Eventbus event types once, on startup.
+    // BEST-EFFORT: registerEventTypes() never throws, and we run it on a
+    // background thread so a slow/unreachable Eventbus can never delay boot or
+    // the /healthz probe. See Eventbus.kt.
+    Thread { registerEventTypes() }.apply { isDaemon = true }.start()
+
     embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0") {
         module()
     }.start(wait = true)
@@ -212,6 +218,16 @@ fun Application.module() {
         get("/healthz") {
             call.respondText("Ok", status = HttpStatusCode.OK)
         }
+
+        // -----------------------------------------------------------------
+        // Inbound Eventbus receiver: POST /internal/events
+        //
+        // The Snapser Eventbus calls this RESERVED, root-level URL to DELIVER
+        // events to this Snap (no /v1 prefix and no byosnap id, like /healthz).
+        // It is an internal webhook, so it is intentionally kept OUT of
+        // snapser-resources/swagger.json. See Eventbus.kt.
+        // -----------------------------------------------------------------
+        installEventbusReceiver()
 
         // -----------------------------------------------------------------
         // System endpoints Snapser expects.

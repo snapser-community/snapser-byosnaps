@@ -36,6 +36,7 @@ const (
 
 	// Environment Variable Keys
 	StorageHTTPURLEnvKey   = "SNAPEND_STORAGE_HTTP_URL"
+	EventbusHTTPURLEnvKey  = "SNAPEND_EVENTBUS_HTTP_URL"
 	InternalHeaderEnvKey   = "SNAPEND_INTERNAL_HEADER"
 	ByoSnapVersionEnvKey   = "BYOSNAP_VERSION"
 

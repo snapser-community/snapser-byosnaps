@@ -63,6 +63,14 @@ func main() {
 	//   1. The health URL does not take any URL prefix like the other APIs.
 	r.HandleFunc("/healthz", HealthCheckHandler).Methods("GET")
 
+	// Eventbus inbound receiver
+	// @GOTCHAS 👋 - Eventbus Receiver
+	//   1. /internal/events is a RESERVED, root-level URL (like /healthz):
+	//      no /v1 prefix and no BYOSnap id. The Snapser Eventbus POSTs here to
+	//      deliver events. It has no swagger:operation annotation so it stays
+	//      out of the generated SDK spec.
+	r.HandleFunc("/internal/events", eventHandler).Methods("POST")
+
 	// CORS pre-flight override for the example route. gorilla/handlers already
 	// handles CORS globally; registering an explicit OPTIONS handler keeps the
 	// example path reachable from the browser-based API Explorer.
@@ -165,6 +173,11 @@ func main() {
 	// config := snapser_internal.NewConfiguration()
 	// config.Servers[0].URL = os.Getenv(StorageHTTPURLEnvKey)
 	// storageClient = snapser_internal.NewAPIClient(config)
+
+	// Register this Snap's custom event types with the Snapser Eventbus. This
+	// is best-effort: it logs success/failure and never blocks or crashes boot.
+	// See eventbus.go.
+	registerEventTypes()
 
 	// Start server
 	log.Println("Starting server on :5003")
@@ -450,27 +463,7 @@ func UpdateSettingsCustom(w http.ResponseWriter, r *http.Request) {
 // ===========================================================================
 
 // GetUserDataCustom gets the user data for the custom HTML User Manager tool
-// swagger:operation GET /v1/byosnap-core/settings/users/{user_id}/custom getUserDataCustom
-// ---
-// summary: User Manager Tool
-// description: Get the user data for the custom HTML User Manager tool.
-// operationId: GetUserDataCustom
-// x-snapser-auth-types: ["internal"]
-// parameters:
-//   - name: user_id
-//     in: path
-//     required: true
-//     type: string
-//
-// responses:
-//   200:
-//     description: User data retrieved successfully
-//     schema:
-//       $ref: '#/definitions/CustomSettingsPayload'
-//   401:
-//     description: Unauthorized access
-//     schema:
-//       $ref: '#/definitions/ErrorResponseSchema'
+// GetUserDataCustom — internal hook; intentionally not in the SDK spec.
 func GetUserDataCustom(w http.ResponseWriter, r *http.Request) {
 	// vars := mux.Vars(r)
 	// userID := vars["user_id"]
@@ -483,30 +476,7 @@ func GetUserDataCustom(w http.ResponseWriter, r *http.Request) {
 }
 
 // UpdateUserDataCustom updates the user data for the custom HTML User Manager tool
-// swagger:operation POST /v1/byosnap-core/settings/users/{user_id}/custom updateUserDataCustom
-// ---
-// summary: User Manager Tool
-// description: Update the user data for the custom HTML User Manager tool.
-// operationId: UpdateUserDataCustom
-// x-snapser-auth-types: ["internal"]
-// parameters:
-//   - name: user_id
-//     in: path
-//     required: true
-//     type: string
-//   - name: body
-//     in: body
-//     required: true
-//     schema:
-//       $ref: '#/definitions/CustomSettingsPayload'
-//
-// responses:
-//   200:
-//     description: User data updated successfully
-//   500:
-//     description: Server error
-//     schema:
-//       $ref: '#/definitions/ErrorResponseSchema'
+// UpdateUserDataCustom — internal hook; intentionally not in the SDK spec.
 func UpdateUserDataCustom(w http.ResponseWriter, r *http.Request) {
 	// vars := mux.Vars(r)
 	// userID := vars["user_id"]
@@ -609,28 +579,7 @@ func ImportSettings(w http.ResponseWriter, r *http.Request) {
 }
 
 // ValidateImportSettings validates settings before importing
-// swagger:operation POST /v1/byosnap-core/settings/validate-import validateImportSettings
-// ---
-// summary: Validate Import Settings
-// description: Validate settings before importing. Snapser sends the settings that are about to be imported - validate if you can accept them.
-// operationId: ValidateImportSettings
-// x-snapser-auth-types: ["internal"]
-// parameters:
-//   - name: body
-//     in: body
-//     required: true
-//     schema:
-//       $ref: '#/definitions/ExportSettingsSchema'
-//
-// responses:
-//   200:
-//     description: Settings are valid
-//     schema:
-//       $ref: '#/definitions/ExportSettingsSchema'
-//   500:
-//     description: Invalid settings
-//     schema:
-//       $ref: '#/definitions/ErrorResponseSchema'
+// ValidateImportSettings — internal hook; intentionally not in the SDK spec.
 func ValidateImportSettings(w http.ResponseWriter, r *http.Request) {
 	var settingsData ExportSettingsSchema
 	if err := json.NewDecoder(r.Body).Decode(&settingsData); err != nil {
@@ -649,29 +598,7 @@ func ValidateImportSettings(w http.ResponseWriter, r *http.Request) {
 // ===========================================================================
 
 // GetUserData gets user data (GDPR)
-// swagger:operation GET /v1/byosnap-core/settings/users/{user_id}/data getUserData
-// ---
-// summary: User Data (GDPR)
-// description: Get user data. Used by the GDPR tool and the User Manager tool.
-// operationId: GetUserData
-// x-snapser-auth-types: ["internal"]
-// parameters:
-//   - name: user_id
-//     in: path
-//     required: true
-//     type: string
-//
-// responses:
-//   200:
-//     description: User data retrieved successfully
-//   400:
-//     description: No data found
-//     schema:
-//       $ref: '#/definitions/ErrorResponseSchema'
-//   401:
-//     description: Unauthorized access
-//     schema:
-//       $ref: '#/definitions/ErrorResponseSchema'
+// GetUserData — internal hook; intentionally not in the SDK spec.
 func GetUserData(w http.ResponseWriter, r *http.Request) {
 	// vars := mux.Vars(r)
 	// userID := vars["user_id"]
@@ -682,25 +609,7 @@ func GetUserData(w http.ResponseWriter, r *http.Request) {
 }
 
 // UpdateUserData updates user data (GDPR)
-// swagger:operation PUT /v1/byosnap-core/settings/users/{user_id}/data updateUserData
-// ---
-// summary: User Data (GDPR)
-// description: Update user data. Used by the GDPR tool and the User Manager tool.
-// operationId: UpdateUserData
-// x-snapser-auth-types: ["internal"]
-// parameters:
-//   - name: user_id
-//     in: path
-//     required: true
-//     type: string
-//
-// responses:
-//   200:
-//     description: User data updated successfully
-//   401:
-//     description: Unauthorized access
-//     schema:
-//       $ref: '#/definitions/ErrorResponseSchema'
+// UpdateUserData — internal hook; intentionally not in the SDK spec.
 func UpdateUserData(w http.ResponseWriter, r *http.Request) {
 	// vars := mux.Vars(r)
 	// userID := vars["user_id"]
@@ -710,29 +619,7 @@ func UpdateUserData(w http.ResponseWriter, r *http.Request) {
 }
 
 // DeleteUserData deletes user data (GDPR right-to-be-forgotten)
-// swagger:operation DELETE /v1/byosnap-core/settings/users/{user_id}/data deleteUserData
-// ---
-// summary: User Data (GDPR)
-// description: Delete user data. Implements the GDPR right-to-be-forgotten.
-// operationId: DeleteUserData
-// x-snapser-auth-types: ["internal"]
-// parameters:
-//   - name: user_id
-//     in: path
-//     required: true
-//     type: string
-//
-// responses:
-//   200:
-//     description: User data deleted successfully
-//   400:
-//     description: No blob found
-//     schema:
-//       $ref: '#/definitions/ErrorResponseSchema'
-//   401:
-//     description: Unauthorized access
-//     schema:
-//       $ref: '#/definitions/ErrorResponseSchema'
+// DeleteUserData — internal hook; intentionally not in the SDK spec.
 func DeleteUserData(w http.ResponseWriter, r *http.Request) {
 	// vars := mux.Vars(r)
 	// userID := vars["user_id"]

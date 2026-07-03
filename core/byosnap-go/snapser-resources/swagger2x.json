@@ -43,7 +43,9 @@
           "api-key",
           "internal"
         ],
-        "x-snapser-sdk-categories": ["admin"]
+        "x-snapser-sdk-categories": [
+          "admin"
+        ]
       }
     },
     "/v1/byosnap-core/example/api-key": {
@@ -128,7 +130,9 @@
         "x-snapser-auth-types": [
           "internal"
         ],
-        "x-snapser-sdk-categories": ["admin"]
+        "x-snapser-sdk-categories": [
+          "admin"
+        ]
       },
       "put": {
         "description": "Update the settings for this Snap's Configuration Tool. This endpoint is called by the Snapser Configuration Tool.",
@@ -177,7 +181,9 @@
         "x-snapser-auth-types": [
           "internal"
         ],
-        "x-snapser-sdk-categories": ["admin"]
+        "x-snapser-sdk-categories": [
+          "admin"
+        ]
       }
     },
     "/v1/byosnap-core/settings/custom": {
@@ -214,7 +220,9 @@
         "x-snapser-auth-types": [
           "internal"
         ],
-        "x-snapser-sdk-categories": ["admin"]
+        "x-snapser-sdk-categories": [
+          "admin"
+        ]
       },
       "put": {
         "description": "Update the settings from the custom HTML configuration tool.",
@@ -254,7 +262,9 @@
         "x-snapser-auth-types": [
           "internal"
         ],
-        "x-snapser-sdk-categories": ["admin"]
+        "x-snapser-sdk-categories": [
+          "admin"
+        ]
       }
     },
     "/v1/byosnap-core/settings/export": {
@@ -311,202 +321,6 @@
           },
           "500": {
             "description": "Server error",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponseSchema"
-            }
-          }
-        },
-        "x-snapser-auth-types": [
-          "internal"
-        ]
-      }
-    },
-    "/v1/byosnap-core/settings/users/{user_id}/custom": {
-      "get": {
-        "description": "Get the user data for the custom HTML User Manager tool.",
-        "summary": "User Manager Tool",
-        "operationId": "GetUserDataCustom",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "user_id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User data retrieved successfully",
-            "schema": {
-              "$ref": "#/definitions/CustomSettingsPayload"
-            }
-          },
-          "401": {
-            "description": "Unauthorized access",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponseSchema"
-            }
-          }
-        },
-        "x-snapser-auth-types": [
-          "internal"
-        ]
-      },
-      "post": {
-        "description": "Update the user data for the custom HTML User Manager tool.",
-        "summary": "User Manager Tool",
-        "operationId": "UpdateUserDataCustom",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "user_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/CustomSettingsPayload"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User data updated successfully"
-          },
-          "500": {
-            "description": "Server error",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponseSchema"
-            }
-          }
-        },
-        "x-snapser-auth-types": [
-          "internal"
-        ]
-      }
-    },
-    "/v1/byosnap-core/settings/users/{user_id}/data": {
-      "get": {
-        "description": "Get user data. Used by the GDPR tool and the User Manager tool.",
-        "summary": "User Data (GDPR)",
-        "operationId": "GetUserData",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "user_id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User data retrieved successfully"
-          },
-          "400": {
-            "description": "No data found",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponseSchema"
-            }
-          },
-          "401": {
-            "description": "Unauthorized access",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponseSchema"
-            }
-          }
-        },
-        "x-snapser-auth-types": [
-          "internal"
-        ]
-      },
-      "put": {
-        "description": "Update user data. Used by the GDPR tool and the User Manager tool.",
-        "summary": "User Data (GDPR)",
-        "operationId": "UpdateUserData",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "user_id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User data updated successfully"
-          },
-          "401": {
-            "description": "Unauthorized access",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponseSchema"
-            }
-          }
-        },
-        "x-snapser-auth-types": [
-          "internal"
-        ]
-      },
-      "delete": {
-        "description": "Delete user data. Implements the GDPR right-to-be-forgotten.",
-        "summary": "User Data (GDPR)",
-        "operationId": "DeleteUserData",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "user_id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User data deleted successfully"
-          },
-          "400": {
-            "description": "No blob found",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponseSchema"
-            }
-          },
-          "401": {
-            "description": "Unauthorized access",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponseSchema"
-            }
-          }
-        },
-        "x-snapser-auth-types": [
-          "internal"
-        ]
-      }
-    },
-    "/v1/byosnap-core/settings/validate-import": {
-      "post": {
-        "description": "Validate settings before importing. Snapser sends the settings that are about to be imported - validate if you can accept them.",
-        "summary": "Validate Import Settings",
-        "operationId": "ValidateImportSettings",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ExportSettingsSchema"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Settings are valid",
-            "schema": {
-              "$ref": "#/definitions/ExportSettingsSchema"
-            }
-          },
-          "500": {
-            "description": "Invalid settings",
             "schema": {
               "$ref": "#/definitions/ErrorResponseSchema"
             }
