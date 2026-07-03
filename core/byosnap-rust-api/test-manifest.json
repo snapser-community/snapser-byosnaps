@@ -1,0 +1,194 @@
+{
+  "version": "v1",
+  "name": "rust-test",
+  "environment": "DEVELOPMENT",
+  "service_definitions": [
+    {
+      "id": "auth",
+      "language": "go",
+      "version": "v1.5.0",
+      "author_id": "snapser",
+      "category": "SNAPSER",
+      "subcategory": "SERVICE",
+      "data_dependencies": [
+        {
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "auth"
+          }
+        },
+        {
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "auth_settings"
+          }
+        },
+        {
+          "type": "REDIS",
+          "redis": {}
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "id": "auth",
+      "data": {
+        "dev": {
+          "anon": {
+            "enabled": true
+          },
+          "api_keys": [],
+          "app_auth": null,
+          "app_verify": null,
+          "apple": null,
+          "disable_user_creation": false,
+          "discord": null,
+          "email": null,
+          "email_password": null,
+          "epic": null,
+          "facebook": null,
+          "fixed_rate_limiter_settings": [
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "email_login"
+            },
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "email_verification"
+            },
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "account_recovery"
+            }
+          ],
+          "google": null,
+          "password": null,
+          "session_inactivity_timeout": 604800,
+          "session_token_validity": 2592000,
+          "single_session_per_user": false,
+          "steam": null,
+          "user_auth_restrictions": [],
+          "username_password": null,
+          "x": null,
+          "xbox": null
+        },
+        "email_templates": [],
+        "prod": {
+          "anon": null,
+          "api_keys": [],
+          "app_auth": null,
+          "app_verify": null,
+          "apple": null,
+          "disable_user_creation": false,
+          "discord": null,
+          "email": null,
+          "email_password": null,
+          "epic": null,
+          "facebook": null,
+          "fixed_rate_limiter_settings": [
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "email_login"
+            },
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "email_verification"
+            },
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "account_recovery"
+            }
+          ],
+          "google": null,
+          "password": null,
+          "session_inactivity_timeout": 604800,
+          "session_token_validity": 2592000,
+          "single_session_per_user": false,
+          "steam": null,
+          "user_auth_restrictions": [],
+          "username_password": null,
+          "x": null,
+          "xbox": null
+        },
+        "stage": {
+          "anon": {
+            "enabled": true
+          },
+          "api_keys": [],
+          "app_auth": null,
+          "app_verify": null,
+          "apple": null,
+          "disable_user_creation": false,
+          "discord": null,
+          "email": null,
+          "email_password": null,
+          "epic": null,
+          "facebook": null,
+          "fixed_rate_limiter_settings": [
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "email_login"
+            },
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "email_verification"
+            },
+            {
+              "allow_list": [],
+              "deny_list": [],
+              "duration_in_seconds": 60,
+              "limit": 5,
+              "lockout_duration_in_seconds": 60,
+              "type": "account_recovery"
+            }
+          ],
+          "google": null,
+          "password": null,
+          "session_inactivity_timeout": 604800,
+          "session_token_validity": 2592000,
+          "single_session_per_user": false,
+          "steam": null,
+          "user_auth_restrictions": [],
+          "username_password": null,
+          "x": null,
+          "xbox": null
+        }
+      },
+      "version": "v1.5.0",
+      "exported_at": "1774376302"
+    }
+  ]
+}

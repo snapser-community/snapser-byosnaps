@@ -1,0 +1,737 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "BYOSnap Core C# Example",
+    "description": "A minimal starter scaffold for a C# BYOSnap. Every endpoint Snapser expects is present but stubbed. See advanced/ByoSnapCSharp for full implementations.",
+    "termsOfService": "https://snapser.com/resources/tos",
+    "contact": {
+      "name": "Snapser Admin",
+      "url": "https://twitter.com/example",
+      "email": "admin@snapser.com"
+    },
+    "version": "v1"
+  },
+  "paths": {
+    "/v1/byosnap-core/users/{UserId}/example": {
+      "get": {
+        "tags": [
+          "Example"
+        ],
+        "summary": "Example: User Auth",
+        "description": "Accessible by a logged-in user, validated against the User-Id in their token. Surfaces in the client/game SDK.",
+        "operationId": "ExampleUserAuth",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessageSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "user"
+        ]
+      }
+    },
+    "/v1/byosnap-core/example/api-key": {
+      "get": {
+        "tags": [
+          "Example"
+        ],
+        "summary": "Example: Api-Key Auth",
+        "description": "Accessible with a valid API key. Use for trusted server-to-server calls.",
+        "operationId": "ExampleApiKeyAuth",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessageSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "api-key"
+        ]
+      }
+    },
+    "/v1/byosnap-core/example/internal": {
+      "get": {
+        "tags": [
+          "Example"
+        ],
+        "summary": "Example: Internal Auth",
+        "description": "Callable only by other Snaps within the same Snapend (internal gateway). Surfaces in the internal SDK.",
+        "operationId": "ExampleInternalAuth",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessageSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "internal"
+        ]
+      }
+    },
+    "/v1/byosnap-core/example/admin": {
+      "get": {
+        "tags": [
+          "Example"
+        ],
+        "summary": "Example: Admin SDK",
+        "description": "Exposed over api-key + internal auth and surfaced in the Admin SDK via x-snapser-sdk-categories.",
+        "operationId": "ExampleAdminSdk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessageSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "api-key",
+          "internal"
+        ],
+        "x-snapser-sdk-categories": ["admin"]
+      }
+    },
+    "/v1/byosnap-core/users/{UserId}/example/multi-auth": {
+      "get": {
+        "tags": [
+          "Example"
+        ],
+        "summary": "Example: Multi Auth",
+        "description": "One endpoint reachable by a logged-in user, a valid API key, or an internal Snap. List every auth type you want to allow — no need for a separate route per type.",
+        "operationId": "ExampleMultiAuth",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessageSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "user",
+          "api-key",
+          "internal"
+        ]
+      }
+    },
+    "/v1/byosnap-core/settings/export": {
+      "get": {
+        "tags": [
+          "ExportImport"
+        ],
+        "summary": "Export Settings",
+        "description": "Export all settings across environments (dev, stage, prod) for Snapend Sync/Clone.",
+        "operationId": "ExportSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExportSettingsSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "internal"
+        ]
+      }
+    },
+    "/v1/byosnap-core/settings/import": {
+      "post": {
+        "tags": [
+          "ExportImport"
+        ],
+        "summary": "Import Settings",
+        "description": "Import settings across environments (dev, stage, prod) for Snapend Sync/Clone.",
+        "operationId": "ImportSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportSettingsSchema"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportSettingsSchema"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportSettingsSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessageSchema"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessageSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "internal"
+        ]
+      }
+    },
+    "/v1/byosnap-core/settings": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Configuration Tool",
+        "description": "Get the settings for the characters microservice. This endpoint is called by the Snapser Configuration Tool.",
+        "operationId": "GetSettings",
+        "parameters": [
+          {
+            "name": "tool_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "environment",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "internal"
+        ],
+        "x-snapser-sdk-categories": ["admin"]
+      },
+      "put": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Configuration Tool",
+        "description": "Update the settings for the characters microservice. This endpoint is called by the Snapser Configuration Tool.",
+        "operationId": "UpdateSettings",
+        "parameters": [
+          {
+            "name": "tool_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "environment",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { }
+            },
+            "text/json": {
+              "schema": { }
+            },
+            "application/*+json": {
+              "schema": { }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "internal"
+        ],
+        "x-snapser-sdk-categories": ["admin"]
+      }
+    },
+    "/v1/byosnap-core/settings/custom": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Custom Configuration Tool",
+        "description": "Get the settings for the custom HTML configuration tool.",
+        "operationId": "GetSettingsCustom",
+        "parameters": [
+          {
+            "name": "tool_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "environment",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomSettingsPayload"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "internal"
+        ],
+        "x-snapser-sdk-categories": ["admin"]
+      },
+      "put": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Custom Configuration Tool",
+        "description": "Update the settings from the custom HTML configuration tool.",
+        "operationId": "UpdateSettingsCustom",
+        "parameters": [
+          {
+            "name": "tool_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "environment",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { }
+            },
+            "text/json": {
+              "schema": { }
+            },
+            "application/*+json": {
+              "schema": { }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "x-snapser-auth-types": [
+          "internal"
+        ],
+        "x-snapser-sdk-categories": ["admin"]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CustomSettingsPayload": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExportSettingsSchema": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "exportedAt": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/SettingsSchema"
+              }
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GroupComponentItemSchema": {
+        "type": "object",
+        "properties": {
+          "componentOne": {
+            "$ref": "#/components/schemas/SettingsComponentSchema"
+          },
+          "componentTwo": {
+            "$ref": "#/components/schemas/SettingsComponentSchema"
+          },
+          "componentThree": {
+            "$ref": "#/components/schemas/SettingsComponentSchema"
+          },
+          "componentFour": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SettingsComponentSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "nullable": true
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GroupComponentItemSchema"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SettingsSchema": {
+        "type": "object",
+        "properties": {
+          "sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SettingsSectionSchema"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SettingsSectionSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SettingsComponentSchema"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuccessMessageSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

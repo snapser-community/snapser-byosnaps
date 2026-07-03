@@ -1,0 +1,540 @@
+{
+    "paths": {
+        "/v1/byosnap-core/settings/export": {
+            "get": {
+                "summary": "Export Settings",
+                "description": "Export Settings",
+                "operationId": "Export Settings",
+                "x-snapser-auth-types": [
+                    "internal"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExportSettingsSchema"
+                                }
+                            }
+                        },
+                        "description": "Settings retrieved successfully"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-core/settings/import": {
+            "post": {
+                "summary": "Import Settings",
+                "description": "Import Settings",
+                "operationId": "Import Settings",
+                "x-snapser-auth-types": [
+                    "internal"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ExportSettingsSchema"
+                            }
+                        }
+                    },
+                    "description": "ExportSettingsSchema payload"
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageSchema"
+                                }
+                            }
+                        },
+                        "description": "SettingsSchema saved successfully"
+                    },
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageSchema"
+                                }
+                            }
+                        },
+                        "description": "SettingsSchema created successfully"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Error saving settings"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Server Exception"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-core/settings": {
+            "put": {
+                "summary": "Update Settings",
+                "description": "Put",
+                "operationId": "Update Settings",
+                "x-snapser-auth-types": [
+                    "internal"
+                ],
+                "x-snapser-sdk-categories": ["admin"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SettingsSchema"
+                            }
+                        }
+                    },
+                    "description": "Settings payload"
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageSchema"
+                                }
+                            }
+                        },
+                        "description": "Settings updated successfully"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Error updating settings"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Server Exception"
+                    }
+                }
+            },
+            "get": {
+                "summary": "Configuration Tool",
+                "description": "Get the settings for the Configuration Tool.",
+                "operationId": "Get Settings",
+                "x-snapser-auth-types": [
+                    "internal"
+                ],
+                "x-snapser-sdk-categories": ["admin"],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SettingsSchema"
+                                }
+                            }
+                        },
+                        "description": "Settings retrieved successfully"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-core/settings/custom": {
+            "get": {
+                "summary": "Custom Configuration Tool",
+                "description": "Get the settings for the custom HTML Configuration Tool.",
+                "operationId": "Get Settings Custom",
+                "x-snapser-auth-types": [
+                    "internal"
+                ],
+                "x-snapser-sdk-categories": ["admin"],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageSchema"
+                                }
+                            }
+                        },
+                        "description": "Settings retrieved successfully"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Custom Configuration Tool",
+                "description": "Update the settings for the custom HTML Configuration Tool.",
+                "operationId": "Update Settings Custom",
+                "x-snapser-auth-types": [
+                    "internal"
+                ],
+                "x-snapser-sdk-categories": ["admin"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SettingsSchema"
+                            }
+                        }
+                    },
+                    "description": "Settings payload"
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageSchema"
+                                }
+                            }
+                        },
+                        "description": "Settings updated successfully"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                                }
+                            }
+                        },
+                        "description": "Server Exception"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-core/users/{user_id}/example": {
+            "get": {
+                "summary": "Example: User Auth",
+                "description": "Accessible by a logged-in user, validated against the User-Id in their token. Surfaces in the client/game SDK.",
+                "operationId": "ExampleUserAuth",
+                "x-snapser-auth-types": [
+                    "user"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "user_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageSchema"
+                                }
+                            }
+                        },
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-core/example/api-key": {
+            "get": {
+                "summary": "Example: Api-Key Auth",
+                "description": "Accessible with a valid API key. Use for trusted server-to-server calls.",
+                "operationId": "ExampleApiKeyAuth",
+                "x-snapser-auth-types": [
+                    "api-key"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageSchema"
+                                }
+                            }
+                        },
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-core/example/internal": {
+            "get": {
+                "summary": "Example: Internal Auth",
+                "description": "Callable only by other Snaps within the same Snapend (internal gateway). Surfaces in the internal SDK.",
+                "operationId": "ExampleInternalAuth",
+                "x-snapser-auth-types": [
+                    "internal"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageSchema"
+                                }
+                            }
+                        },
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-core/example/admin": {
+            "get": {
+                "summary": "Example: Admin SDK",
+                "description": "Exposed over api-key + internal auth and surfaced in the Admin SDK via x-snapser-sdk-categories.",
+                "operationId": "ExampleAdminSdk",
+                "x-snapser-auth-types": [
+                    "api-key",
+                    "internal"
+                ],
+                "x-snapser-sdk-categories": ["admin"],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageSchema"
+                                }
+                            }
+                        },
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/v1/byosnap-core/users/{user_id}/example/multi-auth": {
+            "get": {
+                "summary": "Example: Multi Auth",
+                "description": "One endpoint reachable by a logged-in user, a valid API key, or an internal Snap. List every auth type you want to allow — no need for a separate route per type.",
+                "operationId": "ExampleMultiAuth",
+                "x-snapser-auth-types": [
+                    "user",
+                    "api-key",
+                    "internal"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "user_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageSchema"
+                                }
+                            }
+                        },
+                        "description": "Success"
+                    }
+                }
+            }
+        }
+    },
+    "info": {
+        "title": "BYOSnap Core Java Example",
+        "version": "1.0.0"
+    },
+    "openapi": "3.0.2",
+    "components": {
+        "schemas": {
+            "UserIdParameterSchema": {
+                "type": "object",
+                "properties": {
+                    "user_id": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CharactersResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "characters": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "characters"
+                ]
+            },
+            "SuccessMessageSchema": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ErrorResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "error_message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "BaseComponent": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "value": {},
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "text",
+                            "textarea",
+                            "number",
+                            "select",
+                            "multi_select",
+                            "checkbox",
+                            "radio",
+                            "group"
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "type"
+                ]
+            },
+            "GroupComponentItem": {
+                "type": "object",
+                "properties": {
+                    "component_four": {
+                        "type": "boolean"
+                    },
+                    "component_three": {
+                        "$ref": "#/components/schemas/BaseComponent"
+                    },
+                    "component_two": {
+                        "$ref": "#/components/schemas/BaseComponent"
+                    },
+                    "component_one": {
+                        "$ref": "#/components/schemas/BaseComponent"
+                    }
+                }
+            },
+            "SectionComponent": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "value": {},
+                    "components": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GroupComponentItem"
+                        }
+                    },
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "type"
+                ]
+            },
+            "ByoToolPayloadSection": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "components": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SectionComponent"
+                        }
+                    }
+                },
+                "required": [
+                    "components",
+                    "id"
+                ]
+            },
+            "SettingsSchema": {
+                "type": "object",
+                "properties": {
+                    "sections": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ByoToolPayloadSection"
+                        }
+                    }
+                },
+                "required": [
+                    "sections"
+                ]
+            },
+            "SettingsEnvironmentData": {
+                "type": "object",
+                "properties": {
+                    "characters": {
+                        "$ref": "#/components/schemas/SettingsSchema"
+                    }
+                },
+                "required": [
+                    "characters"
+                ]
+            },
+            "ExportSettingsSchema": {
+                "type": "object",
+                "properties": {
+                    "exported_at": {
+                        "type": "integer"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/SettingsEnvironmentData"
+                        }
+                    }
+                },
+                "required": [
+                    "data",
+                    "exported_at",
+                    "version"
+                ]
+            }
+        }
+    }
+}
