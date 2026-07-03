@@ -97,6 +97,30 @@ npm run build:swagger
 docker build -t byosnap-node-ts-core .
 ```
 
+## Eventbus
+
+The Snapser Eventbus lets this Snap publish custom events and receive events
+delivered by other Snaps in the same Snapend. The stubs live in `src/eventbus.ts`
+plus a raw inbound route in `src/app.ts`.
+
+Outbound calls go through the internal gateway using the base URL from the
+`SNAPEND_EVENTBUS_HTTP_URL` env var (confirm this exact variable name in your
+Snapend config) and the `Gateway: internal` header (value from
+`SNAPEND_INTERNAL_HEADER`, default `internal`). If `SNAPEND_EVENTBUS_HTTP_URL`
+is empty, the outbound calls no-op.
+
+- **`registerEventTypes()`** — called once on startup from `server.ts`. Best-effort
+  `PUT /v1/eventbus/byo/event-types/byosnap-core` declaring the event types this
+  Snap emits. Never crashes or blocks boot / `/healthz`.
+- **`publishEvent(subject, recipients, message)`** — reusable helper that
+  `POST`s to `/v1/eventbus/byo/events/byosnap-core/{subject}`. Best-effort.
+- **`POST /internal/events`** — reserved, root-level inbound route (no `/v1`
+  prefix, no byosnap id) the Eventbus calls to deliver events. It is a raw
+  Express route, intentionally kept OUT of the generated OpenAPI spec.
+
+Each is a `// TODO` stub — customize the event types, publish payloads, and the
+inbound `switch` on subject for your Snap.
+
 ## Next Steps
 
 Each handler in `settingsController.ts` and `exampleController.ts` is a stub with

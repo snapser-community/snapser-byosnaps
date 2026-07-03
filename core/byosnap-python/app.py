@@ -23,6 +23,7 @@ surfaces in the special Admin SDK. Use them as templates for your own logic.
 '''
 import logging
 import os
+import requests
 from flask import Flask, request, make_response, jsonify
 from flask_cors import CORS, cross_origin
 from functools import wraps
@@ -54,6 +55,14 @@ ALL_AUTH_TYPES = [AUTH_TYPE_HEADER_VALUE_USER_AUTH,
 BYOSNAP_ID = "byosnap-core"
 API_PREFIX = f"/v1/{BYOSNAP_ID}"
 
+# Eventbus (custom BYO events)
+# Base URL of the Eventbus Snap for internal Snap-to-Snap calls. Snapser injects
+# this into your container's environment when the Eventbus Snap is part of the
+# Snapend. It is empty in local dev / when the Eventbus is not attached.
+# TODO: Confirm the exact env var name for your Snapend (it may differ, e.g.
+#       SNAPEND_EVENT_BUS_HTTP_URL) and update this if needed.
+SNAPEND_EVENTBUS_HTTP_URL = os.environ.get('SNAPEND_EVENTBUS_HTTP_URL', "")
+
 
 # Configure logging to display messages of level DEBUG and above
 logging.basicConfig(level=logging.DEBUG,
@@ -64,6 +73,103 @@ logger = logging.getLogger(__name__)
 # App Initialization
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
+
+# Eventbus Helpers
+
+# @GOTCHAS 👋 - Eventbus (custom BYO events)
+#   1. Custom event types are registered ONCE with the Eventbus Snap, keyed by
+#      your BYOSNAP_ID. After that you can publish events to those subjects.
+#   2. Internal Snap-to-Snap calls go to the target Snap's base URL (here the
+#      Eventbus, from SNAPEND_EVENTBUS_HTTP_URL) with a `Gateway: internal`
+#      header (value from SNAPEND_INTERNAL_HEADER, default "internal").
+#   3. All of this is BEST-EFFORT. Registration must never crash the app or
+#      block boot / the /healthz readiness endpoint.
+
+
+def register_event_types():
+    '''
+    Register this Snap's custom event types with the Eventbus Snap.
+
+    Runs ONCE on server startup and is BEST-EFFORT: any failure is logged and
+    swallowed so it can never crash the app or block boot / /healthz. If the
+    Eventbus base URL is not configured (e.g. local dev, or the Eventbus Snap is
+    not part of this Snapend) we log a notice and skip.
+
+    Registration is idempotent, so it is safe to run per gunicorn worker.
+    '''
+    if not SNAPEND_EVENTBUS_HTTP_URL:
+        logger.info(
+            "Eventbus base URL not set; skipping custom event type registration")
+        return
+    try:
+        gateway = os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
+        url = f"{SNAPEND_EVENTBUS_HTTP_URL}/v1/eventbus/byo/event-types/{BYOSNAP_ID}"
+        # TODO: Customize the event types you want to register for this Snap.
+        body = {
+            "event_types": [
+                {
+                    "subject": "byosnap-core.example.created",
+                    "service_name": "byosnap-core",
+                    "message_type": "example",
+                    "event_type_id": 0,
+                    "event_type_enum_value": 0,
+                    "description": "Example custom event registered by byosnap-core"
+                }
+            ]
+        }
+        response = requests.put(
+            url,
+            headers={"Content-Type": "application/json", "Gateway": gateway},
+            json=body
+        )
+        logger.info(
+            "Registered custom event types with the Eventbus (status %s)",
+            response.status_code)
+    except Exception as e:
+        logger.warning("Failed to register custom event types: %s", e)
+
+
+def publish_event(subject, recipients, message):
+    '''
+    Publish a custom event to the Eventbus Snap. BEST-EFFORT helper stub.
+
+    Reusable helper you can call from anywhere in your business logic once you
+    are ready to emit events. Not wired into any endpoint by default.
+
+    Example usage:
+        publish_event(
+            "byosnap-core.example.created",
+            ["user-123"],
+            {"example_id": "abc", "created_at": 1700000000},
+        )
+    '''
+    if not SNAPEND_EVENTBUS_HTTP_URL:
+        logger.info("Eventbus base URL not set; skipping publish for '%s'", subject)
+        return
+    try:
+        gateway = os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
+        url = f"{SNAPEND_EVENTBUS_HTTP_URL}/v1/eventbus/byo/events/{BYOSNAP_ID}/{subject}"
+        # TODO: Set event_type_id to match the event type you registered above,
+        #       and shape `message`/`recipients`/`payload` for your event.
+        body = {
+            "event_type_id": 0,
+            "message": message,
+            "payload": "",
+            "recipients": recipients
+        }
+        response = requests.post(
+            url,
+            headers={"Content-Type": "application/json", "Gateway": gateway},
+            json=body
+        )
+        logger.info("Published event '%s' (status %s)", subject, response.status_code)
+    except Exception as e:
+        logger.warning("Failed to publish event '%s': %s", subject, e)
+
+
+# Register custom event types once at module load. Under multi-worker gunicorn
+# this runs once per worker, which is fine because registration is idempotent.
+register_event_types()
 
 # Decorators
 
@@ -160,6 +266,26 @@ def health():
     Health Check Endpoint
     '''
     return "Ok"
+
+# @GOTCHAS 👋 - Eventbus Inbound Receiver
+#    1. This is a RESERVED URL: root-level, with NO /v1 prefix and NO byosnap id
+#       (just like /healthz). The Eventbus Snap calls this URL to DELIVER events
+#       to your Snap.
+#    2. It is intentionally NOT registered in generate_swagger.py, so it stays
+#       out of the generated SDK spec.
+#
+
+
+@app.route('/internal/events', methods=['POST'])
+def receive_event():
+    '''
+    Inbound Eventbus receiver. The Eventbus Snap POSTs delivered events here.
+    '''
+    raw_body = request.get_data(as_text=True)
+    logger.info("Received event from Eventbus: %s", raw_body)
+    # TODO: Parse the payload and switch on the event subject to route it to the
+    #       right handler in your business logic.
+    return make_response("Ok", 200)
 
 # @GOTCHAS 👋 - Externally available APIs
 #     1. The Snapend Id is NOT part of the URL. This allows you to use the same BYOSnap in multiple Snapends.

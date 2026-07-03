@@ -32,6 +32,7 @@ namespace ByoSnapCSharp.Controllers
     // --- Custom HTML User Manager Tool ---
 
     [HttpGet("custom")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [SnapserAuth(AppConstants.internalAuthType)]
     [ValidateAuthorization(AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CustomSettingsPayload))]
@@ -75,6 +76,7 @@ namespace ByoSnapCSharp.Controllers
     }
 
     [HttpPost("custom")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [SnapserAuth(AppConstants.internalAuthType)]
     [ValidateAuthorization(AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -167,6 +169,7 @@ namespace ByoSnapCSharp.Controllers
     // --- GDPR User Data Endpoints ---
 
     [HttpGet("data")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [SnapserAuth(AppConstants.internalAuthType)]
     [ValidateAuthorization(AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -214,6 +217,7 @@ namespace ByoSnapCSharp.Controllers
     }
 
     [HttpPut("data")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [SnapserAuth(AppConstants.internalAuthType)]
     [ValidateAuthorization(AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -236,6 +240,7 @@ namespace ByoSnapCSharp.Controllers
     }
 
     [HttpDelete("data")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [SnapserAuth(AppConstants.internalAuthType)]
     [ValidateAuthorization(AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK)]

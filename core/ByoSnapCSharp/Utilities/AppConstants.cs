@@ -2,6 +2,9 @@ namespace ByoSnapCSharp.Utilities
 {
   public static class AppConstants
   {
+    // Snap Identity
+    public const string byoSnapId = "byosnap-core";
+
     // Header Keys
     public const string gatewayHeaderKey = "Gateway";
     public const string authTypeHeaderKey = "Auth-Type";
@@ -23,6 +26,9 @@ namespace ByoSnapCSharp.Utilities
     public const string storageHttpUrlEnvKey = "SNAPEND_STORAGE_HTTP_URL";
     public const string internalHeaderEnvKey = "SNAPEND_INTERNAL_HEADER";
     public const string byoSnapVersionEnvKey = "BYOSNAP_VERSION";
+    // TODO: Confirm the exact env var name for your Snapend (it may differ, e.g.
+    //       SNAPEND_EVENT_BUS_HTTP_URL) and update this if needed.
+    public const string eventbusHttpUrlEnvKey = "SNAPEND_EVENTBUS_HTTP_URL";
 
     // Default Values
     public const string defaultInternalHeaderValue = "internal";

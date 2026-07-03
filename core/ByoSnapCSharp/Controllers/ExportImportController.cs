@@ -238,6 +238,7 @@ namespace ByoSnapCSharp.Controllers
     }
 
     [HttpPost("validate-import")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [SnapserAuth(AppConstants.internalAuthType)]
     [ValidateAuthorization(AppConstants.internalAuthType)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ExportSettingsSchema))]

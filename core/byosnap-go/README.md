@@ -115,11 +115,20 @@ Each handler returns a placeholder and carries a `// TODO`. To implement real lo
 3. Uncomment the `snapser_internal` import and `storageClient` variable in `main.go`
 4. Replace each stub body with your logic — see the matching handler in `advanced/byosnap-go`
 
+## Eventbus
+
+The scaffold includes best-effort stubs for the Snapser Eventbus in `eventbus.go`. Internal calls target the Eventbus service at the URL in the `SNAPEND_EVENTBUS_HTTP_URL` env var and carry the `Gateway: internal` header (value from `SNAPEND_INTERNAL_HEADER`, default `internal`). If `SNAPEND_EVENTBUS_HTTP_URL` is not set, the outbound calls are logged and skipped. Three pieces:
+
+- **`registerEventTypes()`** — called once from `main()` on startup. Best-effort: it logs success/failure and never blocks or crashes boot. Sends `PUT {SNAPEND_EVENTBUS_HTTP_URL}/v1/eventbus/byo/event-types/byosnap-core` to declare the custom event types this Snap emits. Edit the `event_types` list (`// TODO`) for your Snap.
+- **`publishEvent(subject, recipients, message)`** — a reusable helper that sends `POST {SNAPEND_EVENTBUS_HTTP_URL}/v1/eventbus/byo/events/byosnap-core/{subject}` to publish an event. It is not wired into any endpoint — call it from your own business logic where an event should fire (see the doc comment in `eventbus.go` for example usage).
+- **Inbound receiver `POST /internal/events`** — a reserved, root-level route (no `/v1` prefix, no BYOSnap id, like `/healthz`) the Eventbus POSTs to in order to deliver events. The `eventHandler` stub reads and logs the body and returns 200; add your parse + subject-switch logic (`// TODO`). It has no `swagger:operation` annotation, so it stays out of the generated SDK spec.
+
 ## Environment Variables
 
 | Variable | Description |
 |----------|-------------|
 | `SNAPEND_STORAGE_HTTP_URL` | Storage service endpoint URL |
+| `SNAPEND_EVENTBUS_HTTP_URL` | Eventbus service endpoint URL (used for registering event types and publishing events; if unset the Eventbus calls are skipped) |
 | `SNAPEND_INTERNAL_HEADER` | Gateway header value for internal calls (default: "internal") |
 | `BYOSNAP_VERSION` | Version string for export responses (default: "v1.0.0") |
 | `SNAPSER_ENVIRONMENT` | Current environment (DEVELOPMENT, STAGING, PRODUCTION) |

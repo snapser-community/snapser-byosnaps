@@ -32,8 +32,14 @@ public final class AppConstants {
 
     // --- Environment Keys ---
     public static final String BYOSNAP_VERSION_ENV_KEY = "BYOSNAP_VERSION";
+    // Base URL of the Eventbus internal HTTP endpoint (injected by Snapser at
+    // runtime). Empty when the Eventbus Snap is not part of this Snapend.
+    public static final String EVENTBUS_HTTP_URL_ENV_KEY = "SNAPEND_EVENTBUS_HTTP_URL";
+    // Env var whose value is sent as the `Gateway` header on internal calls.
+    public static final String INTERNAL_HEADER_ENV_KEY = "SNAPEND_INTERNAL_HEADER";
 
     // --- Defaults ---
     public static final String DEFAULT_BYOSNAP_VERSION = "v1.0.0";
     public static final String DEFAULT_ENVIRONMENT = "DEFAULT";
+    public static final String DEFAULT_INTERNAL_HEADER_VALUE = "internal";
 }
