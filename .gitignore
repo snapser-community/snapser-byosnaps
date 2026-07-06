@@ -110,3 +110,5 @@ node_modules/
 npm-debug.log
 yarn-error.log
 dist/
+# Local secrets/config for the core publish test driver
+core/.publish-and-test-core.env

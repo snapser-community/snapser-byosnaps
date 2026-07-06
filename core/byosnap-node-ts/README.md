@@ -47,8 +47,6 @@ byosnap-node-ts/
     ├── snapser-byosnap-profile.json
     ├── snapser-snapend-manifest.json
     ├── snapser-base-snapend-manifest.json
-    ├── snapser-tool-characters.json
-    ├── _complex-snapser-tool-characters.json
     ├── snapser-config-tool-characters-custom.html
     ├── snapser-user-tool-characters-custom.html
     └── .env
