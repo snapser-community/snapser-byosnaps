@@ -12,12 +12,12 @@
         "internal_ports": []
     },
     "readiness_probe_config": {
-        "initial_delay_seconds": 5,
+        "initial_delay_seconds": 30,
         "path": "/healthz"
     },
     "dev_template": {
-        "cpu": 100,
-        "memory": 0.125,
+        "cpu": 500,
+        "memory": 0.5,
         "min_replicas": 1,
         "cmd": "",
         "args": [],
@@ -29,8 +29,8 @@
         ]
     },
     "stage_template": {
-        "cpu": 100,
-        "memory": 0.125,
+        "cpu": 500,
+        "memory": 0.5,
         "min_replicas": 1,
         "cmd": "",
         "args": [],
@@ -42,8 +42,8 @@
         ]
     },
     "prod_template": {
-        "cpu": 100,
-        "memory": 0.125,
+        "cpu": 500,
+        "memory": 0.5,
         "min_replicas": 2,
         "cmd": "",
         "args": [],

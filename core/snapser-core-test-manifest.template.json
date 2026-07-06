@@ -1,0 +1,176 @@
+{
+  "version": "v1",
+  "id": "n7bu9cmm",
+  "name": "test-snapend",
+  "environment": "DEVELOPMENT",
+  "service_definitions": [
+    {
+      "id": "auth",
+      "language": "go",
+      "version": "v1.11.1",
+      "author_id": "snapser",
+      "category": "SNAPSER",
+      "subcategory": "SERVICE",
+      "data_dependencies": [
+        {
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "auth"
+          }
+        },
+        {
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "auth_settings"
+          }
+        },
+        {
+          "type": "REDIS",
+          "redis": {}
+        }
+      ]
+    },
+    {
+      "id": "byosnap-core",
+      "language": "python",
+      "version": "v1.0.1",
+      "author_id": "fc461565-aad4-47ce-bd7b-aada8fd0b2a3",
+      "category": "BYOSNAP",
+      "subcategory": "SERVICE",
+      "deployment_profile": {
+        "cpu": 100,
+        "memory": 0.125,
+        "min_replicas": 1,
+        "env_params": [
+          {
+            "key": "SNAPSER_ENVIRONMENT",
+            "value": "DEVELOPMENT"
+          }
+        ]
+      }
+    },
+    {
+      "id": "eventbus",
+      "language": "go",
+      "version": "v1.3.0",
+      "author_id": "snapser",
+      "category": "SNAPSER",
+      "subcategory": "SERVICE",
+      "data_dependencies": [
+        {
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "eventbus"
+          }
+        },
+        {
+          "type": "POSTGRES",
+          "postgres": {
+            "database": "eventbus_settings"
+          }
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "id": "byosnap-core",
+      "data": {
+        "dev": {
+          "characters": {
+            "sections": [
+              {
+                "components": [
+                  {
+                    "id": "characters",
+                    "type": "textarea",
+                    "value": ""
+                  }
+                ],
+                "id": "registration"
+              }
+            ]
+          }
+        },
+        "prod": {
+          "characters": {
+            "sections": [
+              {
+                "components": [
+                  {
+                    "id": "characters",
+                    "type": "textarea",
+                    "value": ""
+                  }
+                ],
+                "id": "registration"
+              }
+            ]
+          }
+        },
+        "stage": {
+          "characters": {
+            "sections": [
+              {
+                "components": [
+                  {
+                    "id": "characters",
+                    "type": "textarea",
+                    "value": ""
+                  }
+                ],
+                "id": "registration"
+              }
+            ]
+          }
+        }
+      },
+      "version": "v1.0.1"
+    },
+    {
+      "id": "eventbus",
+      "data": {
+        "dev": {
+          "consumers": [
+            {
+              "created_at": "1783355428",
+              "id": "hermes",
+              "subjects": [
+                ""
+              ],
+              "updated_at": "0",
+              "websocket": {}
+            }
+          ]
+        },
+        "prod": {
+          "consumers": [
+            {
+              "created_at": "1783355428",
+              "id": "hermes",
+              "subjects": [
+                ""
+              ],
+              "updated_at": "0",
+              "websocket": {}
+            }
+          ]
+        },
+        "stage": {
+          "consumers": [
+            {
+              "created_at": "1783355428",
+              "id": "hermes",
+              "subjects": [
+                ""
+              ],
+              "updated_at": "0",
+              "websocket": {}
+            }
+          ]
+        }
+      },
+      "version": "v1.3.0"
+    }
+  ]
+}
