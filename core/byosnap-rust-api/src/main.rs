@@ -43,6 +43,142 @@ const GATEWAY_INTERNAL: &str = "internal";
 // one place instead of editing every route string.
 const BYOSNAP_ID: &str = "byosnap-core";
 
+// Snapser sets this header on every request that enters the Snapend. Forward it
+// on outbound Snap-to-Snap calls and attach it to log lines so Snapser can
+// correlate one request across Snaps.
+const REQUEST_ID_HEADER_KEY: &str = "X-Request-Id";
+
+// ===========================================================================
+// JSON logging for the Snapser Logs tool
+//
+// Snapser expects one JSON object per line on stdout:
+//   - `level`      -> parsed to color the line (debug|info|warn|error)
+//   - `message`    -> the log text
+//   - `timestamp`  -> ISO-8601
+//   - `request-id` -> Snapser correlates all lines of one request across Snaps
+//                     by this field, and samples logs per-request instead of
+//                     per-line. Attach it to every request-scoped line.
+//
+// A custom `log::Log` routes the standard log::info!/warn!/... macros (used by
+// boot-time code and the actix access logger) through the same JSON shape,
+// without a `request-id`. Request handlers use the `log_*` helpers below and
+// pass the id extracted from the incoming request.
+// ===========================================================================
+
+/// ISO-8601 UTC timestamp from the system clock. Hand-rolled civil-date math
+/// (Howard Hinnant's algorithm) because this scaffold has no chrono/time dep.
+fn iso8601_now() -> String {
+    let dur = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default();
+    let secs = dur.as_secs() as i64;
+    let millis = dur.subsec_millis();
+    let (hh, mm, ss) = (secs / 3600 % 24, secs / 60 % 60, secs % 60);
+    let z = secs / 86_400 + 719_468;
+    let era = z / 146_097;
+    let doe = z - era * 146_097;
+    let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let d = doy - (153 * mp + 2) / 5 + 1;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 };
+    let y = yoe + era * 400 + if m <= 2 { 1 } else { 0 };
+    format!(
+        "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}.{:03}Z",
+        y, m, d, hh, mm, ss, millis
+    )
+}
+
+/// Write one JSON log line to stdout in the shape Snapser parses.
+fn log_json(level: &str, message: &str, request_id: Option<&str>) {
+    let mut line = serde_json::json!({
+        "level": level,
+        "message": message,
+        "timestamp": iso8601_now(),
+    });
+    if let Some(rid) = request_id {
+        // Field name must be exactly `request-id` (kebab-case).
+        line["request-id"] = serde_json::Value::String(rid.to_string());
+    }
+    println!("{}", line);
+}
+
+// Request-scoped helpers: pass the id from `request_id(&req)` so Snapser can
+// correlate the line with the request that produced it.
+#[allow(dead_code)]
+fn log_debug(message: &str, request_id: Option<&str>) {
+    log_json("debug", message, request_id);
+}
+fn log_info(message: &str, request_id: Option<&str>) {
+    log_json("info", message, request_id);
+}
+fn log_warn(message: &str, request_id: Option<&str>) {
+    log_json("warn", message, request_id);
+}
+#[allow(dead_code)]
+fn log_error(message: &str, request_id: Option<&str>) {
+    log_json("error", message, request_id);
+}
+
+// X-Request-Id is client-supplied: cap the length and allow only safe chars.
+fn sanitize_request_id(value: &str) -> Option<String> {
+    let truncated: String = value.chars().take(128).collect();
+    if !truncated.is_empty()
+        && truncated
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.'))
+    {
+        Some(truncated)
+    } else {
+        None
+    }
+}
+
+/// Extract the Snapser request id from an incoming request. Do this once at
+/// the top of a handler and pass it to every log call and outbound Snap call.
+/// Returns None for a missing, empty, or invalid header so no line ever
+/// carries an empty or unsafe `request-id`.
+fn request_id(req: &HttpRequest) -> Option<String> {
+    req.headers()
+        .get(REQUEST_ID_HEADER_KEY)
+        .and_then(|v| v.to_str().ok())
+        .and_then(sanitize_request_id)
+}
+
+/// `log::Log` impl so the standard log macros (and the actix access logger)
+/// emit the same JSON shape. These lines carry no `request-id`.
+struct JsonLogger;
+
+impl log::Log for JsonLogger {
+    fn enabled(&self, metadata: &log::Metadata) -> bool {
+        metadata.level() <= log::max_level()
+    }
+
+    fn log(&self, record: &log::Record) {
+        if !self.enabled(record.metadata()) {
+            return;
+        }
+        // Snapser only colors debug|info|warn|error; fold trace into debug.
+        let level = match record.level() {
+            log::Level::Error => "error",
+            log::Level::Warn => "warn",
+            log::Level::Info => "info",
+            log::Level::Debug | log::Level::Trace => "debug",
+        };
+        log_json(level, &record.args().to_string(), None);
+    }
+
+    fn flush(&self) {}
+}
+
+static JSON_LOGGER: JsonLogger = JsonLogger;
+
+fn init_logger() {
+    // set_logger only fails if a logger is already set; safe to ignore here.
+    let _ = log::set_logger(&JSON_LOGGER);
+    log::set_max_level(log::LevelFilter::Info);
+}
+
 // --- Models ---
 
 #[derive(Serialize, Deserialize)]
@@ -248,6 +384,7 @@ async fn register_event_types() {
         }
     };
 
+    // Boot-time call: there is no request in flight, so no X-Request-Id header.
     match client
         .put(&url)
         .header("Content-Type", "application/json")
@@ -284,6 +421,9 @@ async fn register_event_types() {
 /// * `subject`    - The event subject, e.g. `"byosnap-core.example.created"`.
 /// * `recipients` - Recipient user IDs the event should be delivered to.
 /// * `message`    - Arbitrary event payload (serialized as JSON).
+/// * `request_id` - Id from `request_id(&req)` when publishing on behalf of a
+///                  request; Snapser uses the forwarded X-Request-Id header to
+///                  correlate the call across Snaps. None for boot-time calls.
 ///
 /// # Example
 /// ```ignore
@@ -291,16 +431,25 @@ async fn register_event_types() {
 ///     "byosnap-core.example.created",
 ///     vec!["user-123".to_string()],
 ///     serde_json::json!({ "example_id": "abc", "name": "My Example" }),
+///     request_id(&req).as_deref(),
 /// )
 /// .await;
 /// ```
 #[allow(dead_code)]
-async fn publish_event(subject: &str, recipients: Vec<String>, message: serde_json::Value) {
+async fn publish_event(
+    subject: &str,
+    recipients: Vec<String>,
+    message: serde_json::Value,
+    request_id: Option<&str>,
+) {
     let base = std::env::var(EVENTBUS_HTTP_URL_ENV_KEY).unwrap_or_default();
     if base.is_empty() {
-        log::info!(
-            "[eventbus] {} not set - skipping publish_event.",
-            EVENTBUS_HTTP_URL_ENV_KEY
+        log_info(
+            &format!(
+                "[eventbus] {} not set - skipping publish_event.",
+                EVENTBUS_HTTP_URL_ENV_KEY
+            ),
+            request_id,
         );
         return;
     }
@@ -322,32 +471,47 @@ async fn publish_event(subject: &str, recipients: Vec<String>, message: serde_js
     {
         Ok(c) => c,
         Err(err) => {
-            log::warn!("[eventbus] Failed to build HTTP client: {}", err);
+            log_warn(
+                &format!("[eventbus] Failed to build HTTP client: {}", err),
+                request_id,
+            );
             return;
         }
     };
 
-    match client
+    // Forward X-Request-Id on Snap-to-Snap calls made on behalf of a request so
+    // Snapser can trace the request across Snaps. Boot-time calls omit it.
+    let mut outbound = client
         .post(&url)
         .header("Content-Type", "application/json")
-        .header(GATEWAY_HEADER_KEY, internal_header_value())
-        .json(&body)
-        .send()
-        .await
-    {
+        .header(GATEWAY_HEADER_KEY, internal_header_value());
+    if let Some(rid) = request_id {
+        outbound = outbound.header(REQUEST_ID_HEADER_KEY, rid);
+    }
+
+    match outbound.json(&body).send().await {
         Ok(resp) if resp.status().is_success() => {
-            log::info!("[eventbus] Published event \"{}\".", subject);
+            log_info(
+                &format!("[eventbus] Published event \"{}\".", subject),
+                request_id,
+            );
         }
         Ok(resp) => {
-            log::warn!(
-                "[eventbus] Publishing \"{}\" returned HTTP {}.",
-                subject,
-                resp.status()
+            log_warn(
+                &format!(
+                    "[eventbus] Publishing \"{}\" returned HTTP {}.",
+                    subject,
+                    resp.status()
+                ),
+                request_id,
             );
         }
         Err(err) => {
             // Best-effort: log and move on. Never propagate.
-            log::warn!("[eventbus] Failed to publish event \"{}\": {}", subject, err);
+            log_warn(
+                &format!("[eventbus] Failed to publish event \"{}\": {}", subject, err),
+                request_id,
+            );
         }
     }
 }
@@ -357,9 +521,13 @@ async fn publish_event(subject: &str, recipients: Vec<String>, message: serde_js
 /// The Snapser Eventbus calls this endpoint to DELIVER events to this Snap. It
 /// is a RESERVED, root-level URL (like /healthz): no /v1 prefix and no byosnap
 /// id.
-async fn event_handler(body: web::Bytes) -> HttpResponse {
+async fn event_handler(req: HttpRequest, body: web::Bytes) -> HttpResponse {
+    let rid = request_id(&req);
     let raw = String::from_utf8_lossy(&body);
-    log::info!("[eventbus] Received inbound event: {}", raw);
+    log_info(
+        &format!("[eventbus] Received inbound event: {}", raw),
+        rid.as_deref(),
+    );
     // TODO: Parse the body and switch on the event subject to route each event
     //       to the appropriate handler in your business logic.
     HttpResponse::Ok().finish()
@@ -565,6 +733,10 @@ async fn example_user_endpoint(req: HttpRequest, path: web::Path<String>) -> Htt
     if !validate_authorization(&req, &[AuthType::User], Some(&user_id)) {
         return unauthorized();
     }
+    // Extract the request id once, then pass it to every log call (and any
+    // outbound Snap call) so Snapser can correlate this request across Snaps.
+    let rid = request_id(&req);
+    log_info(&format!("Handling example call for user {}", user_id), rid.as_deref());
     // TODO: add your business logic here
     HttpResponse::Ok().json(SuccessMessage {
         message: format!("Hello user {}", user_id),
@@ -635,7 +807,9 @@ async fn example_multi_auth_endpoint(req: HttpRequest, path: web::Path<String>) 
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    env_logger::init();
+    // Route all log macros (and the actix access logger) through the JSON
+    // logger so every stdout line matches the shape the Snapser Logs tool parses.
+    init_logger();
     log::info!("Starting {} server on :5003", BYOSNAP_ID);
 
     // Register the custom event types this Snap publishes. BEST-EFFORT: this
