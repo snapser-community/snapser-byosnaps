@@ -5,7 +5,6 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"os"
 
 	"math/rand"
 
@@ -25,7 +24,8 @@ func (a *app) eventHandler(c *gin.Context) {
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Error("failed to read body", slog.Any("error", err))
-		os.Exit(1)
+		c.Status(http.StatusBadRequest)
+		return
 	}
 
 	// 👇 Parse body as eventbus.ByoWebhookMessage
@@ -34,7 +34,8 @@ func (a *app) eventHandler(c *gin.Context) {
 	if err != nil {
 		log.Error("failed to unmarshal body",
 			slog.String("requestBody", string(body)), slog.Any("error", err))
-		os.Exit(1)
+		c.Status(http.StatusBadRequest)
+		return
 	}
 
 	// Switch on the message type
@@ -50,7 +51,8 @@ func (a *app) eventHandler(c *gin.Context) {
 		case "snapser.services.lobbies.member.joined":
 			ev := &lobbiespb.EventLobbiesMemberJoined{}
 			if err := proto.Unmarshal([]byte(snapEvent.Payload), ev); err != nil {
-				panic(err)
+				log.Error("failed to unmarshal lobby member joined payload", slog.Any("error", err))
+				break
 			}
 			log.Info("got EventLobbiesMemberJoined", slog.Any("event", ev))
 
