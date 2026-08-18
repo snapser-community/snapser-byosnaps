@@ -44,6 +44,7 @@ func main() {
 	conn, err := grpc.NewClient(eventbusUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		logger.Error("failed to create grpc client", slog.Any("error", err))
+		os.Exit(1)
 	}
 	defer conn.Close()
 	eventbusClient := eventbuspb.NewEventbusServiceClient(conn)
