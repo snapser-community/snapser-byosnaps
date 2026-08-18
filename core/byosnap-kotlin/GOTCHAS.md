@@ -20,7 +20,10 @@ Important things to keep in mind when developing this Ktor BYOSnap.
 ## CORS
 
 1. The Snapser API Explorer runs in the browser. The `install(CORS) { }` block enables cross-origin access so you can test APIs via the API Explorer.
-2. CORS is configured with `anyHost()` plus the GET/POST/PUT/DELETE/OPTIONS methods and the headers Content-Type, Token, Api-Key, App-Key, Gateway, and User-Id. Ktor handles OPTIONS preflight automatically when the CORS plugin is installed — you do not need a separate preflight route.
+2. CORS is configured with `anyHost()` plus the GET/POST/PUT/DELETE/OPTIONS methods and the
+   headers Content-Type, Token, Api-Key, App-Key, Gateway, User-Id, and X-Request-Id. Ktor
+   handles OPTIONS preflight automatically when the CORS plugin is installed, so you do not
+   need a separate preflight route.
 
 ## Swagger
 
@@ -34,6 +37,29 @@ Important things to keep in mind when developing this Ktor BYOSnap.
 2. **Main class**: `application { mainClass.set("com.snapser.byosnap.ApplicationKt") }`. Because `main()` lives at the top level of `Application.kt`, Kotlin compiles it into a class named `ApplicationKt` (file name + `Kt`). If you rename the file or move `main()`, update `mainClass` accordingly.
 3. **Version alignment**: The `io.ktor.plugin` version in `build.gradle.kts` and `ktorVersion` in `gradle.properties` MUST match (both `2.3.12`). A mismatch can cause `buildFatJar` to behave unexpectedly.
 4. **Port**: The server port (5003) is defined by `SERVER_PORT` in `Application.kt` and must match `EXPOSE` in the Dockerfile and `external_port` in `snapser-byosnap-profile.json`.
+
+## Logging
+
+1. **JSON lines on stdout**: Snapser parses each stdout line as one JSON object with `level`
+   (debug/info/warn/error, lowercase), `message`, `timestamp` (ISO-8601), and `request-id`.
+   `SnapserJsonLayout.kt` emits this shape and `logback.xml` wires it into the ConsoleAppender,
+   so every `LoggerFactory` logger produces it with no call-site changes. Do NOT use `println`.
+2. **`level` drives coloring**: The Logs tool colors each line by the `level` field. TRACE and
+   DEBUG both map to `debug`.
+3. **`request-id` binds once per request**: Every request carries the `X-Request-Id` header. The
+   `CallLogging` plugin (installed at the top of `module()`) puts it into the slf4j MDC, so you
+   never pass the id to a log call. Snapser correlates one request's log lines across snaps by
+   this field and samples logs per-request instead of per-line.
+4. **CallLogging is coroutine-safe**: MDC is thread-local, but Ktor can resume a suspended call
+   on a different worker thread. `CallLogging` reinstates the MDC at every coroutine resumption,
+   so the id survives thread switches and never leaks onto another request. The plugin also
+   emits one INFO access-log line per call through `SnapserJsonLayout`; that is expected.
+5. **`X-Request-Id` is sanitized**: The header is client-supplied. `sanitizeRequestId` in
+   `Application.kt` caps it at 128 chars and allows only ASCII letters, digits, and `-_.`;
+   anything else is dropped, so the MDC only ever holds safe values.
+6. **Forward `X-Request-Id` on outbound calls**: `publishEvent` in `Eventbus.kt` reads the id
+   from the MDC and sets the header on the snap-to-snap call. Boot-time calls
+   (`registerEventTypes`) have no request id, so they send no header.
 
 ## Storage
 
