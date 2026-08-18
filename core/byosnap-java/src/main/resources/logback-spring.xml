@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Snapser reads snap logs from stdout as one JSON object per line.
+     SnapserJsonLayout emits level/message/timestamp/request-id in the shape the
+     Snapser Logs tool parses (level for coloring, request-id for correlation). -->
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="com.snapser.byosnap.logging.SnapserJsonLayout"/>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

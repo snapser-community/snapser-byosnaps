@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -103,6 +104,8 @@ public class EventbusClient {
 
         try {
             String json = objectMapper.writeValueAsString(body);
+            // No X-Request-Id here: registration runs at boot, outside any
+            // request, so there is no request id to forward.
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .timeout(REQUEST_TIMEOUT)
@@ -173,13 +176,21 @@ public class EventbusClient {
             body.put("recipients", recipients);
 
             String json = objectMapper.writeValueAsString(body);
-            HttpRequest request = HttpRequest.newBuilder()
+            HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .timeout(REQUEST_TIMEOUT)
                     .header("Content-Type", "application/json")
                     .header(AppConstants.GATEWAY_HEADER_KEY, internalHeaderValue())
-                    .POST(HttpRequest.BodyPublishers.ofString(json))
-                    .build();
+                    .POST(HttpRequest.BodyPublishers.ofString(json));
+
+            // Forward X-Request-Id (bound to MDC by logging.RequestIdFilter) so
+            // Snapser correlates this snap-to-snap call with the inbound request.
+            // The MDC value is already sanitized by RequestIdFilter.
+            String requestId = MDC.get(AppConstants.REQUEST_ID_MDC_KEY);
+            if (requestId != null && !requestId.isEmpty()) {
+                requestBuilder.header(AppConstants.REQUEST_ID_HEADER_KEY, requestId);
+            }
+            HttpRequest request = requestBuilder.build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() >= 200 && response.statusCode() < 300) {

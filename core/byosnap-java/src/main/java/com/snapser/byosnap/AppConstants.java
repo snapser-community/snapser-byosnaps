@@ -18,6 +18,9 @@ public final class AppConstants {
     public static final String AUTH_TYPE_HEADER_KEY = "Auth-Type";
     public static final String GATEWAY_HEADER_KEY = "Gateway";
     public static final String USER_ID_HEADER_KEY = "User-Id";
+    // Snapser sends X-Request-Id on every request; forward it on outbound
+    // snap-to-snap calls so log lines correlate across snaps.
+    public static final String REQUEST_ID_HEADER_KEY = "X-Request-Id";
 
     // --- Header Values ---
     public static final String AUTH_TYPE_USER = "user";
@@ -37,6 +40,11 @@ public final class AppConstants {
     public static final String EVENTBUS_HTTP_URL_ENV_KEY = "SNAPEND_EVENTBUS_HTTP_URL";
     // Env var whose value is sent as the `Gateway` header on internal calls.
     public static final String INTERNAL_HEADER_ENV_KEY = "SNAPEND_INTERNAL_HEADER";
+
+    // --- Logging ---
+    // MDC key AND JSON field name for the request id. Snapser expects the
+    // kebab-case "request-id" field on every request-scoped log line.
+    public static final String REQUEST_ID_MDC_KEY = "request-id";
 
     // --- Defaults ---
     public static final String DEFAULT_BYOSNAP_VERSION = "v1.0.0";
