@@ -45,7 +45,7 @@ Each example wires up every endpoint Snapser expects, with the body reduced to a
 Each example ships best-effort stubs for Snapser's Eventbus so you can emit and receive custom BYO events:
 
 - **`registerEventTypes()`** runs **once on startup** and declares this Snap's custom event types with the Eventbus (`PUT /v1/eventbus/byo/event-types/byosnap-core`). It is best-effort — failures are logged and swallowed so they can never crash boot or block `/healthz`.
-- **`publishEvent(subject, recipients, message)`** is a reusable helper that publishes an event (`POST /v1/eventbus/byo/events/byosnap-core/{subject}`). Call it from your business logic when you're ready to emit events.
+- **`publishEvent(ctx, subject, recipients, message)`** is a reusable helper that publishes an event (`POST /v1/eventbus/byo/events/byosnap-core/{subject}`). Call it from your business logic when you're ready to emit events.
 - **`POST /internal/events`** is a reserved inbound receiver (root-level, no `/v1` prefix, like `/healthz`, and kept out of the SDK spec) that the Eventbus calls to deliver events to your Snap.
 
 Outbound calls reach the Eventbus over the internal gateway using the `SNAPEND_EVENTBUS_HTTP_URL` environment variable plus a `Gateway: internal` header. If the Eventbus snap isn't part of your Snapend, the helpers log a notice and skip.

@@ -24,7 +24,7 @@ package main
 import (
 	"encoding/json"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	snapser_internal "snapser_internal"
@@ -38,9 +38,18 @@ var profilesClient *snapser_internal.APIClient
 func main() {
 	r := mux.NewRouter()
 
+	// Structured logging
+	// @GOTCHAS 👋 - Logging
+	//   1. Snapser reads the `level` field of each JSON log line to color it in
+	//      the Logs tool, and correlates the lines of one request across Snaps by
+	//      the `request-id` field.
+	//   2. requestLogging binds the inbound X-Request-Id once per request.
+	//      Handlers call requestLogger(r) so every line carries it. See logging.go.
+	r.Use(requestLogging)
+
 	// Configure CORS
 	corsOpts := handlers.AllowedOrigins([]string{"*"}) // Allows all origins
-	corsHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Token", "Api-Key", "App-Key", "Gateway", "User-Id"})
+	corsHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Token", "Api-Key", "App-Key", "Gateway", "User-Id", RequestIDHeaderKey})
 	corsMethods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"})
 
 
@@ -63,11 +72,17 @@ func main() {
 	//Init the snapser client
 	config := snapser_internal.NewConfiguration()
 	config.Servers[0].URL = os.Getenv("SNAPEND_PROFILES_HTTP_URL")
+	// Forward X-Request-Id on every snap-to-snap call so the Profiles Snap logs
+	// carry the same request-id as this Snap's logs.
+	config.HTTPClient = &http.Client{Transport: requestIDForwarder{base: http.DefaultTransport}}
 	profilesClient = snapser_internal.NewAPIClient(config)
-	// Start server
-	log.Println("Starting server on :5003")
-	log.Fatal(http.ListenAndServe(":5003", handlers.CORS(corsOpts, corsHeaders, corsMethods)(r)))
 
+	// Start server
+	logger.Info("Starting server", slog.String("address", ":5003"))
+	if err := http.ListenAndServe(":5003", handlers.CORS(corsOpts, corsHeaders, corsMethods)(r)); err != nil {
+		logger.Error("Server stopped", slog.Any("error", err))
+		os.Exit(1)
+	}
 }
 
 // HealthCheckHandler returns ok for health checks
@@ -111,9 +126,14 @@ func GetGame(w http.ResponseWriter, r *http.Request) {
 		Message:      "success",
 	}
 
+	// requestLogger(r) carries the request-id, so this line correlates with the
+	// rest of the request in the Snapser Logs tool.
+	requestLogger(r).Info("Get game", slog.String("user_id", mux.Vars(r)["user_id"]))
+
 	// Marshal the struct to JSON
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
+		requestLogger(r).Error("Failed to marshal response", slog.Any("error", err))
 		http.Error(w, "Error creating response", http.StatusInternalServerError)
 		return
 	}
@@ -165,6 +185,7 @@ func SaveGame(w http.ResponseWriter, r *http.Request) {
 	// Marshal the struct to JSON
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
+		requestLogger(r).Error("Failed to marshal response", slog.Any("error", err))
 		http.Error(w, "Error creating response", http.StatusInternalServerError)
 		return
 	}
@@ -216,6 +237,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	// Marshal the struct to JSON
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
+		requestLogger(r).Error("Failed to marshal response", slog.Any("error", err))
 		http.Error(w, "Error creating response", http.StatusInternalServerError)
 		return
 	}
@@ -263,29 +285,38 @@ func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
 	if userIdHeader == "" {
 		userIdHeader = "N/A"
 	}
+	log := requestLogger(r)
+
 	var profilePayload ProfilePayloadSchema
 	bodyBytes, _ := io.ReadAll(r.Body)
 	err := json.Unmarshal(bodyBytes, &profilePayload)
 	if err != nil {
+		log.Error("Failed to un-marshal request body", slog.Any("error", err))
 		w.Write([]byte(`{"error_message": "Error un-marshalling request body"}`))
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	if profilePayload.Profile == nil {
+		log.Warn("Profile is missing from the request body")
 		w.Write([]byte(`{"error_message": "Profile is required"}`))
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	// r.Context() carries the request id, so requestIDForwarder adds
+	// X-Request-Id to this snap-to-snap call (see logging.go).
 	req := profilesClient.ProfilesServiceAPI.ProfilesUpsertProfile(r.Context(), userIdHeader).Gateway("internal").Body(snapser_internal.UpsertProfileRequest{
 		Profile: profilePayload.Profile,
 	})
 	snapserRes, httpResp, err := req.Execute()
 	if httpResp == nil {
+		log.Error("Profiles Snap call returned no response", slog.Any("error", err))
 		w.Write([]byte(`{"error_message": "Error calling snapser"}`))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	if err != nil {
+		log.Error("Profiles Snap call failed",
+			slog.Int("status", httpResp.StatusCode), slog.Any("error", err))
 		body := httpResp.Body
 		bodyBytes, _ := io.ReadAll(body)
 		body.Close()
@@ -298,6 +329,7 @@ func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
 
 	jsonResponse, err := json.Marshal(snapserRes)
 	if err != nil {
+		log.Error("Failed to marshal Profiles Snap response", slog.Any("error", err))
 		w.WriteHeader(httpResp.StatusCode)
 		w.Write([]byte(`{"error_message": "Error creating response"}`))
 		return
@@ -314,6 +346,7 @@ func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
 	// Marshal the struct to JSON
 	jsonResponse, err = json.Marshal(response)
 	if err != nil {
+		log.Error("Failed to marshal response", slog.Any("error", err))
 		http.Error(w, "Error creating response", http.StatusInternalServerError)
 		return
 	}

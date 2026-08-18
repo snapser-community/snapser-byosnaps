@@ -31,7 +31,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -50,12 +50,21 @@ import (
 func main() {
 	r := mux.NewRouter()
 
+	// Structured logging
+	// @GOTCHAS 👋 - Logging
+	//   1. Snapser reads the `level` field of each JSON log line to color it in
+	//      the Logs tool, and correlates the lines of one request across Snaps by
+	//      the `request-id` field.
+	//   2. requestLogging binds the inbound X-Request-Id once per request.
+	//      Handlers call requestLogger(r) so every line carries it. See logging.go.
+	r.Use(requestLogging)
+
 	// Configure CORS
 	// @GOTCHAS 👋 - CORS
 	//   1. The Snapser API Explorer runs in the browser. Enabling CORS lets you
 	//      call these APIs from the API Explorer.
 	corsOpts := handlers.AllowedOrigins([]string{"*"}) // Allows all origins
-	corsHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Token", "Api-Key", "App-Key", "Gateway", "User-Id"})
+	corsHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Token", "Api-Key", "App-Key", "Gateway", "User-Id", RequestIDHeaderKey})
 	corsMethods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"})
 
 	// Health Check Endpoint
@@ -180,8 +189,11 @@ func main() {
 	registerEventTypes()
 
 	// Start server
-	log.Println("Starting server on :5003")
-	log.Fatal(http.ListenAndServe(":5003", handlers.CORS(corsOpts, corsHeaders, corsMethods)(r)))
+	logger.Info("Starting server", slog.String("address", ":5003"))
+	if err := http.ListenAndServe(":5003", handlers.CORS(corsOpts, corsHeaders, corsMethods)(r)); err != nil {
+		logger.Error("Server stopped", slog.Any("error", err))
+		os.Exit(1)
+	}
 }
 
 // Helper to get env variable with default
@@ -337,6 +349,7 @@ func UpdateSettings(w http.ResponseWriter, r *http.Request) {
 
 	var blobData map[string]interface{}
 	if err := json.NewDecoder(r.Body).Decode(&blobData); err != nil {
+		requestLogger(r).Error("Invalid settings payload", slog.Any("error", err))
 		writeError(w, http.StatusInternalServerError, "Invalid JSON "+err.Error())
 		return
 	}
@@ -442,6 +455,7 @@ func UpdateSettingsCustom(w http.ResponseWriter, r *http.Request) {
 
 	var blobData map[string]interface{}
 	if err := json.NewDecoder(r.Body).Decode(&blobData); err != nil {
+		requestLogger(r).Error("Invalid custom settings payload", slog.Any("error", err))
 		writeError(w, http.StatusInternalServerError, "Invalid JSON "+err.Error())
 		return
 	}
@@ -483,6 +497,7 @@ func UpdateUserDataCustom(w http.ResponseWriter, r *http.Request) {
 
 	var blobData map[string]interface{}
 	if err := json.NewDecoder(r.Body).Decode(&blobData); err != nil {
+		requestLogger(r).Error("Invalid user data payload", slog.Any("error", err))
 		writeError(w, http.StatusInternalServerError, "Invalid JSON "+err.Error())
 		return
 	}
@@ -567,6 +582,7 @@ func ExportSettings(w http.ResponseWriter, r *http.Request) {
 func ImportSettings(w http.ResponseWriter, r *http.Request) {
 	var settingsData ExportSettingsSchema
 	if err := json.NewDecoder(r.Body).Decode(&settingsData); err != nil {
+		requestLogger(r).Error("Invalid import payload", slog.Any("error", err))
 		writeError(w, http.StatusInternalServerError, "Server Exception: "+err.Error())
 		return
 	}
@@ -583,6 +599,7 @@ func ImportSettings(w http.ResponseWriter, r *http.Request) {
 func ValidateImportSettings(w http.ResponseWriter, r *http.Request) {
 	var settingsData ExportSettingsSchema
 	if err := json.NewDecoder(r.Body).Decode(&settingsData); err != nil {
+		requestLogger(r).Error("Invalid validate-import payload", slog.Any("error", err))
 		writeError(w, http.StatusInternalServerError, "Invalid JSON")
 		return
 	}
@@ -664,6 +681,10 @@ func DeleteUserData(w http.ResponseWriter, r *http.Request) {
 func ExampleUserAuth(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID := vars["user_id"]
+
+	// requestLogger(r) carries the request-id, so this line correlates with the
+	// rest of the request in the Snapser Logs tool.
+	requestLogger(r).Info("Example user auth request", slog.String("user_id", userID))
 
 	// TODO: add your business logic here (user-scoped).
 	writeJSON(w, http.StatusOK, SuccessMessageSchema{

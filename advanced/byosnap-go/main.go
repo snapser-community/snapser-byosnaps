@@ -24,7 +24,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -40,9 +40,18 @@ import (
 func main() {
 	r := mux.NewRouter()
 
+	// Structured logging
+	// @GOTCHAS 👋 - Logging
+	//   1. Snapser reads the `level` field of each JSON log line to color it in
+	//      the Logs tool, and correlates the lines of one request across Snaps by
+	//      the `request-id` field.
+	//   2. requestLogging binds the inbound X-Request-Id once per request.
+	//      Handlers call requestLogger(r) so every line carries it. See logging.go.
+	r.Use(requestLogging)
+
 	// Configure CORS
 	corsOpts := handlers.AllowedOrigins([]string{"*"}) // Allows all origins
-	corsHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Token", "Api-Key", "App-Key", "Gateway", "User-Id"})
+	corsHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Token", "Api-Key", "App-Key", "Gateway", "User-Id", RequestIDHeaderKey})
 	corsMethods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"})
 
 	// Health Check Endpoint
@@ -115,14 +124,21 @@ func main() {
 	r.Handle("/v1/byosnap-advanced/users/{user_id}/characters/active",
 		validateAuthorization([]string{AuthTypeHeaderValueUserAuth, AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "user_id")(getActiveCharactersHandler)).Methods("GET")
 
-	// TODO: Uncomment when snapser_internal SDK is generated
+	// TODO: Uncomment when snapser_internal SDK is generated. To forward the
+	//       request id on those snap-to-snap calls so the Storage Snap logs
+	//       correlate, copy requestIDFromContext and the requestIDForwarder
+	//       RoundTripper from inter/byosnap-go/logging.go into logging.go, then:
+	//       config.HTTPClient = &http.Client{Transport: requestIDForwarder{base: http.DefaultTransport}}
 	// config := snapser_internal.NewConfiguration()
 	// config.Servers[0].URL = os.Getenv(StorageHTTPURLEnvKey)
 	// storageClient = snapser_internal.NewAPIClient(config)
 
 	// Start server
-	log.Println("Starting server on :5003")
-	log.Fatal(http.ListenAndServe(":5003", handlers.CORS(corsOpts, corsHeaders, corsMethods)(r)))
+	logger.Info("Starting server", slog.String("address", ":5003"))
+	if err := http.ListenAndServe(":5003", handlers.CORS(corsOpts, corsHeaders, corsMethods)(r)); err != nil {
+		logger.Error("Server stopped", slog.Any("error", err))
+		os.Exit(1)
+	}
 }
 
 // Helper to get env variable with default
@@ -282,6 +298,7 @@ func UpdateSettings(w http.ResponseWriter, r *http.Request) {
 
 	var blobData map[string]interface{}
 	if err := json.NewDecoder(r.Body).Decode(&blobData); err != nil {
+		requestLogger(r).Error("Invalid request payload", slog.Any("error", err))
 		writeError(w, http.StatusInternalServerError, "Invalid JSON "+err.Error())
 		return
 	}
@@ -391,6 +408,7 @@ func UpdateSettingsCustom(w http.ResponseWriter, r *http.Request) {
 
 	var blobData map[string]interface{}
 	if err := json.NewDecoder(r.Body).Decode(&blobData); err != nil {
+		requestLogger(r).Error("Invalid request payload", slog.Any("error", err))
 		writeError(w, http.StatusInternalServerError, "Invalid JSON "+err.Error())
 		return
 	}
@@ -478,6 +496,7 @@ func UpdateUserDataCustom(w http.ResponseWriter, r *http.Request) {
 
 	var blobData map[string]interface{}
 	if err := json.NewDecoder(r.Body).Decode(&blobData); err != nil {
+		requestLogger(r).Error("Invalid request payload", slog.Any("error", err))
 		writeError(w, http.StatusInternalServerError, "Invalid JSON "+err.Error())
 		return
 	}
@@ -572,12 +591,14 @@ func ExportSettings(w http.ResponseWriter, r *http.Request) {
 func ImportSettings(w http.ResponseWriter, r *http.Request) {
 	var settingsData ExportSettingsSchema
 	if err := json.NewDecoder(r.Body).Decode(&settingsData); err != nil {
+		requestLogger(r).Error("Invalid import payload", slog.Any("error", err))
 		writeError(w, http.StatusInternalServerError, "Server Exception: "+err.Error())
 		return
 	}
 
 	// Validate the incoming structure
 	if !validateExportStructure(&settingsData) {
+		requestLogger(r).Warn("Import rejected: unexpected settings structure")
 		writeError(w, http.StatusInternalServerError, "Invalid JSON")
 		return
 	}
@@ -615,6 +636,7 @@ func ImportSettings(w http.ResponseWriter, r *http.Request) {
 func ValidateImportSettings(w http.ResponseWriter, r *http.Request) {
 	var settingsData ExportSettingsSchema
 	if err := json.NewDecoder(r.Body).Decode(&settingsData); err != nil {
+		requestLogger(r).Error("Invalid validate-import payload", slog.Any("error", err))
 		writeError(w, http.StatusInternalServerError, "Invalid JSON")
 		return
 	}
@@ -622,6 +644,7 @@ func ValidateImportSettings(w http.ResponseWriter, r *http.Request) {
 	// Perform basic validation. You can add more validation by fetching the
 	// settings from storage and comparing with the incoming settings.
 	if !validateExportStructure(&settingsData) {
+		requestLogger(r).Warn("Validate-import rejected: unexpected settings structure")
 		writeError(w, http.StatusInternalServerError, "Invalid JSON")
 		return
 	}
@@ -792,6 +815,10 @@ func DeleteUserData(w http.ResponseWriter, r *http.Request) {
 //     schema:
 //       $ref: '#/definitions/ErrorResponseSchema'
 func GetActiveCharacters(w http.ResponseWriter, r *http.Request) {
+	// requestLogger(r) carries the request-id, so this line correlates with the
+	// rest of the request in the Snapser Logs tool.
+	requestLogger(r).Info("Get active characters", slog.String("user_id", mux.Vars(r)["user_id"]))
+
 	writeJSON(w, http.StatusOK, CharactersResponseSchema{
 		Characters: []string{},
 	})

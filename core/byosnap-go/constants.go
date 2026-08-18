@@ -21,6 +21,9 @@ const (
 	AuthTypeHeaderKey = "Auth-Type"
 	GatewayHeaderKey  = "Gateway"
 	UserIDHeaderKey   = "User-Id"
+	// RequestIDHeaderKey carries the Snapser request id on every inbound request
+	// (gRPC metadata uses the lowercase `x-request-id`).
+	RequestIDHeaderKey = "X-Request-Id"
 
 	// Auth Type Header Values
 	AuthTypeHeaderValueUserAuth   = "user"

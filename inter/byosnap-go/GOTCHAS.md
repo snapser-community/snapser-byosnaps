@@ -83,6 +83,22 @@ r.HandleFunc("/healthz", HealthCheckHandler).Methods("GET")
 ```
 - We use go-swagger to convert annotations to swagger.json. But **go-swagger** only supports 2.X. Snapser is built on the swagger 3.x platform, so we use openApi to convert the 2.x swagger to 3.x. Swagger generation also has some gotchas. Please see the section below.
 
+## Logging
+- Write one JSON object per line to stdout with `level` (`debug`/`info`/`warn`/`error`), `message`
+  and `timestamp`. Snapser reads `level` to color the line in the Logs tool. See `logging.go`.
+- Every inbound request carries an `X-Request-Id` header. The `requestLogging` middleware binds it
+  once per request, and handlers call `requestLogger(r)` so every line carries a `request-id` field.
+```go
+r.Use(requestLogging) // (👈 binds X-Request-Id once, in main.go)
+requestLogger(r).Info("Get game", slog.String("user_id", userID)) // (👈 line carries request-id)
+```
+- The field name must be `request-id` (kebab-case). Snapser correlates the lines of one request
+  across Snaps by this field and samples logs per request, not per line.
+- Snap-to-Snap calls must forward `X-Request-Id` so downstream logs correlate. The generated
+  `snapser_internal` client has no per-call header option, so `requestIDForwarder` (a
+  `http.RoundTripper` set on `config.HTTPClient`) adds the header from the context you pass to the
+  client. Pass `r.Context()` to every call.
+
 ## Swagger generation
 - This repo uses **go-swagger** and method annotations to create a Swagger. There are a few gotchas that you need to be aware of.
 - The comment at the top of the main.go file is what generates the **info** object in the swagger.

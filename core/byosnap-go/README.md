@@ -53,6 +53,8 @@ byosnap-go/
 ├── main.go               # Entry point with all route handlers (stubbed)
 ├── models.go             # Swagger model definitions
 ├── middleware.go         # Authorization middleware
+├── logging.go            # JSON slog logger and request-id middleware
+├── eventbus.go           # Eventbus register/publish/receive stubs
 ├── constants.go          # BYOSnapID / APIPrefix, header keys, auth types
 ├── go.mod / go.sum       # Go module dependencies
 ├── Dockerfile            # Multi-stage Docker build (Go 1.21, Alpine ARM64)
@@ -120,7 +122,7 @@ Each handler returns a placeholder and carries a `// TODO`. To implement real lo
 The scaffold includes best-effort stubs for the Snapser Eventbus in `eventbus.go`. Internal calls target the Eventbus service at the URL in the `SNAPEND_EVENTBUS_HTTP_URL` env var and carry the `Gateway: internal` header (value from `SNAPEND_INTERNAL_HEADER`, default `internal`). If `SNAPEND_EVENTBUS_HTTP_URL` is not set, the outbound calls are logged and skipped. Three pieces:
 
 - **`registerEventTypes()`** — called once from `main()` on startup. Best-effort: it logs success/failure and never blocks or crashes boot. Sends `PUT {SNAPEND_EVENTBUS_HTTP_URL}/v1/eventbus/byo/event-types/byosnap-core` to declare the custom event types this Snap emits. Edit the `event_types` list (`// TODO`) for your Snap.
-- **`publishEvent(subject, recipients, message)`** — a reusable helper that sends `POST {SNAPEND_EVENTBUS_HTTP_URL}/v1/eventbus/byo/events/byosnap-core/{subject}` to publish an event. It is not wired into any endpoint — call it from your own business logic where an event should fire (see the doc comment in `eventbus.go` for example usage).
+- **`publishEvent(ctx, subject, recipients, message)`** — a reusable helper that sends `POST {SNAPEND_EVENTBUS_HTTP_URL}/v1/eventbus/byo/events/byosnap-core/{subject}` to publish an event. It is not wired into any endpoint — call it from your own business logic where an event should fire (see the doc comment in `eventbus.go` for example usage).
 - **Inbound receiver `POST /internal/events`** — a reserved, root-level route (no `/v1` prefix, no BYOSnap id, like `/healthz`) the Eventbus POSTs to in order to deliver events. The `eventHandler` stub reads and logs the body and returns 200; add your parse + subject-switch logic (`// TODO`). It has no `swagger:operation` annotation, so it stays out of the generated SDK spec.
 
 ## Environment Variables

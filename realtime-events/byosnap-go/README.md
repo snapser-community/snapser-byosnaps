@@ -159,6 +159,7 @@ git@github.com:snapser-community/snapser-byosnaps.git
     │       └── Dockerfile (👈 Used by snapctl to deploy your BYOSnap )
     │       └── event_handler.go (👈 Code that handles incoming events )
     │       └── event_handler.go (👈 Register your event types )
+    │       └── logging.go (👈 JSON logger and the request-id middleware Snapser reads )
     │       └── main.go (👈 Main entrypoint for your BYOSnap. This registers the custom event )
   ```
 
@@ -188,16 +189,18 @@ This is so that our BYOSnap can emit an event that other BYOSnaps or game client
 // 👇 This is where we create a gRPC connection with the Eventbus and register our custom event
 eventbusUrl := os.Getenv("SNAPEND_EVENTBUS_GRPC_URL")
 if eventbusUrl == "" {
-  log.Fatal().Msg("SNAPEND_EVENTBUS_GRPC_URL not set")
+  logger.Error("SNAPEND_EVENTBUS_GRPC_URL not set")
+  os.Exit(1)
 }
-log.Info().Msgf("eventbus url: %s", eventbusUrl)
+logger.Info("eventbus url", slog.String("url", eventbusUrl))
 
 eventbusUrl = strings.TrimPrefix(eventbusUrl, "http://")
 
 // Use grpc to call the eventbus service, RegisterEventTypes
 conn, err := grpc.NewClient(eventbusUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 if err != nil {
-  log.Error().Err(err).Msg("failed to create grpc client")
+  logger.Error("failed to create grpc client", slog.Any("error", err))
+  os.Exit(1)
 }
 defer conn.Close()
 eventbusClient := eventbuspb.NewEventbusServiceClient(conn)
@@ -211,13 +214,14 @@ req := &eventbuspb.RegisterByoEventTypesRequest{
   ByosnapId:  byoSnapID,
   EventTypes: eventTypes,
 }
-md := metadata.Pairs("gateway", "internal")
-ctx = metadata.NewOutgoingContext(ctx, md)
-_, err = eventbusClient.RegisterByoEventTypes(ctx, req)
+// Registration runs at boot, outside any request, so outgoingInternalContext
+// adds no x-request-id metadata here.
+_, err = eventbusClient.RegisterByoEventTypes(outgoingInternalContext(ctx), req)
 if err != nil {
-  log.Fatal().Msgf("failed to register event types: %v", err)
+  logger.Error("failed to register event types", slog.Any("error", err))
+  os.Exit(1)
 }
-log.Info().Msg("registered event types")
+logger.Info("registered event types")
 ```
 
 ### B. Listen for Eventbus emitted Events
@@ -226,12 +230,17 @@ You can configure the Eventbus Snap to send specific events to your BYOSnap. The
 // B. We also want to listen for events from the Eventbus. Eventbus does this by sending
 // a webhook to our BYOSnap on the reserved URL "POST /internal/events".
 //
-var router = gin.Default()
-router.Use(logger.SetLogger())
+// gin.New() instead of gin.Default(): gin's built-in logger writes plain text
+// lines, which Snapser cannot parse.
+var router = gin.New()
+router.Use(gin.Recovery())
+// 👇 Binds the inbound X-Request-Id to a request scoped logger. Handlers call
+// requestLogger(c.Request) so every line carries the request-id.
+router.Use(requestLogging)
 router.Use(cors.New(cors.Config{
   AllowAllOrigins: true,
   AllowMethods:    []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-  AllowHeaders:    []string{"Origin", "Authorization", "Content-Type", "User-Id", "Token", "App-Key"},
+  AllowHeaders:    []string{"Origin", "Authorization", "Content-Type", "User-Id", "Token", "App-Key", RequestIDHeaderKey},
 }))
 router.GET("/healthz", func(c *gin.Context) {
   c.JSON(200, gin.H{"status": "ok"})
@@ -242,7 +251,8 @@ router.GET("/healthz", func(c *gin.Context) {
 router.POST("/internal/events", app.eventHandler)
 
 if err = router.Run(":8080"); err != nil {
-  log.Fatal().Err(err).Msg("failed to start server")
+  logger.Error("failed to start server", slog.Any("error", err))
+  os.Exit(1)
 }
 ```
 
@@ -251,19 +261,26 @@ The event handler is where we handle the incoming events from the Eventbus. We c
 ```go
 func (a *app) eventHandler(c *gin.Context) {
 	ctx := c.Request.Context()
-	log := zerolog.Ctx(c.Request.Context())
+	// 👇 Logger bound by the requestLogging middleware: every line below carries
+	// the request-id of this webhook delivery.
+	log := requestLogger(c.Request)
 
 	// Read the body in as a byte slice
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to read body")
+		log.Error("failed to read body", slog.Any("error", err))
+		c.Status(http.StatusBadRequest)
+		return
 	}
 
 	// 👇 Parse body as eventbus.ByoWebhookMessage
 	var wr eventbuspb.ByoWebhookRequest
 	err = proto.Unmarshal(body, &wr)
 	if err != nil {
-		log.Fatal().Str("requestBody", string(body)).Err(err).Msg("failed to unmarshal body")
+		log.Error("failed to unmarshal body",
+			slog.String("requestBody", string(body)), slog.Any("error", err))
+		c.Status(http.StatusBadRequest)
+		return
 	}
 
 	// Switch on the message type
@@ -271,7 +288,7 @@ func (a *app) eventHandler(c *gin.Context) {
 	switch wr.MessageType {
 	case eventbuspb.MessageType_MESSAGE_TYPE_SNAP_EVENT:
 		snapEvent := wr.GetByoSnapEvent()
-		log.Debug().Interface("snapEvent", snapEvent).Msg("received snap event")
+		log.Debug("received snap event", slog.Any("snapEvent", snapEvent))
 
 		// Switch on the subject which is the recommended way to identify the event and payload
 		switch snapEvent.Subject {
@@ -279,9 +296,10 @@ func (a *app) eventHandler(c *gin.Context) {
 		case "snapser.services.lobbies.member.joined":
 			ev := &lobbiespb.EventLobbiesMemberJoined{}
 			if err := proto.Unmarshal([]byte(snapEvent.Payload), ev); err != nil {
-				panic(err)
+				log.Error("failed to unmarshal lobby member joined payload", slog.Any("error", err))
+				break
 			}
-			log.Info().Msgf("got EventLobbiesMemberJoined: %v", ev)
+			log.Info("got EventLobbiesMemberJoined", slog.Any("event", ev))
 
 			// Some praise messages
 			var fallbackPraises = []string{
@@ -301,24 +319,43 @@ func (a *app) eventHandler(c *gin.Context) {
 				Payload:    []byte(fmt.Sprintf("Nice work, you joined a lobby - %s", randomPraise)),
 				Recipients: []string{ev.JoinedUserId},
 			}
-			ctx = metadata.NewOutgoingContext(ctx, metadata.Pairs("gateway", "internal"))
-			_, err := a.eventbusClient.PublishByoEvent(ctx, praiseReq)
+			// 👇 outgoingInternalContext forwards the x-request-id metadata, so the
+			// Eventbus logs this publish under the same request-id.
+			_, err := a.eventbusClient.PublishByoEvent(outgoingInternalContext(ctx), praiseReq)
 			if err != nil {
-				log.Error().Err(err).Msg("failed to publish event")
+				log.Error("failed to publish event", slog.Any("error", err))
 			} else {
-				log.Info().Msgf("published praise event: %v", praiseReq)
+				log.Info("published praise event", slog.String("subject", praiseReq.Subject))
 			}
 		default:
-			log.Warn().Msgf("unhandled event: [eventTypeId=%d, subject=%s, serviceName=%s]",
-				snapEvent.EventTypeId, snapEvent.Subject, snapEvent.ServiceName)
+			log.Warn("unhandled event",
+				slog.Uint64("eventTypeId", uint64(snapEvent.EventTypeId)),
+				slog.String("subject", snapEvent.Subject),
+				slog.String("serviceName", snapEvent.ServiceName))
 		}
 	default:
-		log.Printf("unhandled message type: %v", wr.MessageType)
+		log.Warn("unhandled message type", slog.String("messageType", wr.MessageType.String()))
 	}
 
 	c.Writer.WriteHeader(http.StatusOK)
 	c.Writer.Write([]byte("ok"))
 }
+```
+
+### D. Log in the shape Snapser reads
+Snapser reads one JSON object per line from stdout. The `level` field
+(`debug`/`info`/`warn`/`error`) colors the line in the Logs tool, and the `request-id` field
+correlates all the lines of one request across Snaps. **logging.go** holds the `log/slog` JSON
+logger, the `requestLogging` middleware that binds the inbound `X-Request-Id` header once per
+request, and `outgoingInternalContext`, which forwards the id as `x-request-id` gRPC metadata on
+outbound calls.
+```go
+// Bound once per request by the requestLogging middleware
+log := requestLogger(c.Request)
+log.Info("got EventLobbiesMemberJoined", slog.Any("event", ev)) // (👈 line carries request-id)
+
+// 👇 Forwards x-request-id, so the Eventbus logs this publish under the same request-id
+a.eventbusClient.PublishByoEvent(outgoingInternalContext(ctx), praiseReq)
 ```
 
 <Checkpoint step={4}>
