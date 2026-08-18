@@ -5,6 +5,7 @@ import { Request as ExpressRequest } from 'express';
 import { Controller, Route, Get, Path, Post, Put, Delete, Extension, Body, Middlewares, TsoaResponse, Response, Res, Request } from 'tsoa';
 import { ProfilesServiceApi }  from '../snapser-internal/api/profilesServiceApi'
 import { UpsertProfileRequest } from '../snapser-internal/model/upsertProfileRequest';
+import { getRequestId, REQUEST_ID_HEADER_KEY } from '../logger';
 
 // # @GOTCHAS 👋 - Please read GOTCHAS.md
 
@@ -116,6 +117,11 @@ export class UserController extends Controller {
       // //    SNAPEND_PROFILES_HTTP_URL, For the Auth snap it will be SNAPEND_AUTH_HTTP_URL
       // const baseUrl = process.env.SNAPEND_PROFILES_HTTP_URL ?? 'http://profiles-service:8090';
       // const profilesApi = new ProfilesServiceApi(baseUrl);
+      // // Forward the caller's request id so Snapser can correlate logs across snaps.
+      // const requestId = getRequestId();
+      // if (requestId) {
+      //   profilesApi.defaultHeaders = { [REQUEST_ID_HEADER_KEY]: requestId };
+      // }
       // const payload: UpsertProfileRequest = {
       //   profile: body.profile
       // };

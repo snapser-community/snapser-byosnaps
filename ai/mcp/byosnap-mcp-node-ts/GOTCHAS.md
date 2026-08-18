@@ -107,3 +107,14 @@ public async getGame() {...}
 - This example provides you with a helper middleware. Depending on which Auth type you want your API to be validated against, update the `["user", "api-key", "internal"]` array you pass to the `@Middlewares([authMiddleware`.
 
 - This line in the controller `@Res() _unauthorized: TsoaResponse<401, ErrorResponse>,` Makes sure that tsoa picks up the `ErrorResponse`. Without this line, tsoa would not know, it has to crawl to `ErrorResponse` and have it in the swagger.
+
+## Logging
+
+- `src/logger.ts` writes one JSON object per line to stdout, with no dependencies.
+- Each line has `level` (debug, info, warn, error), `message`, and `timestamp`. Snapser parses
+  `level` to color the line in the Logs tool.
+- `requestIdMiddleware` in `src/app.ts` binds the `X-Request-Id` header once per request. The
+  logger adds it to every line as the `request-id` field. Snapser correlates all log lines of one
+  request across snaps by this field and samples logs per request, not per line.
+- `buildStorageApi()` in `mcpController.ts` forwards `X-Request-Id` on storage calls so Snapser
+  can correlate the storage snap logs with this request.

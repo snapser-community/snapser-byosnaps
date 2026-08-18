@@ -18,6 +18,8 @@
 // value comes from SNAPEND_INTERNAL_HEADER, defaulting to "internal").
 // ===========================================================================
 
+import { getRequestId, logger, REQUEST_ID_HEADER_KEY } from './logger';
+
 const BYOSNAP_ID = 'byosnap-core';
 
 // Base URL of the Eventbus internal HTTP endpoint. Injected by Snapser at
@@ -32,11 +34,18 @@ const INTERNAL_HEADER_VALUE = process.env.SNAPEND_INTERNAL_HEADER || 'internal';
 const REQUEST_TIMEOUT_MS = 5000;
 
 function eventbusHeaders(): Record<string, string> {
-    return {
+    const headers: Record<string, string> = {
         'Content-Type': 'application/json',
         // Marks this as an internal Snap-to-Snap call through the gateway.
         'Gateway': INTERNAL_HEADER_VALUE,
     };
+    // Forward the caller's request id so Snapser can correlate logs across
+    // snaps. Empty outside a request (e.g. startup registration).
+    const requestId = getRequestId();
+    if (requestId) {
+        headers[REQUEST_ID_HEADER_KEY] = requestId;
+    }
+    return headers;
 }
 
 /**
@@ -50,7 +59,7 @@ function eventbusHeaders(): Record<string, string> {
  */
 export async function registerEventTypes(): Promise<void> {
     if (!EVENTBUS_HTTP_URL) {
-        console.log('[eventbus] SNAPEND_EVENTBUS_HTTP_URL not set - skipping event type registration.');
+        logger.info('SNAPEND_EVENTBUS_HTTP_URL not set - skipping event type registration.');
         return;
     }
 
@@ -81,13 +90,13 @@ export async function registerEventTypes(): Promise<void> {
             signal: controller.signal,
         });
         if (res.ok) {
-            console.log('[eventbus] Registered event types successfully.');
+            logger.info('Registered eventbus event types successfully.');
         } else {
-            console.warn(`[eventbus] Event type registration returned HTTP ${res.status}.`);
+            logger.warn(`Eventbus event type registration returned HTTP ${res.status}.`);
         }
     } catch (err) {
         // Best-effort: log and move on. Never rethrow.
-        console.warn('[eventbus] Failed to register event types:', err);
+        logger.warn('Failed to register eventbus event types.', { error: String(err) });
     } finally {
         clearTimeout(timeout);
     }
@@ -119,7 +128,7 @@ export async function publishEvent(
     message: unknown,
 ): Promise<void> {
     if (!EVENTBUS_HTTP_URL) {
-        console.log('[eventbus] SNAPEND_EVENTBUS_HTTP_URL not set - skipping publishEvent.');
+        logger.info('SNAPEND_EVENTBUS_HTTP_URL not set - skipping publishEvent.');
         return;
     }
 
@@ -144,13 +153,13 @@ export async function publishEvent(
             signal: controller.signal,
         });
         if (res.ok) {
-            console.log(`[eventbus] Published event "${subject}".`);
+            logger.info(`Published eventbus event "${subject}".`);
         } else {
-            console.warn(`[eventbus] Publishing "${subject}" returned HTTP ${res.status}.`);
+            logger.warn(`Publishing eventbus event "${subject}" returned HTTP ${res.status}.`);
         }
     } catch (err) {
         // Best-effort: log and move on. Never rethrow.
-        console.warn(`[eventbus] Failed to publish event "${subject}":`, err);
+        logger.warn(`Failed to publish eventbus event "${subject}".`, { error: String(err) });
     } finally {
         clearTimeout(timeout);
     }
