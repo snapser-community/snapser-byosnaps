@@ -1,10 +1,13 @@
 import logging
 import os
+import sys
 import uuid
 import json
+from contextvars import ContextVar
+from datetime import datetime, timezone
 from functools import wraps
 
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, has_request_context
 from flask_cors import CORS, cross_origin
 import snapser_internal
 from snapser_internal.rest import ApiException
@@ -21,6 +24,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 AUTH_TYPE_HEADER_KEY = "Auth-Type"
 GATEWAY_HEADER_KEY = "Gateway"
 USER_ID_HEADER_KEY = "User-Id"
+REQUEST_ID_HEADER_KEY = "X-Request-Id"
 
 AUTH_TYPE_HEADER_VALUE_USER_AUTH = "user"
 AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH = "api-key"
@@ -37,10 +41,81 @@ ALL_AUTH_TYPES = [
 # TODO: Replace with your MCP API key
 MCP_API_KEY = '171206450ee690fc4062bf3c4880d4b3'
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-)
+# Logging
+
+# @GOTCHAS 👋 - Logging
+#   1. Log ONE JSON object per line to stdout. Snapser parses the `level` field
+#      (debug/info/warn/error) to color the line in the Logs tool.
+#   2. Snapser correlates all log lines of one request ACROSS snaps by the
+#      `request-id` field (from the X-Request-Id header), and samples logs
+#      per-request instead of per-line. Bind it once per request (see the
+#      before_request hook) instead of passing it to every log call.
+#   3. Forward X-Request-Id on outbound snap-to-snap calls (see
+#      outbound_headers) so downstream snaps log the same request-id.
+
+request_id_var = ContextVar('request_id', default='')
+
+
+def _sanitize_request_id(value):
+    '''X-Request-Id is client-supplied: cap the length and allow only safe chars.'''
+    value = value[:128]
+    if value and all(c.isalnum() or c in '-_.' for c in value):
+        return value
+    return ''
+
+
+_LEVEL_MAP = {'DEBUG': 'debug', 'INFO': 'info', 'WARNING': 'warn',
+              'ERROR': 'error', 'CRITICAL': 'error'}
+
+
+class JsonLogFormatter(logging.Formatter):
+    '''Formats logs as the JSON shape Snapser parses (level, message, timestamp, request-id).'''
+
+    def format(self, record):
+        entry = {
+            'level': _LEVEL_MAP.get(record.levelname, 'info'),
+            'message': record.getMessage(),
+            'timestamp': datetime.fromtimestamp(
+                record.created, timezone.utc).isoformat().replace('+00:00', 'Z'),
+        }
+        request_id = request_id_var.get()
+        if request_id:
+            entry['request-id'] = request_id
+        if record.exc_info:
+            entry['exception'] = self.formatException(record.exc_info)
+        if record.stack_info:
+            entry['stack'] = self.formatStack(record.stack_info)
+        return json.dumps(entry)
+
+
+_log_handler = logging.StreamHandler(sys.stdout)
+_log_handler.setFormatter(JsonLogFormatter())
+logging.basicConfig(level=logging.DEBUG, handlers=[_log_handler])
+# Gunicorn configures these loggers with propagate=False, so point them at the JSON handler too
+for _gunicorn_logger in ('gunicorn.error', 'gunicorn.access'):
+    _gl = logging.getLogger(_gunicorn_logger)
+    _gl.handlers = [_log_handler]
+    _gl.propagate = False
+
+
+@app.before_request
+def bind_request_id():
+    '''
+    Bind X-Request-Id to a contextvar so every log line for this request carries it.
+    '''
+    request_id_var.set(_sanitize_request_id(
+        request.headers.get(REQUEST_ID_HEADER_KEY, '')))
+
+
+def outbound_headers(extra=None):
+    '''Headers for outbound snap-to-snap calls; forwards X-Request-Id for log correlation.'''
+    headers = dict(extra or {})
+    if has_request_context():
+        request_id = _sanitize_request_id(
+            request.headers.get(REQUEST_ID_HEADER_KEY, ''))
+        if request_id:
+            headers[REQUEST_ID_HEADER_KEY] = request_id
+    return headers
 
 
 def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):
@@ -149,7 +224,9 @@ def get_tasks_for_user(user_id: str) -> TodoStore:
                 owner_id=user_id,
                 access_type='protected',
                 blob_key=TODOS_BLOB_KEY,
-                gateway=GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE
+                gateway=GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE,
+                # Forward X-Request-Id so Snapser can correlate logs across snaps
+                _headers=outbound_headers()
             )
             if api_response.value:
                 parsed = json.loads(api_response.value)
@@ -185,16 +262,16 @@ def save_tasks_for_user(user_id: str, new_store: TodoStore) -> TodoStore:
             api_response = api_instance.storage_replace_blob(
                 owner_id=user_id, access_type='protected',
                 blob_key=TODOS_BLOB_KEY, gateway=GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE,
-                body=body
+                body=body,
+                # Forward X-Request-Id so Snapser can correlate logs across snaps
+                _headers=outbound_headers()
             )
             if api_response.cas:
                 new_store.cas = api_response.cas
         except ApiException as e:
-            print(
-                f"ApiException when calling StorageServiceApi->storage_get_blob: {e}\n")
+            logging.warning("storage_replace_blob ApiException: %s", e)
         except Exception as e:
-            print(
-                f"Exception when calling StorageServiceApi->storage_get_blob: {e}\n")
+            logging.exception("storage_replace_blob Exception: %s", e)
     return new_store
 
 

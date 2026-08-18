@@ -1,8 +1,12 @@
 '''
 Gemini Wrapper - Snapser BYOSnap
 '''
+import json
 import os
 import logging
+import sys
+from contextvars import ContextVar
+from datetime import datetime, timezone
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, make_response, Response, stream_with_context
 from flask_cors import CORS, cross_origin
@@ -13,6 +17,7 @@ import google.generativeai as genai
 AUTH_TYPE_HEADER_KEY = 'Auth-Type'
 GATEWAY_HEADER_KEY = 'Gateway'
 USER_ID_HEADER_KEY = 'User-Id'
+REQUEST_ID_HEADER_KEY = 'X-Request-Id'
 AUTH_TYPE_HEADER_VALUE_USER_AUTH = 'user'
 AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH = 'api-key'
 GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE = 'internal'
@@ -21,8 +26,60 @@ ALL_AUTH_TYPES = [AUTH_TYPE_HEADER_VALUE_USER_AUTH,
 
 
 # Logging
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+
+# @GOTCHAS 👋 - Logging
+#   1. Log ONE JSON object per line to stdout. Snapser parses the `level` field
+#      (debug/info/warn/error) to color the line in the Logs tool.
+#   2. Snapser correlates all log lines of one request ACROSS snaps by the
+#      `request-id` field (from the X-Request-Id header), and samples logs
+#      per-request instead of per-line. Bind it once per request (see the
+#      before_request hook) instead of passing it to every log call.
+#   3. Forward X-Request-Id only on outbound snap-to-snap calls. Do NOT send it
+#      to third-party APIs like Gemini. This snap makes no snap-to-snap calls.
+
+request_id_var = ContextVar('request_id', default='')
+
+
+def _sanitize_request_id(value):
+    '''X-Request-Id is client-supplied: cap the length and allow only safe chars.'''
+    value = value[:128]
+    if value and all(c.isalnum() or c in '-_.' for c in value):
+        return value
+    return ''
+
+
+_LEVEL_MAP = {'DEBUG': 'debug', 'INFO': 'info', 'WARNING': 'warn',
+              'ERROR': 'error', 'CRITICAL': 'error'}
+
+
+class JsonLogFormatter(logging.Formatter):
+    '''Formats logs as the JSON shape Snapser parses (level, message, timestamp, request-id).'''
+
+    def format(self, record):
+        entry = {
+            'level': _LEVEL_MAP.get(record.levelname, 'info'),
+            'message': record.getMessage(),
+            'timestamp': datetime.fromtimestamp(
+                record.created, timezone.utc).isoformat().replace('+00:00', 'Z'),
+        }
+        request_id = request_id_var.get()
+        if request_id:
+            entry['request-id'] = request_id
+        if record.exc_info:
+            entry['exception'] = self.formatException(record.exc_info)
+        if record.stack_info:
+            entry['stack'] = self.formatStack(record.stack_info)
+        return json.dumps(entry)
+
+
+_log_handler = logging.StreamHandler(sys.stdout)
+_log_handler.setFormatter(JsonLogFormatter())
+logging.basicConfig(level=logging.DEBUG, handlers=[_log_handler])
+# Gunicorn configures these loggers with propagate=False, so point them at the JSON handler too
+for _gunicorn_logger in ('gunicorn.error', 'gunicorn.access'):
+    _gl = logging.getLogger(_gunicorn_logger)
+    _gl.handlers = [_log_handler]
+    _gl.propagate = False
 
 # Environment
 load_dotenv()
@@ -32,6 +89,15 @@ genai.configure(api_key=GOOGLE_API_KEY)
 # Flask App
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
+
+
+@app.before_request
+def bind_request_id():
+    '''
+    Bind X-Request-Id to a contextvar so every log line for this request carries it
+    '''
+    request_id_var.set(_sanitize_request_id(
+        request.headers.get(REQUEST_ID_HEADER_KEY, '')))
 
 
 def validate_authorization(*allowed_auth_types, user_id_resource_key="user_id"):

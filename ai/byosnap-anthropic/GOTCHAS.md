@@ -142,4 +142,12 @@ spec.components.schema("UserIdParameterSchema", schema=UserIdParameterSchema)
     """
 ```
 
--
+## Logging
+- Log to stdout as one JSON object per line with `level`, `message`, and `timestamp` fields.
+  Snapser parses `level` (`debug`, `info`, `warn`, `error`) to color the line in the Logs tool.
+- Every request carries an `X-Request-Id` header. `app.before_request` binds it to a contextvar
+  and `JsonLogFormatter` emits it as the `request-id` field on every request-scoped log line.
+  Snapser correlates all log lines of one request across snaps by this field and samples logs
+  per-request instead of per-line.
+- Forward `X-Request-Id` only on outbound Snapser-internal calls (snap-to-snap). Do not send it
+  to third-party APIs like Anthropic. This snap makes no snap-to-snap calls, so no forwarding is needed.
