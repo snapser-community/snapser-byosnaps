@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ByoSnapCSharp.Filters;
+using ByoSnapCSharp.Utilities;
 
 namespace ByoSnapCSharp
 {
@@ -50,6 +51,10 @@ namespace ByoSnapCSharp
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+      // First in the pipeline so every request-scoped log line carries the
+      // `request-id` field Snapser uses to correlate logs across snaps.
+      app.UseMiddleware<RequestIdLoggingMiddleware>();
+
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();

@@ -15,6 +15,10 @@ namespace ByoSnapCSharp
       // Add controllers
       services.AddControllers();
 
+      // Lets EventbusClient read the current request's X-Request-Id so it can
+      // forward it on outbound calls (empty at boot, where there is no request).
+      services.AddHttpContextAccessor();
+
       // Eventbus (custom BYO events). AddHttpClient supplies the HttpClient the
       // EventbusClient depends on. The hosted service registers this Snap's
       // custom event types ONCE on startup, in the background, best-effort — it
@@ -58,6 +62,10 @@ namespace ByoSnapCSharp
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+      // First in the pipeline so every request-scoped log line carries the
+      // `request-id` field Snapser uses to correlate logs across snaps.
+      app.UseMiddleware<RequestIdLoggingMiddleware>();
+
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();

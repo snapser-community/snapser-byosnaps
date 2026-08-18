@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Swashbuckle.AspNetCore.Swagger;
 using System.IO;
 using Microsoft.OpenApi.Writers;
+using ByoSnapCSharp.Utilities;
 
 namespace ByoSnapCSharp
 {
@@ -26,6 +29,18 @@ namespace ByoSnapCSharp
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                // Snapser expects one JSON object per log line on stdout. It
+                // parses `level` to color lines in the Logs tool and
+                // `request-id` to correlate all lines of one request.
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole(o => o.FormatterName = SnapserJsonConsoleFormatter.FormatterName);
+                    // The formatter walks the scope provider itself, so scope values
+                    // (request-id) surface as top-level JSON fields.
+                    logging.AddConsoleFormatter<SnapserJsonConsoleFormatter, ConsoleFormatterOptions>(
+                        o => o.IncludeScopes = true);
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

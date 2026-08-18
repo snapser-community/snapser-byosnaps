@@ -145,3 +145,12 @@ public class UsersController : ControllerBase
 ...
   }
 ```
+
+## Logging
+- Write logs to stdout as one JSON object per line with `level`, `message`, and `timestamp`
+  fields. `Utilities/SnapserJsonConsoleFormatter.cs` does this for all `ILogger` output. Snapser
+  parses `level` (`debug`, `info`, `warn`, `error`) to color each line in the Logs tool.
+- Every request carries an `X-Request-Id` header. `Utilities/RequestIdLoggingMiddleware.cs` binds
+  it to a log scope once per request, so each log line gets a `request-id` JSON field. Snapser
+  uses this field to correlate all log lines of one request across snaps.
+- Forward `X-Request-Id` on outbound snap-to-snap calls made for a request.
