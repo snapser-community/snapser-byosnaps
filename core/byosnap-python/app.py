@@ -21,10 +21,14 @@ Snapser auth type (User, Api-Key, Internal), an endpoint that accepts all three
 together (you do NOT need a separate route per auth type), and one endpoint that
 surfaces in the special Admin SDK. Use them as templates for your own logic.
 '''
+import json
 import logging
 import os
+import sys
+from contextvars import ContextVar
+from datetime import datetime, timezone
 import requests
-from flask import Flask, request, make_response, jsonify
+from flask import Flask, request, make_response, jsonify, has_request_context
 from flask_cors import CORS, cross_origin
 from functools import wraps
 # The generated Snapser server SDK ships in this project for internal
@@ -40,6 +44,7 @@ from functools import wraps
 AUTH_TYPE_HEADER_KEY = 'Auth-Type'
 GATEWAY_HEADER_KEY = 'Gateway'
 USER_ID_HEADER_KEY = 'User-Id'
+REQUEST_ID_HEADER_KEY = 'X-Request-Id'
 # Header Values
 AUTH_TYPE_HEADER_VALUE_USER_AUTH = 'user'
 AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH = 'api-key'
@@ -64,15 +69,86 @@ API_PREFIX = f"/v1/{BYOSNAP_ID}"
 SNAPEND_EVENTBUS_HTTP_URL = os.environ.get('SNAPEND_EVENTBUS_HTTP_URL', "")
 
 
-# Configure logging to display messages of level DEBUG and above
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+# Logging
+
+# @GOTCHAS 👋 - Logging
+#   1. Log ONE JSON object per line to stdout. Snapser parses the `level` field
+#      (debug/info/warn/error) to color the line in the Logs tool.
+#   2. Snapser correlates all log lines of one request ACROSS snaps by the
+#      `request-id` field (from the X-Request-Id header), and samples logs
+#      per-request instead of per-line. Bind it once per request (see the
+#      before_request hook) instead of passing it to every log call.
+#   3. Forward X-Request-Id on outbound snap-to-snap calls (see
+#      outbound_headers) so downstream snaps log the same request-id.
+
+request_id_var = ContextVar('request_id', default='')
+
+
+def _sanitize_request_id(value):
+    '''X-Request-Id is client-supplied: cap the length and allow only safe chars.'''
+    value = value[:128]
+    if value and all(c.isalnum() or c in '-_.' for c in value):
+        return value
+    return ''
+
+
+_LEVEL_MAP = {'DEBUG': 'debug', 'INFO': 'info', 'WARNING': 'warn',
+              'ERROR': 'error', 'CRITICAL': 'error'}
+
+
+class JsonLogFormatter(logging.Formatter):
+    '''Formats logs as the JSON shape Snapser parses (level, message, timestamp, request-id).'''
+
+    def format(self, record):
+        entry = {
+            'level': _LEVEL_MAP.get(record.levelname, 'info'),
+            'message': record.getMessage(),
+            'timestamp': datetime.fromtimestamp(
+                record.created, timezone.utc).isoformat().replace('+00:00', 'Z'),
+        }
+        request_id = request_id_var.get()
+        if request_id:
+            entry['request-id'] = request_id
+        if record.exc_info:
+            entry['exception'] = self.formatException(record.exc_info)
+        if record.stack_info:
+            entry['stack'] = self.formatStack(record.stack_info)
+        return json.dumps(entry)
+
+
+# Configure the root logger to emit JSON lines (level DEBUG and above) to stdout
+_log_handler = logging.StreamHandler(sys.stdout)
+_log_handler.setFormatter(JsonLogFormatter())
+logging.basicConfig(level=logging.DEBUG, handlers=[_log_handler])
+# Gunicorn configures these loggers with propagate=False, so point them at the JSON handler too
+for _gunicorn_logger in ('gunicorn.error', 'gunicorn.access'):
+    _gl = logging.getLogger(_gunicorn_logger)
+    _gl.handlers = [_log_handler]
+    _gl.propagate = False
 logger = logging.getLogger(__name__)
 
 
 # App Initialization
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
+
+
+@app.before_request
+def bind_request_id():
+    '''Bind X-Request-Id to a contextvar so every log line in this request carries it.'''
+    request_id_var.set(_sanitize_request_id(
+        request.headers.get(REQUEST_ID_HEADER_KEY, '')))
+
+
+def outbound_headers(extra=None):
+    '''Headers for outbound snap-to-snap calls; forwards X-Request-Id for log correlation.'''
+    headers = dict(extra or {})
+    if has_request_context():
+        request_id = _sanitize_request_id(
+            request.headers.get(REQUEST_ID_HEADER_KEY, ''))
+        if request_id:
+            headers[REQUEST_ID_HEADER_KEY] = request_id
+    return headers
 
 # Eventbus Helpers
 
@@ -117,9 +193,12 @@ def register_event_types():
                 }
             ]
         }
+        # Registration runs at boot (no request context), so outbound_headers
+        # adds no X-Request-Id here.
         response = requests.put(
             url,
-            headers={"Content-Type": "application/json", "Gateway": gateway},
+            headers=outbound_headers(
+                {"Content-Type": "application/json", "Gateway": gateway}),
             json=body
         )
         logger.info(
@@ -159,7 +238,8 @@ def publish_event(subject, recipients, message):
         }
         response = requests.post(
             url,
-            headers={"Content-Type": "application/json", "Gateway": gateway},
+            headers=outbound_headers(
+                {"Content-Type": "application/json", "Gateway": gateway}),
             json=body
         )
         logger.info("Published event '%s' (status %s)", subject, response.status_code)

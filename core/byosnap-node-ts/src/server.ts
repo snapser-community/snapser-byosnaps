@@ -1,4 +1,5 @@
 import { app } from './app';
+import { logger } from './logger';
 import { registerEventTypes } from './eventbus';
 
 //This is important - Unless you import your controllers, the tsoa generated routes will not be registered
@@ -7,7 +8,7 @@ import './controllers/exampleController';
 
 const PORT = process.env.PORT || 5003;
 app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
+    logger.info(`Server is running at http://localhost:${PORT}`);
 });
 
 // Register this Snap's custom Eventbus event types once, on startup.

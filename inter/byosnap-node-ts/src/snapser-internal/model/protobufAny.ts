@@ -1,3 +1,6 @@
+/* eslint-disable */
+/* tslint:disable */
+// @ts-nocheck
 /**
  * juhi-dev
  * Your custom SDK

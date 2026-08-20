@@ -14,6 +14,21 @@ Important things to keep in mind when developing this BYOSnap.
 2. **Header Injection**: Snapser automatically adds the correct headers in the SDK and API Explorer based on the auth type.
 3. **Validation**: Always validate auth types in the `validateAuthorization` middleware, even though Snapser handles header injection.
 
+## Logging
+
+1. **JSON lines**: Write one JSON object per line to stdout with `level`
+   (`debug`/`info`/`warn`/`error`), `message` and `timestamp`. Snapser reads `level` to color the
+   line in the Logs tool. See `logging.go`.
+2. **Request Id**: Every inbound request carries an `X-Request-Id` header. The `requestLogging`
+   middleware binds it once per request; handlers call `requestLogger(r)` so every line carries a
+   `request-id` field. Snapser correlates the lines of one request across Snaps by this field and
+   samples logs per request, not per line.
+3. **Field name**: The field must be `request-id` (kebab-case). `request_id` or `requestId` are not
+   parsed.
+4. **Outbound calls**: Forward `X-Request-Id` on Snap-to-Snap calls (e.g. the Storage API calls,
+   once the `snapser_internal` SDK is connected) so downstream logs correlate. Startup work has no
+   request id, so the field is omitted there.
+
 ## CORS
 
 1. Snapser API Explorer runs in the browser. Enabling CORS via `gorilla/handlers` allows you to test APIs via the API Explorer.

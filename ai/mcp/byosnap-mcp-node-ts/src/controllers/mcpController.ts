@@ -16,6 +16,7 @@ import {
 import { Todo } from '../types/app';
 import { JsonRpcId, JsonRpcRequest, JsonRpcErrorResponse, JsonRpcSuccessResponse, JsonRpcError } from '../types/responses';
 import { ReplaceBlobRequest, StorageGetBlobRequest, StorageGetBlobResponse, StorageReplaceBlobResponse, StorageServiceApi } from '../snapser-internal/api';
+import { getRequestId, logger, REQUEST_ID_HEADER_KEY } from '../logger';
 
 // # @GOTCHAS 👋 - Please read GOTCHAS.md
 
@@ -54,9 +55,19 @@ function getUserIdForRequest(req: ExpressRequest, pathUserId?: string): string {
   return 'anonymous';
 }
 
-async function getTasksForUser(userId: string): Promise<TodoStore> {
+function buildStorageApi(): StorageServiceApi {
   const baseUrl = process.env.SNAPEND_STORAGE_HTTP_URL ?? 'http://storage-service:8090';
   const storageApi = new StorageServiceApi(baseUrl);
+  // Forward the caller's request id so Snapser can correlate logs across snaps.
+  const requestId = getRequestId();
+  if (requestId) {
+    storageApi.defaultHeaders = { [REQUEST_ID_HEADER_KEY]: requestId };
+  }
+  return storageApi;
+}
+
+async function getTasksForUser(userId: string): Promise<TodoStore> {
+  const storageApi = buildStorageApi();
 
   let todos: Todo[] = [];
   let cas = '';
@@ -77,11 +88,11 @@ async function getTasksForUser(userId: string): Promise<TodoStore> {
 
     if (status === 404) {
       // No blob yet -> start fresh, no CAS
-      console.info(`No todo blob for user ${userId} yet, starting empty.`);
+      logger.info('No todo blob for user yet, starting empty.', { userId });
       return { todos: [], cas: '' };
     }
 
-    console.error('Error fetching todos from storage blob:', error);
+    logger.error('Error fetching todos from storage blob.', { error: String(error) });
     // Let caller turn this into a JSON-RPC error instead of pretending it worked
     throw error;
   }
@@ -90,8 +101,7 @@ async function getTasksForUser(userId: string): Promise<TodoStore> {
 }
 
 async function saveTasksForUser(userId: string, store: TodoStore): Promise<TodoStore> {
-  const baseUrl = process.env.SNAPEND_STORAGE_HTTP_URL ?? 'http://storage-service:8090';
-  const storageApi = new StorageServiceApi(baseUrl);
+  const storageApi = buildStorageApi();
 
   const payload: ReplaceBlobRequest = {
     cas: store.cas,        // '' for create, actual CAS for updates
@@ -294,7 +304,7 @@ function handleToolsList(id: JsonRpcId, params: any): JsonRpcSuccessResponse {
 //       return jsonRpcError(id, METHOD_NOT_FOUND, `Unknown tool: ${name}`);
 //     }
 //   } catch (err: any) {
-//     console.error('Unhandled error in tools/call', err);
+//     logger.error('Unhandled error in tools/call.', { error: String(err) });
 //     return jsonRpcError(id, INTERNAL_ERROR, 'Internal server error');
 //   }
 // }
@@ -351,7 +361,7 @@ async function handleToolsCall(
 
     return jsonRpcError(id, METHOD_NOT_FOUND, `Unknown tool: ${name}`);
   } catch (err: any) {
-    console.error('Unhandled error in tools/call', err);
+    logger.error('Unhandled error in tools/call.', { error: String(err) });
     return jsonRpcError(id, INTERNAL_ERROR, 'Internal server error');
   }
 }
@@ -384,7 +394,7 @@ export class McpController extends Controller {
     // try {
     //   body = expressReq.body as JsonRpcRequest;
     // } catch (err) {
-    //   console.error('Failed to parse JSON body', err);
+    //   logger.error('Failed to parse JSON body.', { error: String(err) });
     //   this.setStatus(400);
     //   return jsonRpcError(null, PARSE_ERROR, 'Invalid JSON');
     // }

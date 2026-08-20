@@ -107,6 +107,15 @@ namespace ByoSnapCSharp.Controllers
         // Configuration config = new Configuration();
         // config.BasePath = Environment.GetEnvironmentVariable("SNAPEND_PROFILES_HTTP_URL");
         // HttpClient httpClient = new HttpClient();
+        // // Forward X-Request-Id so Snapser correlates this snap-to-snap call
+        // // with the originating request's logs. The header is client-supplied,
+        // // so sanitize it before forwarding.
+        // var requestId = RequestIdLoggingMiddleware.SanitizeRequestId(
+        //   Request.Headers[AppConstants.requestIdHeaderKey].ToString());
+        // if (!string.IsNullOrEmpty(requestId))
+        // {
+        //   httpClient.DefaultRequestHeaders.Add(AppConstants.requestIdHeaderKey, requestId);
+        // }
         // HttpClientHandler httpClientHandler = new HttpClientHandler();
         // var apiInstance = new ProfilesServiceApi(httpClient, config, httpClientHandler);
 

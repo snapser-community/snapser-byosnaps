@@ -3,33 +3,39 @@ package main
 import (
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 
 	"math/rand"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 	eventbuspb "github.com/snapser-community/snapser-byosnaps/byosnap-go/snapserpb/eventbus"
 	lobbiespb "github.com/snapser-community/snapser-byosnaps/byosnap-go/snapserpb/lobbies"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/proto"
 )
 
 func (a *app) eventHandler(c *gin.Context) {
 	ctx := c.Request.Context()
-	log := zerolog.Ctx(c.Request.Context())
+	// 👇 Logger bound by the requestLogging middleware: every line below carries
+	// the request-id of this webhook delivery.
+	log := requestLogger(c.Request)
 
 	// Read the body in as a byte slice
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to read body")
+		log.Error("failed to read body", slog.Any("error", err))
+		c.Status(http.StatusBadRequest)
+		return
 	}
 
 	// 👇 Parse body as eventbus.ByoWebhookMessage
 	var wr eventbuspb.ByoWebhookRequest
 	err = proto.Unmarshal(body, &wr)
 	if err != nil {
-		log.Fatal().Str("requestBody", string(body)).Err(err).Msg("failed to unmarshal body")
+		log.Error("failed to unmarshal body",
+			slog.String("requestBody", string(body)), slog.Any("error", err))
+		c.Status(http.StatusBadRequest)
+		return
 	}
 
 	// Switch on the message type
@@ -37,7 +43,7 @@ func (a *app) eventHandler(c *gin.Context) {
 	switch wr.MessageType {
 	case eventbuspb.MessageType_MESSAGE_TYPE_SNAP_EVENT:
 		snapEvent := wr.GetByoSnapEvent()
-		log.Debug().Interface("snapEvent", snapEvent).Msg("received snap event")
+		log.Debug("received snap event", slog.Any("snapEvent", snapEvent))
 
 		// Switch on the subject which is the recommended way to identify the event and payload
 		switch snapEvent.Subject {
@@ -45,9 +51,10 @@ func (a *app) eventHandler(c *gin.Context) {
 		case "snapser.services.lobbies.member.joined":
 			ev := &lobbiespb.EventLobbiesMemberJoined{}
 			if err := proto.Unmarshal([]byte(snapEvent.Payload), ev); err != nil {
-				panic(err)
+				log.Error("failed to unmarshal lobby member joined payload", slog.Any("error", err))
+				break
 			}
-			log.Info().Msgf("got EventLobbiesMemberJoined: %v", ev)
+			log.Info("got EventLobbiesMemberJoined", slog.Any("event", ev))
 
 			// Some praise messages
 			var fallbackPraises = []string{
@@ -67,19 +74,22 @@ func (a *app) eventHandler(c *gin.Context) {
 				Payload:    []byte(fmt.Sprintf("Nice work, you joined a lobby - %s", randomPraise)),
 				Recipients: []string{ev.JoinedUserId},
 			}
-			ctx = metadata.NewOutgoingContext(ctx, metadata.Pairs("gateway", "internal"))
-			_, err := a.eventbusClient.PublishByoEvent(ctx, praiseReq)
+			// 👇 outgoingInternalContext forwards the x-request-id metadata, so the
+			// Eventbus logs this publish under the same request-id.
+			_, err := a.eventbusClient.PublishByoEvent(outgoingInternalContext(ctx), praiseReq)
 			if err != nil {
-				log.Error().Err(err).Msg("failed to publish event")
+				log.Error("failed to publish event", slog.Any("error", err))
 			} else {
-				log.Info().Msgf("published praise event: %v", praiseReq)
+				log.Info("published praise event", slog.String("subject", praiseReq.Subject))
 			}
 		default:
-			log.Warn().Msgf("unhandled event: [eventTypeId=%d, subject=%s, serviceName=%s]",
-				snapEvent.EventTypeId, snapEvent.Subject, snapEvent.ServiceName)
+			log.Warn("unhandled event",
+				slog.Uint64("eventTypeId", uint64(snapEvent.EventTypeId)),
+				slog.String("subject", snapEvent.Subject),
+				slog.String("serviceName", snapEvent.ServiceName))
 		}
 	default:
-		log.Printf("unhandled message type: %v", wr.MessageType)
+		log.Warn("unhandled message type", slog.String("messageType", wr.MessageType.String()))
 	}
 
 	c.Writer.WriteHeader(http.StatusOK)

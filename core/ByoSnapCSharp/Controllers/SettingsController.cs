@@ -78,6 +78,15 @@ namespace ByoSnapCSharp.Controllers
       // var configuration = new Configuration();
       // configuration.BasePath = Environment.GetEnvironmentVariable(AppConstants.storageHttpUrlEnvKey);
       // using var httpClient = new HttpClient();
+      // // Forward X-Request-Id so Snapser correlates this snap-to-snap call
+      // // with the originating request's logs. The header is client-supplied,
+      // // so sanitize it before forwarding.
+      // var requestId = RequestIdLoggingMiddleware.SanitizeRequestId(
+      //   Request.Headers[AppConstants.requestIdHeaderKey].ToString());
+      // if (!string.IsNullOrEmpty(requestId))
+      // {
+      //   httpClient.DefaultRequestHeaders.Add(AppConstants.requestIdHeaderKey, requestId);
+      // }
       // using var httpClientHandler = new HttpClientHandler();
       // var apiInstance = new StorageServiceApi(httpClient, configuration, httpClientHandler);
       // try
@@ -140,6 +149,15 @@ namespace ByoSnapCSharp.Controllers
         // var configuration = new Configuration();
         // configuration.BasePath = Environment.GetEnvironmentVariable(AppConstants.storageHttpUrlEnvKey);
         // using var httpClient = new HttpClient();
+        // // Forward X-Request-Id so Snapser correlates this snap-to-snap call
+        // // with the originating request's logs. The header is client-supplied,
+        // // so sanitize it before forwarding.
+        // var requestId = RequestIdLoggingMiddleware.SanitizeRequestId(
+        //   Request.Headers[AppConstants.requestIdHeaderKey].ToString());
+        // if (!string.IsNullOrEmpty(requestId))
+        // {
+        //   httpClient.DefaultRequestHeaders.Add(AppConstants.requestIdHeaderKey, requestId);
+        // }
         // using var httpClientHandler = new HttpClientHandler();
         // var apiInstance = new StorageServiceApi(httpClient, configuration, httpClientHandler);
         //
@@ -222,6 +240,15 @@ namespace ByoSnapCSharp.Controllers
       // var configuration = new Configuration();
       // configuration.BasePath = Environment.GetEnvironmentVariable(AppConstants.storageHttpUrlEnvKey);
       // using var httpClient = new HttpClient();
+      // // Forward X-Request-Id so Snapser correlates this snap-to-snap call
+      // // with the originating request's logs. The header is client-supplied,
+      // // so sanitize it before forwarding.
+      // var requestId = RequestIdLoggingMiddleware.SanitizeRequestId(
+      //   Request.Headers[AppConstants.requestIdHeaderKey].ToString());
+      // if (!string.IsNullOrEmpty(requestId))
+      // {
+      //   httpClient.DefaultRequestHeaders.Add(AppConstants.requestIdHeaderKey, requestId);
+      // }
       // using var httpClientHandler = new HttpClientHandler();
       // var apiInstance = new StorageServiceApi(httpClient, configuration, httpClientHandler);
       // try
@@ -283,6 +310,15 @@ namespace ByoSnapCSharp.Controllers
         // var configuration = new Configuration();
         // configuration.BasePath = Environment.GetEnvironmentVariable(AppConstants.storageHttpUrlEnvKey);
         // using var httpClient = new HttpClient();
+        // // Forward X-Request-Id so Snapser correlates this snap-to-snap call
+        // // with the originating request's logs. The header is client-supplied,
+        // // so sanitize it before forwarding.
+        // var requestId = RequestIdLoggingMiddleware.SanitizeRequestId(
+        //   Request.Headers[AppConstants.requestIdHeaderKey].ToString());
+        // if (!string.IsNullOrEmpty(requestId))
+        // {
+        //   httpClient.DefaultRequestHeaders.Add(AppConstants.requestIdHeaderKey, requestId);
+        // }
         // using var httpClientHandler = new HttpClientHandler();
         // var apiInstance = new StorageServiceApi(httpClient, configuration, httpClientHandler);
         //

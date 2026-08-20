@@ -49,3 +49,15 @@ Important things to keep in mind when developing this BYOSnap.
 1. The `SnapserInternal/` directory contains auto-generated API client code.
 2. Generate it from the Storage service OpenAPI spec.
 3. Set the `BasePath` using the Snapser-provided environment variable (e.g., `SNAPEND_STORAGE_HTTP_URL`).
+
+## Logging
+
+1. Write logs to stdout as one JSON object per line with `level`, `message`, and `timestamp`
+   fields. `Utilities/SnapserJsonConsoleFormatter.cs` does this for all `ILogger` output. Snapser
+   parses `level` (`debug`, `info`, `warn`, `error`) to color each line in the Logs tool.
+2. Every request carries an `X-Request-Id` header. `Utilities/RequestIdLoggingMiddleware.cs` binds
+   it to a log scope once per request, so each log line gets a `request-id` JSON field. Snapser
+   uses this field to correlate all log lines of one request across snaps.
+3. Forward `X-Request-Id` on outbound HTTP calls made for a request. `EventbusClient` reads it
+   from the current `HttpContext`. Startup calls (event type registration at boot) have no
+   request id, so the header is omitted there.

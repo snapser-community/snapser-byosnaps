@@ -41,3 +41,14 @@
 1. The Dockerfile uses a multi-stage build: build stage installs all deps and compiles TypeScript, production stage only copies the compiled output.
 2. Port 5003 is exposed by default.
 3. The `npm run build` command also generates the swagger spec.
+
+## Logging
+
+- `src/logger.ts` writes one JSON object per line to stdout, with no dependencies.
+- Each line has `level` (debug, info, warn, error), `message`, and `timestamp`. Snapser parses
+  `level` to color the line in the Logs tool.
+- `requestIdMiddleware` in `src/app.ts` binds the `X-Request-Id` header once per request. The
+  logger adds it to every line as the `request-id` field. Snapser correlates all log lines of one
+  request across snaps by this field and samples logs per request, not per line.
+- The eventbus helpers forward `X-Request-Id` on publish calls made during a request. The
+  boot-time event type registration has no request id, so no header is sent there.

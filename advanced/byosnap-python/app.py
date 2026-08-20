@@ -4,8 +4,11 @@ Intermediate Python BYOSnap Example.
 import logging
 import os
 import json
+import sys
 import time
-from flask import Flask, request, make_response, jsonify
+from contextvars import ContextVar
+from datetime import datetime, timezone
+from flask import Flask, request, make_response, jsonify, has_request_context
 from flask_cors import CORS, cross_origin
 from functools import wraps
 import snapser_internal
@@ -17,6 +20,7 @@ from snapser_internal.rest import ApiException
 AUTH_TYPE_HEADER_KEY = 'Auth-Type'
 GATEWAY_HEADER_KEY = 'Gateway'
 USER_ID_HEADER_KEY = 'User-Id'
+REQUEST_ID_HEADER_KEY = 'X-Request-Id'
 # Header Values
 AUTH_TYPE_HEADER_VALUE_USER_AUTH = 'user'
 AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH = 'api-key'
@@ -26,13 +30,85 @@ ALL_AUTH_TYPES = [AUTH_TYPE_HEADER_VALUE_USER_AUTH,
                   AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE]
 
 
-# Configure logging to display messages of level DEBUG and above
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+# Logging
+
+# @GOTCHAS 👋 - Logging
+#   1. Log ONE JSON object per line to stdout. Snapser parses the `level` field
+#      (debug/info/warn/error) to color the line in the Logs tool.
+#   2. Snapser correlates all log lines of one request ACROSS snaps by the
+#      `request-id` field (from the X-Request-Id header), and samples logs
+#      per-request instead of per-line. Bind it once per request (see the
+#      before_request hook) instead of passing it to every log call.
+#   3. Forward X-Request-Id on outbound snap-to-snap calls (see
+#      outbound_headers, passed via the SDK's `_headers` kwarg) so downstream
+#      snaps log the same request-id.
+
+request_id_var = ContextVar('request_id', default='')
+
+
+def _sanitize_request_id(value):
+    '''X-Request-Id is client-supplied: cap the length and allow only safe chars.'''
+    value = value[:128]
+    if value and all(c.isalnum() or c in '-_.' for c in value):
+        return value
+    return ''
+
+
+_LEVEL_MAP = {'DEBUG': 'debug', 'INFO': 'info', 'WARNING': 'warn',
+              'ERROR': 'error', 'CRITICAL': 'error'}
+
+
+class JsonLogFormatter(logging.Formatter):
+    '''Formats logs as the JSON shape Snapser parses (level, message, timestamp, request-id).'''
+
+    def format(self, record):
+        entry = {
+            'level': _LEVEL_MAP.get(record.levelname, 'info'),
+            'message': record.getMessage(),
+            'timestamp': datetime.fromtimestamp(
+                record.created, timezone.utc).isoformat().replace('+00:00', 'Z'),
+        }
+        request_id = request_id_var.get()
+        if request_id:
+            entry['request-id'] = request_id
+        if record.exc_info:
+            entry['exception'] = self.formatException(record.exc_info)
+        if record.stack_info:
+            entry['stack'] = self.formatStack(record.stack_info)
+        return json.dumps(entry)
+
+
+# Configure the root logger to emit JSON lines (level DEBUG and above) to stdout
+_log_handler = logging.StreamHandler(sys.stdout)
+_log_handler.setFormatter(JsonLogFormatter())
+logging.basicConfig(level=logging.DEBUG, handlers=[_log_handler])
+# Gunicorn configures these loggers with propagate=False, so point them at the JSON handler too
+for _gunicorn_logger in ('gunicorn.error', 'gunicorn.access'):
+    _gl = logging.getLogger(_gunicorn_logger)
+    _gl.handlers = [_log_handler]
+    _gl.propagate = False
 
 # App Initialization
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
+
+
+@app.before_request
+def bind_request_id():
+    '''Bind X-Request-Id to a contextvar so every log line in this request carries it.'''
+    request_id_var.set(_sanitize_request_id(
+        request.headers.get(REQUEST_ID_HEADER_KEY, '')))
+
+
+def outbound_headers(extra=None):
+    '''Headers for outbound snap-to-snap calls; forwards X-Request-Id for log correlation.'''
+    headers = dict(extra or {})
+    if has_request_context():
+        request_id = _sanitize_request_id(
+            request.headers.get(REQUEST_ID_HEADER_KEY, ''))
+        if request_id:
+            headers[REQUEST_ID_HEADER_KEY] = request_id
+    return headers
 
 # Decorators
 
@@ -197,7 +273,8 @@ def get_settings():
                 access_type='private',
                 blob_key='character_settings',
                 owner_id=blob_owner_key,
-                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
+                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal'),
+                _headers=outbound_headers()
             )
             if api_response is None:
                 return make_response(jsonify(default_settings), 200)
@@ -241,7 +318,8 @@ def update_settings():
                 access_type='private',
                 blob_key='character_settings',
                 owner_id=blob_owner_key,
-                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
+                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal'),
+                _headers=outbound_headers()
             )
             if api_response is not None:
                 cas = api_response.cas
@@ -254,6 +332,7 @@ def update_settings():
                 blob_key='character_settings',
                 owner_id=blob_owner_key,
                 gateway=os.environ['SNAPEND_INTERNAL_HEADER'],
+                _headers=outbound_headers(),
                 body={
                     "value": json.dumps(blob_data),
                     "ttl": 0,
@@ -300,7 +379,8 @@ def get_settings_custom():
                 access_type='private',
                 blob_key='character_settings',
                 owner_id=blob_owner_key,
-                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
+                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal'),
+                _headers=outbound_headers()
             )
             if api_response is None:
                 return make_response(jsonify(default_settings), 200)
@@ -345,7 +425,8 @@ def update_settings_custom():
                 access_type='private',
                 blob_key='character_settings',
                 owner_id=blob_owner_key,
-                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
+                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal'),
+                _headers=outbound_headers()
             )
             if api_response is not None:
                 cas = api_response.cas
@@ -358,6 +439,7 @@ def update_settings_custom():
                 blob_key='character_settings',
                 owner_id=blob_owner_key,
                 gateway=os.environ['SNAPEND_INTERNAL_HEADER'],
+                _headers=outbound_headers(),
                 body={
                     "value": json.dumps(blob_data),
                     "ttl": 0,
@@ -398,7 +480,8 @@ def get_user_data_custom(user_id):
                 access_type='protected',
                 blob_key='characters',
                 owner_id=user_id,
-                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
+                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal'),
+                _headers=outbound_headers()
             )
             if api_response is None:
                 return make_response(jsonify({"payload": ""}), 200)
@@ -439,7 +522,8 @@ def update_user_data_custom(user_id):
                 access_type='protected',
                 blob_key='characters',
                 owner_id=user_id,
-                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal')
+                gateway=os.environ.get('SNAPEND_INTERNAL_HEADER', 'internal'),
+                _headers=outbound_headers()
             )
             if api_response is not None:
                 cas = api_response.cas
@@ -452,6 +536,7 @@ def update_user_data_custom(user_id):
                 blob_key='characters',
                 owner_id=user_id,
                 gateway=os.environ['SNAPEND_INTERNAL_HEADER'],
+                _headers=outbound_headers(),
                 body={
                     "value": json.dumps(blob_data),
                     "ttl": 0,
@@ -563,7 +648,8 @@ def settings_export():
                 blob_key='character_settings',
                 owner_id=blob_key_ids,
                 gateway=os.environ.get(
-                    'SNAPEND_INTERNAL_HEADER', 'internal')
+                    'SNAPEND_INTERNAL_HEADER', 'internal'),
+                _headers=outbound_headers()
             )
             if api_response is None:
                 return make_response(jsonify(response), 200)
@@ -735,6 +821,7 @@ def settings_import():
             try:
                 api_response = api_instance.storage_batch_replace_blob(
                     gateway=os.environ['SNAPEND_INTERNAL_HEADER'],
+                    _headers=outbound_headers(),
                     body=payload,
                 )
                 if api_response is None:
@@ -803,7 +890,8 @@ def get_user_data(user_id):
                 access_type='private',
                 blob_key='characters',
                 owner_id=user_id,
-                gateway=os.environ['SNAPEND_INTERNAL_HEADER']
+                gateway=os.environ['SNAPEND_INTERNAL_HEADER'],
+                _headers=outbound_headers()
             )
             if api_response is None:
                 return make_response(jsonify({
@@ -854,7 +942,8 @@ def delete_user_data(user_id):
                 access_type='private',
                 blob_key='characters',
                 owner_id=user_id,
-                gateway=os.environ['SNAPEND_INTERNAL_HEADER']
+                gateway=os.environ['SNAPEND_INTERNAL_HEADER'],
+                _headers=outbound_headers()
             )
             if storage_api_response is None:
                 return make_response(jsonify({

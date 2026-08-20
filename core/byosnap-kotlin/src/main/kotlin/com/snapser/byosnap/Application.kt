@@ -35,6 +35,7 @@ import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.request.receiveText
@@ -53,6 +54,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import org.slf4j.LoggerFactory
 
 // =========================================================================
 // Constants
@@ -62,6 +64,18 @@ import kotlinx.serialization.json.put
 const val AUTH_TYPE_HEADER_KEY = "Auth-Type"
 const val GATEWAY_HEADER_KEY = "Gateway"
 const val USER_ID_HEADER_KEY = "User-Id"
+// Snapser sends this header on every request. Its value goes into every log
+// line as the `request-id` JSON field (see SnapserJsonLayout) so Snapser can
+// correlate one request's logs across snaps.
+const val REQUEST_ID_HEADER_KEY = "X-Request-Id"
+// MDC key + JSON field name Snapser expects (kebab-case).
+const val REQUEST_ID_MDC_KEY = "request-id"
+
+// X-Request-Id is client-supplied: cap the length and allow only safe chars.
+fun sanitizeRequestId(value: String): String {
+    val truncated = value.take(128)
+    return if (truncated.all { (it.code < 128 && it.isLetterOrDigit()) || it in "-_." }) truncated else ""
+}
 
 // Header Values
 const val AUTH_TYPE_HEADER_VALUE_USER_AUTH = "user"
@@ -81,6 +95,11 @@ const val SERVER_PORT = 5003
 
 // Shared JSON codec used for parsing request bodies below.
 private val jsonCodec = Json { ignoreUnknownKeys = true }
+
+// Structured application logger. logback.xml routes it through
+// SnapserJsonLayout, so every line lands on stdout as the JSON shape Snapser
+// parses — use this instead of println.
+private val appLogger = LoggerFactory.getLogger("Application")
 
 // =========================================================================
 // Response models (kotlinx.serialization)
@@ -183,6 +202,22 @@ fun main() {
 }
 
 fun Application.module() {
+    // Request-id logging context
+    //
+    // Bind the X-Request-Id header to the MDC ONCE per request instead of
+    // passing it to every log call. SnapserJsonLayout copies it into the
+    // `request-id` field of each log line, which Snapser uses to correlate a
+    // request's logs across snaps and to sample logs per-request.
+    //
+    // CallLogging reinstates the MDC at every coroutine resumption, so the id
+    // survives thread switches and never leaks onto another request. It also
+    // emits one INFO access-log line per call through SnapserJsonLayout.
+    install(CallLogging) {
+        mdc(REQUEST_ID_MDC_KEY) { call ->
+            sanitizeRequestId(call.request.headers[REQUEST_ID_HEADER_KEY] ?: "").ifEmpty { null }
+        }
+    }
+
     // CORS
     //
     // @GOTCHAS 👋 - CORS
@@ -201,6 +236,7 @@ fun Application.module() {
         allowHeader("App-Key")
         allowHeader("Gateway")
         allowHeader("User-Id")
+        allowHeader(REQUEST_ID_HEADER_KEY)
     }
 
     // JSON serialization
@@ -453,6 +489,9 @@ fun Application.module() {
         get("$API_PREFIX/users/{userId}/example") {
             val userId = call.parameters["userId"] ?: ""
             if (!validateAuthorization(call, AUTH_TYPE_HEADER_VALUE_USER_AUTH, userId = userId)) return@get
+            // Emits a JSON line with the request-id already attached (no need
+            // to pass it) — see the CallLogging install at the top of module().
+            appLogger.info("Handling example request for user $userId")
             // TODO: Add your user-scoped business logic here.
             call.respond(HttpStatusCode.OK, MessageResponse("Hello user $userId"))
         }

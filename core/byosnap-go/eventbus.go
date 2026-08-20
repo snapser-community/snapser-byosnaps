@@ -2,10 +2,11 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"time"
 )
@@ -33,11 +34,14 @@ var eventbusHTTPClient = &http.Client{Timeout: 5 * time.Second}
 // SNAPEND_EVENTBUS_HTTP_URL is not set (e.g. the Eventbus Snap isn't part of
 // this Snapend) it logs and skips.
 //
+// It runs outside any request, so its log lines carry no `request-id`.
+//
 // PUT {SNAPEND_EVENTBUS_HTTP_URL}/v1/eventbus/byo/event-types/{BYOSnapID}
 func registerEventTypes() {
 	eventbusURL := getEnv(EventbusHTTPURLEnvKey, "")
 	if eventbusURL == "" {
-		log.Printf("Eventbus: %s not set, skipping event-type registration", EventbusHTTPURLEnvKey)
+		logger.Info("Eventbus URL not set, skipping event-type registration",
+			slog.String("env_key", EventbusHTTPURLEnvKey))
 		return
 	}
 
@@ -47,26 +51,26 @@ func registerEventTypes() {
 	body := map[string]interface{}{
 		"event_types": []map[string]interface{}{
 			{
-				"subject":              fmt.Sprintf("%s.example.created", BYOSnapID),
-				"service_name":         BYOSnapID,
-				"message_type":         "example",
-				"event_type_id":        0,
+				"subject":               fmt.Sprintf("%s.example.created", BYOSnapID),
+				"service_name":          BYOSnapID,
+				"message_type":          "example",
+				"event_type_id":         0,
 				"event_type_enum_value": 0,
-				"description":          fmt.Sprintf("Example custom event registered by %s", BYOSnapID),
+				"description":           fmt.Sprintf("Example custom event registered by %s", BYOSnapID),
 			},
 		},
 	}
 
 	payload, err := json.Marshal(body)
 	if err != nil {
-		log.Printf("Eventbus: failed to marshal event-type registration body: %v", err)
+		logger.Error("Eventbus: failed to marshal event-type registration body", slog.Any("error", err))
 		return
 	}
 
 	url := fmt.Sprintf("%s/v1/eventbus/byo/event-types/%s", eventbusURL, BYOSnapID)
 	req, err := http.NewRequest(http.MethodPut, url, bytes.NewReader(payload))
 	if err != nil {
-		log.Printf("Eventbus: failed to build event-type registration request: %v", err)
+		logger.Error("Eventbus: failed to build event-type registration request", slog.Any("error", err))
 		return
 	}
 	req.Header.Set("Content-Type", "application/json")
@@ -74,18 +78,19 @@ func registerEventTypes() {
 
 	resp, err := eventbusHTTPClient.Do(req)
 	if err != nil {
-		log.Printf("Eventbus: event-type registration request failed: %v", err)
+		logger.Error("Eventbus: event-type registration request failed", slog.Any("error", err))
 		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		respBody, _ := io.ReadAll(resp.Body)
-		log.Printf("Eventbus: event-type registration returned %d: %s", resp.StatusCode, string(respBody))
+		logger.Error("Eventbus: event-type registration failed",
+			slog.Int("status", resp.StatusCode), slog.String("body", string(respBody)))
 		return
 	}
 
-	log.Printf("Eventbus: registered event types for %s", BYOSnapID)
+	logger.Info("Eventbus: registered event types", slog.String("byosnap_id", BYOSnapID))
 }
 
 // publishEvent publishes a single event to the Snapser Eventbus. It is a
@@ -93,19 +98,27 @@ func registerEventTypes() {
 // choose to ignore. It is intentionally NOT wired into any endpoint's normal
 // flow — call it from your own business logic where an event should fire.
 //
-// Example:
+// Pass the inbound request context (r.Context()) so the call forwards the
+// X-Request-Id header and the Eventbus logs correlate with this request.
+//
+// Example (context.WithoutCancel keeps the request id but drops the
+// cancellation, because r.Context() is cancelled once the handler returns):
 //
 //	go publishEvent(
+//	    context.WithoutCancel(r.Context()),
 //	    fmt.Sprintf("%s.example.created", BYOSnapID),
 //	    []string{"user-123"},                       // recipients (empty = broadcast)
 //	    map[string]interface{}{"example_id": "abc"}, // your payload
 //	)
 //
 // POST {SNAPEND_EVENTBUS_HTTP_URL}/v1/eventbus/byo/events/{BYOSnapID}/{subject}
-func publishEvent(subject string, recipients []string, message map[string]interface{}) error {
+func publishEvent(ctx context.Context, subject string, recipients []string, message map[string]interface{}) error {
+	log := contextLogger(ctx).With(slog.String("subject", subject))
+
 	eventbusURL := getEnv(EventbusHTTPURLEnvKey, "")
 	if eventbusURL == "" {
-		log.Printf("Eventbus: %s not set, skipping publish of %q", EventbusHTTPURLEnvKey, subject)
+		log.Info("Eventbus URL not set, skipping publish",
+			slog.String("env_key", EventbusHTTPURLEnvKey))
 		return nil
 	}
 
@@ -121,33 +134,35 @@ func publishEvent(subject string, recipients []string, message map[string]interf
 
 	payload, err := json.Marshal(body)
 	if err != nil {
-		log.Printf("Eventbus: failed to marshal publish body for %q: %v", subject, err)
+		log.Error("Eventbus: failed to marshal publish body", slog.Any("error", err))
 		return err
 	}
 
 	url := fmt.Sprintf("%s/v1/eventbus/byo/events/%s/%s", eventbusURL, BYOSnapID, subject)
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(payload))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(payload))
 	if err != nil {
-		log.Printf("Eventbus: failed to build publish request for %q: %v", subject, err)
+		log.Error("Eventbus: failed to build publish request", slog.Any("error", err))
 		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set(GatewayHeaderKey, getEnv(InternalHeaderEnvKey, DefaultInternalHeaderValue))
+	forwardRequestID(ctx, req)
 
 	resp, err := eventbusHTTPClient.Do(req)
 	if err != nil {
-		log.Printf("Eventbus: publish request for %q failed: %v", subject, err)
+		log.Error("Eventbus: publish request failed", slog.Any("error", err))
 		return err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		respBody, _ := io.ReadAll(resp.Body)
-		log.Printf("Eventbus: publish of %q returned %d: %s", subject, resp.StatusCode, string(respBody))
+		log.Error("Eventbus: publish failed",
+			slog.Int("status", resp.StatusCode), slog.String("body", string(respBody)))
 		return fmt.Errorf("eventbus publish returned status %d", resp.StatusCode)
 	}
 
-	log.Printf("Eventbus: published event %q", subject)
+	log.Info("Eventbus: published event")
 	return nil
 }
 
@@ -159,14 +174,16 @@ func publishEvent(subject string, recipients []string, message map[string]interf
 // This stub reads and logs the delivered body, then returns 200 so the Eventbus
 // marks delivery as successful.
 func eventHandler(w http.ResponseWriter, r *http.Request) {
+	log := requestLogger(r)
+
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Printf("Eventbus: failed to read inbound event body: %v", err)
+		log.Error("Eventbus: failed to read inbound event body", slog.Any("error", err))
 		w.WriteHeader(http.StatusOK)
 		return
 	}
 
-	log.Printf("Eventbus: received event: %s", string(body))
+	log.Info("Eventbus: received event", slog.String("body", string(body)))
 
 	// TODO: Parse the body and switch on the event `subject` to dispatch to your
 	//       own handlers. Return 200 once you have accepted the event.

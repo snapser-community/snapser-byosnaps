@@ -41,6 +41,23 @@ Important things to keep in mind when developing this Spring Boot BYOSnap.
 3. When you add, rename, or remove an endpoint, update `snapser-resources/swagger.json` by hand: add the path, its `operationId`, and the correct `x-snapser-auth-types` array.
 4. **Only SDK-exposed endpoints belong in swagger.json.** The internal settings/GDPR system endpoints are intentionally omitted (matching the other core examples) except the import/export operations that Snapser tooling calls.
 
+## Logging
+
+1. **JSON to stdout, one object per line.** Snapser ingests snap logs from stdout.
+   `logback-spring.xml` wires `logging/SnapserJsonLayout` (logback + Jackson, both bundled by
+   Spring Boot, no extra dependency) to emit `level`, `message`, `timestamp`, and `request-id`.
+2. **`level` must be lowercase** `debug|info|warn|error`. Snapser parses it to color the line in
+   the Logs tool. The layout maps logback TRACE/DEBUG to `debug`.
+3. **`request-id` correlates logs across snaps.** Snapser sends `X-Request-Id` on every request
+   and samples logs per-request instead of per-line. `logging/RequestIdFilter` binds the header
+   to MDC once per request (with a `finally` MDC.remove because Tomcat pools threads), so every
+   log call picks it up. Do not pass the id to each log statement.
+4. **Forward `X-Request-Id` on outbound snap-to-snap calls** made on behalf of a request.
+   `EventbusClient#publishEvent` reads it from MDC and sets the header. Startup registration
+   (`registerEventTypes`) runs outside any request, so it sends no header.
+5. Startup and background-thread logs have no `request-id` field. That is expected: only
+   request-scoped lines carry it.
+
 ## Docker / Build
 
 1. The Dockerfile is multi-stage: it builds with `maven:3.9-eclipse-temurin-21` and runs on `eclipse-temurin:21-jre`.

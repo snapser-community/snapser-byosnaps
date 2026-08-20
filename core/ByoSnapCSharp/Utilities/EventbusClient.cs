@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -26,11 +27,16 @@ namespace ByoSnapCSharp.Utilities
   {
     private readonly ILogger<EventbusClient> _logger;
     private readonly HttpClient _httpClient;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public EventbusClient(ILogger<EventbusClient> logger, HttpClient httpClient)
+    public EventbusClient(
+      ILogger<EventbusClient> logger,
+      HttpClient httpClient,
+      IHttpContextAccessor httpContextAccessor)
     {
       _logger = logger;
       _httpClient = httpClient;
+      _httpContextAccessor = httpContextAccessor;
     }
 
     /// <summary>
@@ -48,6 +54,27 @@ namespace ByoSnapCSharp.Utilities
     private static string GatewayHeaderValue =>
       Environment.GetEnvironmentVariable(AppConstants.internalHeaderEnvKey)
         ?? AppConstants.defaultInternalHeaderValue;
+
+    /// <summary>
+    /// Adds the Gateway header and, when running inside a request, forwards the
+    /// caller's X-Request-Id so Snapser can correlate this outbound call with
+    /// the originating request. At boot (event type registration) there is no
+    /// HttpContext, so the header is omitted.
+    /// </summary>
+    private void AddInternalHeaders(HttpRequestMessage request)
+    {
+      request.Headers.TryAddWithoutValidation(
+        AppConstants.gatewayHeaderKey, GatewayHeaderValue);
+
+      var requestId = RequestIdLoggingMiddleware.SanitizeRequestId(
+        _httpContextAccessor.HttpContext?
+          .Request.Headers[AppConstants.requestIdHeaderKey].ToString() ?? "");
+      if (!string.IsNullOrEmpty(requestId))
+      {
+        request.Headers.TryAddWithoutValidation(
+          AppConstants.requestIdHeaderKey, requestId);
+      }
+    }
 
     /// <summary>
     /// Register this Snap's custom event types with the Eventbus Snap.
@@ -95,8 +122,7 @@ namespace ByoSnapCSharp.Utilities
           Content = new StringContent(
             JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json")
         };
-        request.Headers.TryAddWithoutValidation(
-          AppConstants.gatewayHeaderKey, GatewayHeaderValue);
+        AddInternalHeaders(request);
 
         var response = await _httpClient.SendAsync(request);
         _logger.LogInformation(
@@ -156,8 +182,7 @@ namespace ByoSnapCSharp.Utilities
           Content = new StringContent(
             JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json")
         };
-        request.Headers.TryAddWithoutValidation(
-          AppConstants.gatewayHeaderKey, GatewayHeaderValue);
+        AddInternalHeaders(request);
 
         var response = await _httpClient.SendAsync(request);
         _logger.LogInformation(

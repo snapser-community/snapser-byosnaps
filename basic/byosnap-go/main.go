@@ -23,8 +23,9 @@ package main
 
 import (
 	"encoding/json"
-	"log"
+	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -33,9 +34,18 @@ import (
 func main() {
 	r := mux.NewRouter()
 
+	// Structured logging
+	// @GOTCHAS 👋 - Logging
+	//   1. Snapser reads the `level` field of each JSON log line to color it in
+	//      the Logs tool, and correlates the lines of one request across Snaps by
+	//      the `request-id` field.
+	//   2. requestLogging binds the inbound X-Request-Id once per request.
+	//      Handlers call requestLogger(r) so every line carries it. See logging.go.
+	r.Use(requestLogging)
+
 	// Configure CORS
 	corsOpts := handlers.AllowedOrigins([]string{"*"}) // Allows all origins
-	corsHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Token", "Api-Key", "App-Key", "Gateway", "User-Id"})
+	corsHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Token", "Api-Key", "App-Key", "Gateway", "User-Id", RequestIDHeaderKey})
 	corsMethods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"})
 
 
@@ -56,8 +66,11 @@ func main() {
 	r.Handle("/v1/byosnap-basic/users/{user_id}/profile", validateAuthorization([]string{AuthTypeHeaderValueUserAuth, AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "user_id")(updateUserProfileHandler)).Methods("PUT")
 
 	// Start server
-	log.Println("Starting server on :5003")
-	log.Fatal(http.ListenAndServe(":5003", handlers.CORS(corsOpts, corsHeaders, corsMethods)(r)))
+	logger.Info("Starting server", slog.String("address", ":5003"))
+	if err := http.ListenAndServe(":5003", handlers.CORS(corsOpts, corsHeaders, corsMethods)(r)); err != nil {
+		logger.Error("Server stopped", slog.Any("error", err))
+		os.Exit(1)
+	}
 }
 
 // HealthCheckHandler returns ok for health checks
@@ -101,9 +114,14 @@ func GetGame(w http.ResponseWriter, r *http.Request) {
 		Message:      "success",
 	}
 
+	// requestLogger(r) carries the request-id, so this line correlates with the
+	// rest of the request in the Snapser Logs tool.
+	requestLogger(r).Info("Get game", slog.String("user_id", mux.Vars(r)["user_id"]))
+
 	// Marshal the struct to JSON
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
+		requestLogger(r).Error("Failed to marshal response", slog.Any("error", err))
 		http.Error(w, "Error creating response", http.StatusInternalServerError)
 		return
 	}
@@ -155,6 +173,7 @@ func SaveGame(w http.ResponseWriter, r *http.Request) {
 	// Marshal the struct to JSON
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
+		requestLogger(r).Error("Failed to marshal response", slog.Any("error", err))
 		http.Error(w, "Error creating response", http.StatusInternalServerError)
 		return
 	}
@@ -206,6 +225,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	// Marshal the struct to JSON
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
+		requestLogger(r).Error("Failed to marshal response", slog.Any("error", err))
 		http.Error(w, "Error creating response", http.StatusInternalServerError)
 		return
 	}
@@ -257,6 +277,7 @@ func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
 	// Marshal the struct to JSON
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
+		requestLogger(r).Error("Failed to marshal response", slog.Any("error", err))
 		http.Error(w, "Error creating response", http.StatusInternalServerError)
 		return
 	}

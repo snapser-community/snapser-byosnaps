@@ -33,6 +33,7 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -168,11 +169,21 @@ fun publishEvent(subject: String, recipients: List<String>, message: String) {
         "{\"event_type_id\":0,\"message\":$message,\"payload\":\"\",\"recipients\":$recipientsJson}"
 
     try {
-        val request = HttpRequest.newBuilder()
+        val requestBuilder = HttpRequest.newBuilder()
             .uri(URI.create("$baseUrl/v1/eventbus/byo/events/$BYOSNAP_ID/$subject"))
             .timeout(Duration.ofSeconds(5))
             .header("Content-Type", "application/json")
             .header(GATEWAY_HEADER_KEY, internalHeaderValue())
+        // Forward the caller's request id so Snapser can correlate this
+        // snap-to-snap call with the inbound request that triggered it. The id
+        // is bound to the MDC per request by CallLogging in Application.kt, so
+        // the MDC only ever holds sanitized values (see sanitizeRequestId).
+        // Boot-time calls (registerEventTypes) have no request id, so no
+        // header is sent there.
+        MDC.get(REQUEST_ID_MDC_KEY)?.takeIf { it.isNotBlank() }?.let {
+            requestBuilder.header(REQUEST_ID_HEADER_KEY, it)
+        }
+        val request = requestBuilder
             .POST(HttpRequest.BodyPublishers.ofString(body))
             .build()
 
