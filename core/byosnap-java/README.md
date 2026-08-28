@@ -40,7 +40,7 @@ This scaffold wires up the following Snapser BYOSnap capabilities (all stubbed):
 | GET | `/v1/byosnap-core/users/{userId}/example` | user |
 | GET | `/v1/byosnap-core/example/api-key` | api-key |
 | GET | `/v1/byosnap-core/example/internal` | internal |
-| GET | `/v1/byosnap-core/example/admin` | internal (surfaces in Admin SDK) |
+| GET | `/v1/byosnap-core/settings/example/admin` | internal (surfaces in Admin SDK) |
 | GET | `/v1/byosnap-core/users/{userId}/example/multi-auth` | user + api-key + internal |
 
 ## Eventbus

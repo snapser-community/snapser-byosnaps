@@ -301,7 +301,7 @@
                 }
             }
         },
-        "/v1/byosnap-core/example/admin": {
+        "/v1/byosnap-core/settings/example/admin": {
             "get": {
                 "summary": "Example: Admin SDK",
                 "description": "Exposed over api-key + internal auth and surfaced in the Admin SDK via x-snapser-sdk-categories.",

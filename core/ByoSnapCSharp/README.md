@@ -106,7 +106,7 @@ These demonstrate each Snapser auth exposure. The `[SnapserAuth(...)]` attribute
 | GET | `/v1/byosnap-core/users/{UserId}/example` | user | Exposed over User auth; surfaces in the client/game SDK |
 | GET | `/v1/byosnap-core/example/api-key` | api-key | Exposed over Api-Key auth; server-to-server calls |
 | GET | `/v1/byosnap-core/example/internal` | internal | Callable only by other Snaps (internal gateway) |
-| GET | `/v1/byosnap-core/example/admin` | admin | Surfaces in the Admin SDK. `admin` is a tag, NOT an auth type — the request still arrives via the internal gateway |
+| GET | `/v1/byosnap-core/settings/example/admin` | admin | Surfaces in the Admin SDK. `admin` is a tag, NOT an auth type — the request still arrives via the internal gateway |
 | GET | `/v1/byosnap-core/users/{UserId}/example/multi-auth` | user, api-key, internal | One endpoint accepting multiple auth types — no separate route per type |
 
 ### System

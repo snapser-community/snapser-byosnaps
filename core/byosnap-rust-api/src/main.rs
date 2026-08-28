@@ -903,7 +903,7 @@ async fn main() -> std::io::Result<()> {
             // d. Admin SDK (guarded via internal; requests arrive via the
             //    internal gateway)
             .route(
-                &format!("{}/example/admin", prefix),
+                &format!("{}/settings/example/admin", prefix),
                 web::get().to(example_admin_endpoint),
             )
             // e. Multiple auth types on one route (User + Api-Key + Internal)

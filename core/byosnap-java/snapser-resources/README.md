@@ -17,7 +17,7 @@ Snapser supports three kinds of authorization schemes:
 1. **Example: User Auth** — `GET /v1/byosnap-core/users/{user_id}/example`. Exposed over user auth (surfaces in the client/game SDK).
 1. **Example: Api-Key Auth** — `GET /v1/byosnap-core/example/api-key`. Exposed over api-key auth (server-to-server calls).
 1. **Example: Internal Auth** — `GET /v1/byosnap-core/example/internal`. Callable only by other Snaps in the same Snapend.
-1. **Example: Admin SDK** — `GET /v1/byosnap-core/example/admin`. Surfaces in the Admin SDK. `admin` is not an auth type — the request still arrives via the internal gateway.
+1. **Example: Admin SDK** — `GET /v1/byosnap-core/settings/example/admin`. Surfaces in the Admin SDK. `admin` is not an auth type — the request still arrives via the internal gateway.
 1. **Example: Multi Auth** — `GET /v1/byosnap-core/users/{user_id}/example/multi-auth`. One endpoint reachable by user, api-key, or internal auth.
 
 ## Files in this folder

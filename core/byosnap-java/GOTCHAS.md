@@ -24,7 +24,7 @@ Important things to keep in mind when developing this Spring Boot BYOSnap.
    @ValidateAuthorization({ AppConstants.AUTH_TYPE_USER, AppConstants.AUTH_TYPE_API_KEY, AppConstants.GATEWAY_INTERNAL_ORIGIN })
    ```
 2. **A single endpoint can accept multiple auth types** — list them all in the annotation. You do not need a separate route per auth type.
-3. **`admin` is not an auth type.** Tagging an operation with `admin` in swagger.json only surfaces it in the Admin SDK. Admin calls still arrive through the internal gateway, so guard admin endpoints with `GATEWAY_INTERNAL_ORIGIN`.
+3. **`admin` is not an auth type.** Tagging an operation with `admin` in swagger.json only surfaces it in the Admin SDK. Admin calls still arrive through the internal gateway, so guard admin endpoints with `GATEWAY_INTERNAL_ORIGIN`. Admin SDK endpoints must also be routed under `/settings`, right after the prefix + snap name (e.g. `/v1/byosnap-core/settings/example/admin`).
 4. **Failure response**: On an auth failure the interceptor returns HTTP **400** with body `{"error_message":"Unauthorized"}` (matching the other core examples). It does not return 401/403.
 5. **Header injection**: Snapser automatically adds the correct headers (Token / Api-Key / Gateway) in the SDK and API Explorer based on the auth type. You do not need to declare those headers in swagger.json.
 6. **Interceptor is a no-op without the annotation**. `AuthorizationInterceptor` is registered on `/**`, but it only runs when the matched handler method carries `@ValidateAuthorization`. That is why `/healthz` and CORS preflights pass through untouched.

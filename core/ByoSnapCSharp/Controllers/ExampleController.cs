@@ -112,7 +112,7 @@ namespace ByoSnapCSharp.Controllers
     /// admin`, which is what surfaces it in the Admin SDK (used by admin tooling
     /// / the Snapser dashboard).
     /// </summary>
-    [HttpGet("example/admin")]
+    [HttpGet("settings/example/admin")]
     [SnapserAuth(AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]
     [SnapserSdkCategory("admin")]
     [ValidateAuthorization(AppConstants.apiKeyAuthType, AppConstants.internalAuthType)]

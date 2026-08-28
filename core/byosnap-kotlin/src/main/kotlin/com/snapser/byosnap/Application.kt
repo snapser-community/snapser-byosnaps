@@ -520,7 +520,7 @@ fun Application.module() {
         // auth types (here api-key + internal); the `x-snapser-sdk-categories:
         // admin` tag in snapser-resources/swagger.json is what surfaces it in
         // the Admin SDK (used by admin tooling / the Snapser dashboard).
-        get("$API_PREFIX/example/admin") {
+        get("$API_PREFIX/settings/example/admin") {
             if (!validateAuthorization(
                     call,
                     AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH,

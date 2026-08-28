@@ -583,7 +583,7 @@ export function RegisterRoutes(app: Router) {
                 _unauthorized: {"in":"res","name":"401","required":true,"ref":"ErrorResponse"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.get('/v1/byosnap-core/example/admin',
+        app.get('/v1/byosnap-core/settings/example/admin',
             ...(fetchMiddlewares<RequestHandler>(ExampleController)),
             ...(fetchMiddlewares<RequestHandler>(ExampleController.prototype.exampleAdminSdk)),
 

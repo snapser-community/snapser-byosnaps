@@ -100,7 +100,7 @@ Each example shows how to expose an API over a Snapser auth type. `admin` is not
 | GET | `/v1/byosnap-core/users/{user_id}/example` | user |
 | GET | `/v1/byosnap-core/example/api-key` | api-key |
 | GET | `/v1/byosnap-core/example/internal` | internal |
-| GET | `/v1/byosnap-core/example/admin` | admin (surfaced in Admin SDK; internal gateway) |
+| GET | `/v1/byosnap-core/settings/example/admin` | admin (surfaced in Admin SDK; internal gateway) |
 | GET | `/v1/byosnap-core/users/{user_id}/example/multi-auth` | user, api-key, internal |
 
 ### System

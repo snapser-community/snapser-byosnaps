@@ -127,7 +127,7 @@
         ]
       }
     },
-    "/v1/byosnap-core/example/admin": {
+    "/v1/byosnap-core/settings/example/admin": {
       "get": {
         "tags": [
           "Example"
