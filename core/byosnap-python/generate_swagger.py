@@ -46,7 +46,7 @@ app.add_url_rule(f"{API_PREFIX}/example/api-key",
                  view_func=example_api_key_endpoint, methods=['GET'])
 app.add_url_rule(f"{API_PREFIX}/example/internal",
                  view_func=example_internal_endpoint, methods=['GET'])
-app.add_url_rule(f"{API_PREFIX}/example/admin",
+app.add_url_rule(f"{API_PREFIX}/settings/example/admin",
                  view_func=example_admin_endpoint, methods=['GET'])
 app.add_url_rule(f"{API_PREFIX}/users/<user_id>/example/multi-auth",
                  view_func=example_multi_auth_endpoint, methods=['GET'])

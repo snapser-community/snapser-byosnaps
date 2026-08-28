@@ -20,7 +20,7 @@
   },
   "host": "localhost:5003",
   "paths": {
-    "/v1/byosnap-core/example/admin": {
+    "/v1/byosnap-core/settings/example/admin": {
       "get": {
         "description": "Exposed over api-key + internal auth and surfaced in the Admin SDK via x-snapser-sdk-categories.",
         "summary": "Example: Admin SDK",

@@ -37,8 +37,10 @@ Each example wires up every endpoint Snapser expects, with the body reduced to a
 | `GET /v1/byosnap-core/users/{user_id}/example` | User auth |
 | `GET /v1/byosnap-core/example/api-key` | Api-Key auth |
 | `GET /v1/byosnap-core/example/internal` | Internal auth |
-| `GET /v1/byosnap-core/example/admin` | Surfaced in the Admin SDK (`x-snapser-sdk-categories: ["admin"]`) and reached over api-key + internal auth. `admin` is an SDK *category*, not an auth type. |
+| `GET /v1/byosnap-core/settings/example/admin` | Surfaced in the Admin SDK (`x-snapser-sdk-categories: ["admin"]`) and reached over api-key + internal auth. `admin` is an SDK *category*, not an auth type. |
 | `GET /v1/byosnap-core/users/{user_id}/example/multi-auth` | User + Api-Key + Internal on one route — you do **not** need a separate route per auth type. |
+
+> **Admin SDK URL convention**: every endpoint tagged `x-snapser-sdk-categories: ["admin"]` must live under `/settings` — i.e. `/{version}/{snap-name}/settings/...` (for example `/v1/inventory/settings/items`). That is why the admin example above is `/v1/byosnap-core/settings/example/admin`.
 
 ## 2. Eventbus integration
 

@@ -301,7 +301,7 @@
                 }
             }
         },
-        "/v1/byosnap-core/example/admin": {
+        "/v1/byosnap-core/settings/example/admin": {
             "get": {
                 "summary": "Example: Admin SDK",
                 "description": "Surfaces in the Admin SDK for admin tooling / the Snapser dashboard. `admin` controls SDK exposure, not authentication.",

@@ -60,7 +60,7 @@ public class ExampleController {
      * {@code x-snapser-auth-types} tag and the {@link ValidateAuthorization}
      * annotation below.
      */
-    @GetMapping(AppConstants.API_PREFIX + "/example/admin")
+    @GetMapping(AppConstants.API_PREFIX + "/settings/example/admin")
     @ValidateAuthorization({
             AppConstants.AUTH_TYPE_API_KEY,
             AppConstants.GATEWAY_INTERNAL_ORIGIN

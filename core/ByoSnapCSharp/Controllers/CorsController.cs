@@ -20,7 +20,7 @@ namespace ByoSnapCSharp.Controllers
     [HttpOptions("v1/byosnap-core/users/{userId}/example")]
     [HttpOptions("v1/byosnap-core/example/api-key")]
     [HttpOptions("v1/byosnap-core/example/internal")]
-    [HttpOptions("v1/byosnap-core/example/admin")]
+    [HttpOptions("v1/byosnap-core/settings/example/admin")]
     [HttpOptions("v1/byosnap-core/users/{userId}/example/multi-auth")]
     public IActionResult CorsOverrides()
     {

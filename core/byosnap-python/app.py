@@ -832,7 +832,7 @@ def example_internal_endpoint():
     return make_response(jsonify({'message': 'Hello internal caller'}), 200)
 
 
-@app.route(f"{API_PREFIX}/example/admin", methods=["GET"])
+@app.route(f"{API_PREFIX}/settings/example/admin", methods=["GET"])
 @validate_authorization(AUTH_TYPE_HEADER_VALUE_API_KEY_AUTH, GATEWAY_HEADER_INTERNAL_ORIGIN_VALUE)
 def example_admin_endpoint():
     """Example endpoint surfaced in the special Admin SDK.

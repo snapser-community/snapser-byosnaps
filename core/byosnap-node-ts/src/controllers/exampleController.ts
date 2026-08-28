@@ -80,7 +80,7 @@ export class ExampleController extends Controller {
     /**
      * @summary Example: Admin SDK
      */
-    @Get("example/admin")
+    @Get("settings/example/admin")
     @Extension("x-description", 'Exposed over api-key + internal auth and surfaced in the Admin SDK via x-snapser-sdk-categories.')
     @Extension("x-snapser-auth-types", ["api-key", "internal"])
     @Extension("x-snapser-sdk-categories", ["admin"])

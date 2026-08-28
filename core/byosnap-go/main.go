@@ -168,7 +168,7 @@ func main() {
 	//    admin` tag is what surfaces it in the Admin SDK. Guard it with those
 	//    same auth types.
 	exampleAdminHandler := http.HandlerFunc(ExampleAdminSdk)
-	r.Handle(fmt.Sprintf("%s/example/admin", APIPrefix),
+	r.Handle(fmt.Sprintf("%s/settings/example/admin", APIPrefix),
 		validateAuthorization([]string{AuthTypeHeaderValueApiKeyAuth, GatewayHeaderValueInternalOrigin}, "")(exampleAdminHandler)).Methods("GET")
 
 	// e. Multi-auth. One endpoint can accept multiple auth types; no separate
@@ -744,7 +744,7 @@ func ExampleInternalAuth(w http.ResponseWriter, r *http.Request) {
 // types (here api-key + internal); the `x-snapser-sdk-categories: [admin]` tag is
 // what places it in the Admin SDK (used by admin tooling / the Snapser
 // dashboard).
-// swagger:operation GET /v1/byosnap-core/example/admin exampleAdminSdk
+// swagger:operation GET /v1/byosnap-core/settings/example/admin exampleAdminSdk
 // ---
 // summary: 'Example: Admin SDK'
 // description: Exposed over api-key + internal auth and surfaced in the Admin SDK via x-snapser-sdk-categories.

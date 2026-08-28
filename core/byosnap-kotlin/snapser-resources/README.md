@@ -18,5 +18,5 @@ The five example endpoints demonstrate each exposure:
 1. **ExampleUserAuth**: `GET /v1/byosnap-core/users/{user_id}/example` — exposed over user auth.
 1. **ExampleApiKeyAuth**: `GET /v1/byosnap-core/example/api-key` — exposed over api-key auth.
 1. **ExampleInternalAuth**: `GET /v1/byosnap-core/example/internal` — internal only.
-1. **ExampleAdminSdk**: `GET /v1/byosnap-core/example/admin` — surfaces in the Admin SDK (arrives via the internal gateway).
+1. **ExampleAdminSdk**: `GET /v1/byosnap-core/settings/example/admin` — surfaces in the Admin SDK (arrives via the internal gateway).
 1. **ExampleMultiAuth**: `GET /v1/byosnap-core/users/{user_id}/example/multi-auth` — one endpoint reachable over user, api-key, and internal auth.

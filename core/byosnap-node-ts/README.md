@@ -71,7 +71,7 @@ byosnap-node-ts/
 | GET | `/v1/byosnap-core/users/{userId}/example` | user | Example: User auth |
 | GET | `/v1/byosnap-core/example/api-key` | api-key | Example: Api-Key auth |
 | GET | `/v1/byosnap-core/example/internal` | internal | Example: Internal auth |
-| GET | `/v1/byosnap-core/example/admin` | admin | Example: Admin SDK (surfaces in Admin SDK; still arrives via internal gateway) |
+| GET | `/v1/byosnap-core/settings/example/admin` | admin | Example: Admin SDK (surfaces in Admin SDK; still arrives via internal gateway) |
 | GET | `/v1/byosnap-core/users/{userId}/example/multi-auth` | user, api-key, internal | Example: Multi auth (one route, multiple auth types) |
 | GET | `/healthz` | none | Health check |
 

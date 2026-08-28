@@ -582,7 +582,7 @@
         "description": "Callable only by other Snaps within the same Snapend (internal gateway). Surfaces in the internal SDK."
       }
     },
-    "/v1/byosnap-core/example/admin": {
+    "/v1/byosnap-core/settings/example/admin": {
       "get": {
         "operationId": "ExampleAdminSdk",
         "responses": {
